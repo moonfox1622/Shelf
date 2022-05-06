@@ -61,6 +61,12 @@
     <Compile Include="Grid.Designer.cs">
       <DependentUpon>Grid.cs</DependentUpon>
     </Compile>
+    <Compile Include="Reset.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Reset.Designer.cs">
+      <DependentUpon>Reset.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>
@@ -76,6 +82,9 @@
     </Compile>
     <EmbeddedResource Include="Grid.resx">
       <DependentUpon>Grid.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reset.resx">
+      <DependentUpon>Reset.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

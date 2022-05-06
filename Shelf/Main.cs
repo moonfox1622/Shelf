@@ -136,6 +136,8 @@ namespace Shelf
                     }
                 }
                 interruptIndex = 0;
+                btnReupload.Visible = false;
+                btnRun.Enabled = true;
             }
             catch(Exception ex)
             {
@@ -143,13 +145,50 @@ namespace Shelf
                 btnReupload.Visible = true;
                 btnRun.Enabled = false;
             }
-            
-            
         }
 
         private void BtnReuploadClick(object sender, EventArgs e)
         {
             UploadHistory(false, datas);
+        }
+
+        
+        private void BtnResetClick(object sender, EventArgs e)
+        {
+            Reset reset = new Reset();
+            reset.ShowDialog();
+            if (reset.resetCount != 0)
+            {
+                List<Data> newDatas = new List<Data>();
+                Random randNum = new Random();
+                for (int i = 0; i < reset.resetCount; i++)
+                {
+                    Data data = new Data
+                    {
+                        name = "I" + i,
+                        count = randNum.Next(0, 100),
+                        alarm = true
+                    };
+                    newDatas.Add(data);
+                }
+                var query = @"DELETE FROM data";
+                using(SqlConnection conn = new SqlConnection(_connectStr))
+                {
+                    if (conn.State != ConnectionState.Open)
+                        conn.Open();
+                    using(SqlCommand comm = new SqlCommand(query, conn))
+                    {
+                        comm.ExecuteNonQuery();
+                    }
+
+                    query = @"INSERT INTO data(name, count, alarm) VALUES (@name, @count, @alarm)";
+                    using (SqlCommand comm = new SqlCommand(query, conn))
+                    {
+                        comm.ExecuteNonQuery();
+                    }
+                }
+            }
+
         }
     }
 }
