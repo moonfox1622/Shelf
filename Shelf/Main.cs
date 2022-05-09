@@ -16,7 +16,7 @@ namespace Shelf
         private readonly string _connectStr = @"Data Source = 127.0.0.1; Initial Catalog = Shelf; User ID = MES2014; Password = PMCMES;"; //資料庫連線設定
 
         List<int> lastDatas = new List<int>(); 
-        List<Grid> datas = new List<Grid>();
+        List<Grid> tools = new List<Grid>();
         int[] checkDatas;
         int updateCount = 0;
         int interruptIndex = 0;
@@ -31,40 +31,49 @@ namespace Shelf
             initalContent();
         }
 
+        /// <summary>
+        /// 初始化界面
+        /// </summary>
         private void initalContent()
         {
             content.Controls.Clear();
-            datas = new List<Grid>();
-            LoadData(ref datas, ref lastDatas);
-            UploadHistory(true, datas);
+            tools = new List<Grid>();
+            LoadData(ref tools, ref lastDatas);
+            UpdateStatus(true, tools);
 
             Random randNum = new Random();
             checkDatas = Enumerable
-                .Repeat(0, datas.Count)
+                .Repeat(0, tools.Count)
                 .Select(i => randNum.Next(0, 49))
                 .ToArray();
             Point loc = new Point(23, 23);
-            for (int i = 0; i < datas.Count; i++)
+            for (int i = 0; i < tools.Count; i++)
             {
-                datas[i].check = checkDatas[i];
-                datas[i].Location = loc;
-                content.Controls.Add(datas[i]);
+                tools[i].check = checkDatas[i];
+                tools[i].Location = loc;
+                content.Controls.Add(tools[i]);
                 //設定方框位置，每六個換一行
                 if ((i + 1) % 6 == 0)
                 {
                     loc.X = 23;
-                    loc.Y += datas[i].Height + 40;
+                    loc.Y += tools[i].Height + 40;
                 }
                 else
                 {
-                    loc.X += datas[i].Width + 32;
+                    loc.X += tools[i].Width + 32;
                 }
             }
         }
 
-        private List<Grid> LoadData(ref List<Grid> datas, ref List<int> lastDatas)
+        /// <summary>
+        /// 取得刀具資料
+        /// </summary>
+        /// <param name="tools"></param>
+        /// <param name="lastDatas"></param>
+        /// <returns></returns>
+        private List<Grid> LoadData(ref List<Grid> tools, ref List<int> lastDatas)
         {
-            var query = "SELECT TRIM(name) as name, count, alarm FROM data";
+            var query = "SELECT id, TRIM(name) as name, count, alarm FROM tool";
             using (SqlConnection conn = new SqlConnection(_connectStr))
             {
                 using (SqlCommand comm = new SqlCommand(query, conn))
@@ -76,70 +85,100 @@ namespace Shelf
                         {
                             while (data.Read())
                             {
-                                Grid d = new Grid
+                                Tool tool = new Tool
                                 {
+                                    id = int.Parse(data["id"].ToString()),
                                     name = data["name"].ToString(),
                                     count = int.Parse(data["count"].ToString()),
                                     alarm = bool.Parse(data["alarm"].ToString())
                                 };
+                                Grid d = new Grid
+                                {
+                                    tool = tool
+                                };
 
-                                datas.Add(d);
+                                tools.Add(d);
                                 lastDatas.Add(int.Parse(data["count"].ToString()));
                             }
                         }
                     }
                 }
             }
-            return datas;
+            return tools;
         }
 
         
-
+        /// <summary>
+        ///  資料更新
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnRunClick(object sender, EventArgs e)
         {
             updateCount++;
-            for(int i = 0; i < datas.Count; i++)
+            for(int i = 0; i < tools.Count; i++)
             {
-                lastDatas.Add(datas[i].count);
-                datas[i].count -= 3 * updateCount;
-                if(datas[i].count <= checkDatas[i])
+                lastDatas.Add(tools[i].tool.count);
+                tools[i].tool.count -= 3 * updateCount;
+                if(tools[i].tool.count <= checkDatas[i])
                 {
-                    datas[i].alarm = true;
+                    tools[i].tool.alarm = true;
                 }
-                datas[i].CheckStatus();
+                tools[i].CheckStatus();
             }
-            UploadHistory(false, datas);
+            UpdateStatus(false, tools);
         }
 
-        private void UploadHistory(bool start, List<Grid> datas)
+        /// <summary>
+        /// 更新狀態
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="tools"></param>
+        private void UpdateStatus(bool start, List<Grid> tools)
         {
-            var query = @"INSERT INTO history(name, count, alarm, mark) VALUES(@name, @count, @alarm, @mark)";
-
+            var queryHis = @"INSERT INTO history(toolId, name, count, alarm, mark) VALUES(@toolId, @name, @count, @alarm, @mark)";
+            var queryData = @"UPDATE tool SET count = @count, alarm = @alarm WHERE id = @toolId";
+            
             try{
-                for (int i = interruptIndex; i < datas.Count; i++)
+                for (int i = interruptIndex; i < tools.Count; i++)
                 {
-                    string name = datas[i].name;
-                    //if (i == 5) name = null;
                     interruptIndex = i;
                     using (SqlConnection conn = new SqlConnection(_connectStr))
                     {
-                        using (SqlCommand comm = new SqlCommand(query, conn))
+                        //更新 tool data
+                        using (SqlCommand comm = new SqlCommand(queryData, conn))
                         {
-                            if (conn.State != ConnectionState.Open)
+                            if(conn.State != ConnectionState.Open)
                                 conn.Open();
-                            comm.Parameters.AddWithValue("@name", name);
-                            comm.Parameters.AddWithValue("@count", datas[i].count);
-                            comm.Parameters.AddWithValue("@alarm", datas[i].alarm);
+                            comm.Parameters.AddWithValue("@count", tools[i].tool.count);
+                            comm.Parameters.AddWithValue("@alarm", tools[i].tool.alarm);
+                            comm.Parameters.AddWithValue("@toolId", tools[i].tool.id);
+                            int affectRows = comm.ExecuteNonQuery();
+                            if (affectRows == 0)
+                            {
+                                MessageBox.Show("儲存發生錯誤，請進行重新上傳");
+                                btnReupload.Visible = true;
+                                btnRun.Enabled = false;
+                                throw new Exception("儲存失敗");
+                            }
+                        }
+
+                        //新增歷史資料
+                        using (SqlCommand comm = new SqlCommand(queryHis, conn))
+                        {
+                            comm.Parameters.AddWithValue("@toolId", tools[i].tool.id);
+                            comm.Parameters.AddWithValue("@name", tools[i].tool.name);
+                            comm.Parameters.AddWithValue("@count", tools[i].tool.count);
+                            comm.Parameters.AddWithValue("@alarm", tools[i].tool.alarm);
                             comm.Parameters.AddWithValue("@mark", start);
 
                             int affectRows = comm.ExecuteNonQuery();
                             if (affectRows == 0)
                             {
-                                
                                 MessageBox.Show("儲存發生錯誤，請進行重新上傳");
                                 btnReupload.Visible = true;
                                 btnRun.Enabled = false;
-                                break;
+                                throw new Exception("儲存失敗");
                             }
                         }
                     }
@@ -156,9 +195,14 @@ namespace Shelf
             }
         }
 
+        /// <summary>
+        /// 重新上傳
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnReuploadClick(object sender, EventArgs e)
         {
-            UploadHistory(false, datas);
+            UpdateStatus(false, tools);
         }
 
         
@@ -169,11 +213,11 @@ namespace Shelf
             if (reset.resetCount != 0)
             {
                 int insertCount = 0;
-                List<Data> newDatas = new List<Data>();
+                List<Tool> newDatas = new List<Tool>();
                 Random randNum = new Random();
                 for (int i = 0; i < reset.resetCount; i++)
                 {
-                    Data data = new Data
+                    Tool data = new Tool
                     {
                         name = "I" + i,
                         count = randNum.Next(80, 100),
@@ -181,7 +225,7 @@ namespace Shelf
                     };
                     newDatas.Add(data);
                 }
-                var query = @"DELETE FROM data";
+                var query = @"DELETE FROM tool";
                 try
                 {
                     using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -193,14 +237,15 @@ namespace Shelf
                             comm.ExecuteNonQuery();
                         }
 
-                        foreach (Data data in newDatas)
+                        foreach (Tool data in newDatas)
                         {
-                            query = @"INSERT INTO data(name, count, alarm) VALUES (@name, @count, @alarm)";
+                            query = @"INSERT INTO tool(id, name, count, alarm) VALUES (@id, @name, @count, @alarm)";
                             using (SqlCommand comm = new SqlCommand(query, conn))
                             {
+                                comm.Parameters.AddWithValue("@id", insertCount);
                                 comm.Parameters.AddWithValue("@name", data.name);
                                 comm.Parameters.AddWithValue("@count", data.count);
-                                comm.Parameters.AddWithValue("@alarm", data.alarm);
+                                comm.Parameters.AddWithValue("@alarm", 0);
                                 insertCount += comm.ExecuteNonQuery();
                             }
                         }

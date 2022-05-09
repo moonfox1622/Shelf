@@ -12,9 +12,7 @@ namespace Shelf
 {
     public partial class Grid : UserControl
     {
-        public string name { get; set; }
-        public int count { get; set; }
-        public bool alarm { get; set; }
+        public Tool tool { get; set; }
         public int check { get; set; }
 
         public Grid()
@@ -28,13 +26,13 @@ namespace Shelf
         }
         public void CheckStatus()
         {
-            txtName.Text = name;
-            txtCount.Text = count.ToString();
+            txtName.Text = tool.name;
+            txtCount.Text = tool.count.ToString();
             //count>80:green, 80>count>=50:yellow, count<50:red
-            if (count >= 80)
+            if (tool.count >= 80)
             {
                 this.BackColor = Color.FromArgb(89, 201, 165);
-            }else if(count < 80 && count >= 50)
+            }else if(tool.count < 80 && tool.count >= 50)
             {
                 this.BackColor = Color.FromArgb(255, 253, 152);
             }
@@ -44,7 +42,7 @@ namespace Shelf
             }
 
             //alarm == true show picAlarm
-            if (count <= check)
+            if (tool.count <= check)
             {
                 picAlarm.Visible = true;
             }
