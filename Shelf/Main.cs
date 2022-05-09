@@ -28,6 +28,13 @@ namespace Shelf
 
         private void MainShown(object sender, EventArgs e)
         {
+            initalContent();
+        }
+
+        private void initalContent()
+        {
+            content.Controls.Clear();
+            datas = new List<Grid>();
             LoadData(ref datas, ref lastDatas);
             UploadHistory(true, datas);
 
@@ -85,6 +92,8 @@ namespace Shelf
             }
             return datas;
         }
+
+        
 
         private void BtnRunClick(object sender, EventArgs e)
         {
@@ -159,6 +168,7 @@ namespace Shelf
             reset.ShowDialog();
             if (reset.resetCount != 0)
             {
+                int insertCount = 0;
                 List<Data> newDatas = new List<Data>();
                 Random randNum = new Random();
                 for (int i = 0; i < reset.resetCount; i++)
@@ -166,27 +176,56 @@ namespace Shelf
                     Data data = new Data
                     {
                         name = "I" + i,
-                        count = randNum.Next(0, 100),
+                        count = randNum.Next(80, 100),
                         alarm = true
                     };
                     newDatas.Add(data);
                 }
                 var query = @"DELETE FROM data";
-                using(SqlConnection conn = new SqlConnection(_connectStr))
+                try
                 {
-                    if (conn.State != ConnectionState.Open)
-                        conn.Open();
-                    using(SqlCommand comm = new SqlCommand(query, conn))
+                    using (SqlConnection conn = new SqlConnection(_connectStr))
                     {
-                        comm.ExecuteNonQuery();
-                    }
+                        if (conn.State != ConnectionState.Open)
+                            conn.Open();
+                        using (SqlCommand comm = new SqlCommand(query, conn))
+                        {
+                            comm.ExecuteNonQuery();
+                        }
 
-                    query = @"INSERT INTO data(name, count, alarm) VALUES (@name, @count, @alarm)";
-                    using (SqlCommand comm = new SqlCommand(query, conn))
-                    {
-                        comm.ExecuteNonQuery();
+                        foreach (Data data in newDatas)
+                        {
+                            query = @"INSERT INTO data(name, count, alarm) VALUES (@name, @count, @alarm)";
+                            using (SqlCommand comm = new SqlCommand(query, conn))
+                            {
+                                comm.Parameters.AddWithValue("@name", data.name);
+                                comm.Parameters.AddWithValue("@count", data.count);
+                                comm.Parameters.AddWithValue("@alarm", data.alarm);
+                                insertCount += comm.ExecuteNonQuery();
+                            }
+                        }
+
                     }
+                }catch(SqlException ex)
+                {
+                    MessageBox.Show("資料庫發生問題，新增失敗：" + ex.Message);
+                }catch(Exception ex)
+                {
+                    MessageBox.Show("新增失敗：" + ex.Message);
                 }
+                if(insertCount != reset.resetCount)
+                {
+                    MessageBox.Show("新增過程中發生錯誤，未新增完全");
+                }
+                else
+                {
+                    MessageBox.Show("新增成功");
+                    initalContent();
+                }
+            }
+            else
+            {
+                MessageBox.Show("未進行任何改變");
             }
 
         }
