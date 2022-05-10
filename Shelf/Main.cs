@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -24,6 +25,7 @@ namespace Shelf
         public Main()
         {
             InitializeComponent();
+            
         }
 
         private void MainShown(object sender, EventArgs e)
@@ -46,21 +48,22 @@ namespace Shelf
                 .Repeat(0, tools.Count)
                 .Select(i => randNum.Next(0, 49))
                 .ToArray();
-            Point loc = new Point(23, 23);
+            Point loc = new Point(0, 23);
             for (int i = 0; i < tools.Count; i++)
             {
                 tools[i].check = checkDatas[i];
                 tools[i].Location = loc;
+
                 content.Controls.Add(tools[i]);
                 //設定方框位置，每六個換一行
                 if ((i + 1) % 6 == 0)
                 {
-                    loc.X = 23;
-                    loc.Y += tools[i].Height + 40;
+                    loc.X = 0;
+                    loc.Y += tools[i].Height + 15;
                 }
                 else
                 {
-                    loc.X += tools[i].Width + 32;
+                    loc.X += tools[i].Width + 5;
                 }
             }
         }
@@ -73,7 +76,7 @@ namespace Shelf
         /// <returns></returns>
         private List<Grid> LoadData(ref List<Grid> tools, ref List<int> lastDatas)
         {
-            var query = "SELECT id, TRIM(name) as name, count, alarm FROM tool";
+            var query = "SELECT id, TRIM(name) as name, life, remain, alarm FROM tool";
             using (SqlConnection conn = new SqlConnection(_connectStr))
             {
                 using (SqlCommand comm = new SqlCommand(query, conn))
@@ -89,7 +92,8 @@ namespace Shelf
                                 {
                                     id = int.Parse(data["id"].ToString()),
                                     name = data["name"].ToString(),
-                                    count = int.Parse(data["count"].ToString()),
+                                    life = int.Parse(data["life"].ToString()),
+                                    remain = int.Parse(data["remain"].ToString()),
                                     alarm = bool.Parse(data["alarm"].ToString())
                                 };
                                 Grid d = new Grid
@@ -98,7 +102,7 @@ namespace Shelf
                                 };
 
                                 tools.Add(d);
-                                lastDatas.Add(int.Parse(data["count"].ToString()));
+                                lastDatas.Add(int.Parse(data["remain"].ToString()));
                             }
                         }
                     }
@@ -118,9 +122,9 @@ namespace Shelf
             updateCount++;
             for(int i = 0; i < tools.Count; i++)
             {
-                lastDatas.Add(tools[i].tool.count);
-                tools[i].tool.count -= 3 * updateCount;
-                if(tools[i].tool.count <= checkDatas[i])
+                lastDatas.Add(tools[i].tool.remain);
+                tools[i].tool.remain -= 3 * updateCount;
+                if(tools[i].tool.remain <= checkDatas[i])
                 {
                     tools[i].tool.alarm = true;
                 }
@@ -136,8 +140,8 @@ namespace Shelf
         /// <param name="tools"></param>
         private void UpdateStatus(bool start, List<Grid> tools)
         {
-            var queryHis = @"INSERT INTO history(toolId, name, count, alarm, mark) VALUES(@toolId, @name, @count, @alarm, @mark)";
-            var queryData = @"UPDATE tool SET count = @count, alarm = @alarm WHERE id = @toolId";
+            var queryHis = @"INSERT INTO history(toolId, name, life, remain, alarm, mark) VALUES(@toolId, @name, @life, @remain, @alarm, @mark)";
+            var queryData = @"UPDATE tool SET remain = @remain, alarm = @alarm WHERE id = @toolId";
             
             try{
                 for (int i = interruptIndex; i < tools.Count; i++)
@@ -150,7 +154,7 @@ namespace Shelf
                         {
                             if(conn.State != ConnectionState.Open)
                                 conn.Open();
-                            comm.Parameters.AddWithValue("@count", tools[i].tool.count);
+                            comm.Parameters.AddWithValue("@remain", tools[i].tool.remain);
                             comm.Parameters.AddWithValue("@alarm", tools[i].tool.alarm);
                             comm.Parameters.AddWithValue("@toolId", tools[i].tool.id);
                             int affectRows = comm.ExecuteNonQuery();
@@ -168,7 +172,8 @@ namespace Shelf
                         {
                             comm.Parameters.AddWithValue("@toolId", tools[i].tool.id);
                             comm.Parameters.AddWithValue("@name", tools[i].tool.name);
-                            comm.Parameters.AddWithValue("@count", tools[i].tool.count);
+                            comm.Parameters.AddWithValue("@life", tools[i].tool.life);
+                            comm.Parameters.AddWithValue("@remain", tools[i].tool.remain);
                             comm.Parameters.AddWithValue("@alarm", tools[i].tool.alarm);
                             comm.Parameters.AddWithValue("@mark", start);
 
@@ -205,22 +210,29 @@ namespace Shelf
             UpdateStatus(false, tools);
         }
 
-        
+        /// <summary>
+        /// 重新設定刀具庫
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnResetClick(object sender, EventArgs e)
         {
             Reset reset = new Reset();
             reset.ShowDialog();
             if (reset.resetCount != 0)
             {
+                updateCount = 0;
                 int insertCount = 0;
                 List<Tool> newDatas = new List<Tool>();
                 Random randNum = new Random();
                 for (int i = 0; i < reset.resetCount; i++)
                 {
+                    int randLife = randNum.Next(80, 100);
                     Tool data = new Tool
                     {
                         name = "I" + i,
-                        count = randNum.Next(80, 100),
+                        life = randLife,
+                        remain = randLife,
                         alarm = true
                     };
                     newDatas.Add(data);
@@ -239,12 +251,13 @@ namespace Shelf
 
                         foreach (Tool data in newDatas)
                         {
-                            query = @"INSERT INTO tool(id, name, count, alarm) VALUES (@id, @name, @count, @alarm)";
+                            query = @"INSERT INTO tool(id, name, life, remain, alarm) VALUES (@id, @name, @life, @remain, @alarm)";
                             using (SqlCommand comm = new SqlCommand(query, conn))
                             {
                                 comm.Parameters.AddWithValue("@id", insertCount);
                                 comm.Parameters.AddWithValue("@name", data.name);
-                                comm.Parameters.AddWithValue("@count", data.count);
+                                comm.Parameters.AddWithValue("@life", data.life);
+                                comm.Parameters.AddWithValue("@remain", data.remain);
                                 comm.Parameters.AddWithValue("@alarm", 0);
                                 insertCount += comm.ExecuteNonQuery();
                             }
