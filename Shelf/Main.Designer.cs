@@ -39,7 +39,7 @@
             // content
             // 
             this.content.AutoScroll = true;
-            this.content.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(224)))), ((int)(((byte)(227)))));
+            this.content.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(35)))), ((int)(((byte)(35)))));
             this.content.Location = new System.Drawing.Point(12, 46);
             this.content.Margin = new System.Windows.Forms.Padding(0);
             this.content.Name = "content";
@@ -102,7 +102,7 @@
             // Main
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(224)))), ((int)(((byte)(227)))));
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(35)))), ((int)(((byte)(35)))));
             this.ClientSize = new System.Drawing.Size(1008, 681);
             this.Controls.Add(this.content);
             this.Controls.Add(this.panel1);

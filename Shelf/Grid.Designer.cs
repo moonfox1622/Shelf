@@ -54,7 +54,7 @@
             // txtCount
             // 
             this.txtCount.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtCount.ForeColor = System.Drawing.Color.Black;
+            this.txtCount.ForeColor = System.Drawing.Color.White;
             this.txtCount.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.txtCount.Location = new System.Drawing.Point(43, 0);
             this.txtCount.Margin = new System.Windows.Forms.Padding(0);
@@ -100,9 +100,9 @@
             // picWarning
             // 
             this.picWarning.Image = global::Shelf.Properties.Resources.yellowwarning;
-            this.picWarning.Location = new System.Drawing.Point(125, -7);
+            this.picWarning.Location = new System.Drawing.Point(126, -4);
             this.picWarning.Name = "picWarning";
-            this.picWarning.Size = new System.Drawing.Size(35, 35);
+            this.picWarning.Size = new System.Drawing.Size(32, 32);
             this.picWarning.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picWarning.TabIndex = 7;
             this.picWarning.TabStop = false;
@@ -110,7 +110,7 @@
             // 
             // panel1
             // 
-            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(241)))), ((int)(((byte)(241)))));
+            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
             this.panel1.Controls.Add(this.txtName);
             this.panel1.Controls.Add(this.txtCount);
             this.panel1.Controls.Add(this.remainLifeBar);
@@ -124,7 +124,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(224)))), ((int)(((byte)(227)))));
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(35)))), ((int)(((byte)(35)))));
             this.Controls.Add(this.picWarning);
             this.Controls.Add(this.panel1);
             this.Name = "Grid";
