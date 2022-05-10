@@ -100,9 +100,9 @@
             // picWarning
             // 
             this.picWarning.Image = global::Shelf.Properties.Resources.yellowwarning;
-            this.picWarning.Location = new System.Drawing.Point(125, -7);
+            this.picWarning.Location = new System.Drawing.Point(126, -4);
             this.picWarning.Name = "picWarning";
-            this.picWarning.Size = new System.Drawing.Size(35, 35);
+            this.picWarning.Size = new System.Drawing.Size(32, 32);
             this.picWarning.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picWarning.TabIndex = 7;
             this.picWarning.TabStop = false;
