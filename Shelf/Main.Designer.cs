@@ -33,6 +33,7 @@
             this.btnReupload = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnReset = new System.Windows.Forms.Button();
+            this.btnSetting = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -40,11 +41,11 @@
             // 
             this.content.AutoScroll = true;
             this.content.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(224)))), ((int)(((byte)(227)))));
-            this.content.Location = new System.Drawing.Point(12, 46);
+            this.content.Location = new System.Drawing.Point(118, 3);
             this.content.Margin = new System.Windows.Forms.Padding(0);
             this.content.Name = "content";
             this.content.Padding = new System.Windows.Forms.Padding(20);
-            this.content.Size = new System.Drawing.Size(987, 626);
+            this.content.Size = new System.Drawing.Size(881, 672);
             this.content.TabIndex = 0;
             // 
             // btnRun
@@ -53,9 +54,9 @@
             this.btnRun.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRun.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnRun.ForeColor = System.Drawing.Color.White;
-            this.btnRun.Location = new System.Drawing.Point(921, -7);
+            this.btnRun.Location = new System.Drawing.Point(-5, 12);
             this.btnRun.Name = "btnRun";
-            this.btnRun.Size = new System.Drawing.Size(88, 60);
+            this.btnRun.Size = new System.Drawing.Size(130, 47);
             this.btnRun.TabIndex = 1;
             this.btnRun.Text = "更新";
             this.btnRun.UseVisualStyleBackColor = false;
@@ -66,9 +67,9 @@
             this.btnReupload.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
             this.btnReupload.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnReupload.ForeColor = System.Drawing.Color.White;
-            this.btnReupload.Location = new System.Drawing.Point(833, -6);
+            this.btnReupload.Location = new System.Drawing.Point(-5, 65);
             this.btnReupload.Name = "btnReupload";
-            this.btnReupload.Size = new System.Drawing.Size(88, 60);
+            this.btnReupload.Size = new System.Drawing.Size(130, 47);
             this.btnReupload.TabIndex = 2;
             this.btnReupload.Text = "重新上傳";
             this.btnReupload.UseVisualStyleBackColor = false;
@@ -78,12 +79,13 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
+            this.panel1.Controls.Add(this.btnSetting);
             this.panel1.Controls.Add(this.btnReset);
             this.panel1.Controls.Add(this.btnRun);
             this.panel1.Controls.Add(this.btnReupload);
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1009, 43);
+            this.panel1.Size = new System.Drawing.Size(115, 686);
             this.panel1.TabIndex = 0;
             // 
             // btnReset
@@ -91,13 +93,26 @@
             this.btnReset.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
             this.btnReset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnReset.ForeColor = System.Drawing.Color.White;
-            this.btnReset.Location = new System.Drawing.Point(-1, -6);
+            this.btnReset.Location = new System.Drawing.Point(-5, 622);
             this.btnReset.Name = "btnReset";
-            this.btnReset.Size = new System.Drawing.Size(88, 60);
+            this.btnReset.Size = new System.Drawing.Size(130, 47);
             this.btnReset.TabIndex = 3;
             this.btnReset.Text = "重新設定";
             this.btnReset.UseVisualStyleBackColor = false;
             this.btnReset.Click += new System.EventHandler(this.BtnResetClick);
+            // 
+            // btnSetting
+            // 
+            this.btnSetting.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
+            this.btnSetting.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSetting.ForeColor = System.Drawing.Color.White;
+            this.btnSetting.Location = new System.Drawing.Point(-5, 569);
+            this.btnSetting.Name = "btnSetting";
+            this.btnSetting.Size = new System.Drawing.Size(130, 47);
+            this.btnSetting.TabIndex = 4;
+            this.btnSetting.Text = "設定";
+            this.btnSetting.UseVisualStyleBackColor = false;
+            this.btnSetting.Click += new System.EventHandler(this.btnSetting_Click);
             // 
             // Main
             // 
@@ -106,6 +121,7 @@
             this.ClientSize = new System.Drawing.Size(1008, 681);
             this.Controls.Add(this.content);
             this.Controls.Add(this.panel1);
+            this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(1024, 720);
             this.MinimumSize = new System.Drawing.Size(1024, 720);
             this.Name = "Main";
@@ -123,6 +139,7 @@
         private System.Windows.Forms.Button btnReupload;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnReset;
+        private System.Windows.Forms.Button btnSetting;
     }
 }
 

@@ -81,6 +81,8 @@
             this.Controls.Add(this.numPick);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnConfirm);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "Reset";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Reset";

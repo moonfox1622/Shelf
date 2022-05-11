@@ -16,7 +16,7 @@ namespace Shelf
     {
         private readonly string _connectStr = @"Data Source = 127.0.0.1; Initial Catalog = Shelf; User ID = MES2014; Password = PMCMES;"; //資料庫連線設定
 
-        List<int> lastDatas = new List<int>(); 
+        List<int> lastDatas = new List<int>();
         List<Grid> tools = new List<Grid>();
         int[] checkDatas;
         int updateCount = 0;
@@ -25,7 +25,7 @@ namespace Shelf
         public Main()
         {
             InitializeComponent();
-            
+
         }
 
         private void MainShown(object sender, EventArgs e)
@@ -48,7 +48,7 @@ namespace Shelf
                 .Repeat(0, tools.Count)
                 .Select(i => randNum.Next(0, 49))
                 .ToArray();
-            Point loc = new Point(0, 23);
+            Point loc = new Point(10, 23);
             for (int i = 0; i < tools.Count; i++)
             {
                 tools[i].check = checkDatas[i];
@@ -58,12 +58,12 @@ namespace Shelf
                 //設定方框位置，每六個換一行
                 if ((i + 1) % 6 == 0)
                 {
-                    loc.X = 0;
+                    loc.X = 10;
                     loc.Y += tools[i].Height + 15;
                 }
                 else
                 {
-                    loc.X += tools[i].Width + 5;
+                    loc.X += tools[i].Width + 11;
                 }
             }
         }
@@ -74,9 +74,9 @@ namespace Shelf
         /// <param name="tools"></param>
         /// <param name="lastDatas"></param>
         /// <returns></returns>
-        private List<Grid> LoadData(ref List<Grid> tools, ref List<int> lastDatas)
+        private void LoadData(ref List<Grid> tools, ref List<int> lastDatas)
         {
-            var query = "SELECT id, TRIM(name) as name, life, remain, alarm FROM tool";
+            var query = "SELECT id, name, life, remain, alarm FROM tool";
             using (SqlConnection conn = new SqlConnection(_connectStr))
             {
                 using (SqlCommand comm = new SqlCommand(query, conn))
@@ -108,10 +108,9 @@ namespace Shelf
                     }
                 }
             }
-            return tools;
         }
 
-        
+
         /// <summary>
         ///  資料更新
         /// </summary>
@@ -120,11 +119,11 @@ namespace Shelf
         private void BtnRunClick(object sender, EventArgs e)
         {
             updateCount++;
-            for(int i = 0; i < tools.Count; i++)
+            for (int i = 0; i < tools.Count; i++)
             {
                 lastDatas.Add(tools[i].tool.remain);
                 tools[i].tool.remain -= 3 * updateCount;
-                if(tools[i].tool.remain <= checkDatas[i])
+                if (tools[i].tool.remain <= checkDatas[i])
                 {
                     tools[i].tool.alarm = true;
                 }
@@ -142,8 +141,8 @@ namespace Shelf
         {
             var queryHis = @"INSERT INTO history(toolId, name, life, remain, alarm, mark) VALUES(@toolId, @name, @life, @remain, @alarm, @mark)";
             var queryData = @"UPDATE tool SET remain = @remain, alarm = @alarm WHERE id = @toolId";
-            
-            try{
+
+            try {
                 for (int i = interruptIndex; i < tools.Count; i++)
                 {
                     interruptIndex = i;
@@ -152,7 +151,7 @@ namespace Shelf
                         //更新 tool data
                         using (SqlCommand comm = new SqlCommand(queryData, conn))
                         {
-                            if(conn.State != ConnectionState.Open)
+                            if (conn.State != ConnectionState.Open)
                                 conn.Open();
                             comm.Parameters.AddWithValue("@remain", tools[i].tool.remain);
                             comm.Parameters.AddWithValue("@alarm", tools[i].tool.alarm);
@@ -192,7 +191,7 @@ namespace Shelf
                 btnReupload.Visible = false;
                 btnRun.Enabled = true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("儲存發生錯誤，請進行重新上傳：" + ex.Message);
                 btnReupload.Visible = true;
@@ -264,14 +263,14 @@ namespace Shelf
                         }
 
                     }
-                }catch(SqlException ex)
+                } catch (SqlException ex)
                 {
                     MessageBox.Show("資料庫發生問題，新增失敗：" + ex.Message);
-                }catch(Exception ex)
+                } catch (Exception ex)
                 {
                     MessageBox.Show("新增失敗：" + ex.Message);
                 }
-                if(insertCount != reset.resetCount)
+                if (insertCount != reset.resetCount)
                 {
                     MessageBox.Show("新增過程中發生錯誤，未新增完全");
                 }
@@ -286,6 +285,143 @@ namespace Shelf
                 MessageBox.Show("未進行任何改變");
             }
 
+        }
+
+        private void btnSetting_Click(object sender, EventArgs e)
+        {
+            Setting setting = new Setting();
+            setting.ShowDialog();
+            foreach (NewData d in setting.datas)
+            {
+                Tool t = new Tool
+                {
+                    name = d.name,
+                    life = d.life,
+                    remain = d.life,
+                    alarm = false
+                };
+
+            }
+        }
+
+        /// <summary>
+        /// 確認資料庫內是否有同樣資料存在
+        /// </summary>
+        /// <param name="t">刀具資料</param>
+        private bool SendData(Tool t)
+        {
+            string query = "SELECT * FROM data WHERE name = @name";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectStr))
+                {
+                    if (conn.State != ConnectionState.Open)
+                        conn.Open();
+                    using (SqlCommand comm = new SqlCommand(query, conn))
+                    {
+                        comm.Parameters.AddWithValue("@name", t.name);
+                        using (SqlDataReader data = comm.ExecuteReader())
+                        {
+                            if (data.HasRows)
+                            {
+                                //Update data
+                                return UpdateTool(t);
+                            }
+                            else
+                            {
+                                //insert data
+                                return InsertTool(t);
+                            }
+                        }
+                    }
+                }
+            }catch(SqlException ex)
+            {
+                MessageBox.Show("資料庫連接發生錯誤" + ex.Message);
+            }catch(Exception ex)
+            {
+                MessageBox.Show("發生錯誤" + ex.Message);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 更新 Tool 資料
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        private bool UpdateTool(Tool t)
+        {
+            string query = "UPDATE tool SET life = @life, remain = @remain, alarm = 0 WHERE name = @name";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectStr))
+                {
+                    using (SqlCommand comm = new SqlCommand(query, conn))
+                    {
+                        comm.Parameters.AddWithValue("@life", t.life);
+                        comm.Parameters.AddWithValue("@remain", t.life);
+                        comm.Parameters.AddWithValue("@name", t.name);
+                        int affectRows = comm.ExecuteNonQuery();
+                        if (affectRows > 0)
+                        {
+                            //Success
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("資料庫連接發生錯誤" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("發生錯誤" + ex.Message);
+            }
+            //Failed
+            return false;
+        }
+
+        /// <summary>
+        /// 新增 Tool 資料
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        private bool InsertTool(Tool t)
+        {
+            string maxId = "SELECT MAX(id)+1 FROM tool";
+            string query = @"INSERT INTO tool(id, name, life, remain, alarm) VALUES(@id, @name, @life, @remain, 0)";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectStr))
+                {
+                    using (SqlCommand comm = new SqlCommand(query, conn))
+                    {
+                        comm.Parameters.AddWithValue("@id", maxId);
+                        comm.Parameters.AddWithValue("@name", t.name);
+                        comm.Parameters.AddWithValue("@life", t.life);
+                        comm.Parameters.AddWithValue("@remain", t.remain);
+
+                        int affectRows = comm.ExecuteNonQuery();
+                        if (affectRows > 0)
+                        {
+                            //Success
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("資料庫連接發生錯誤" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("發生錯誤" + ex.Message);
+            }
+            //Failed
+            return false;
         }
     }
 }
