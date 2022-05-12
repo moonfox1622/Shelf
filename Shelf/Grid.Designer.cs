@@ -31,8 +31,8 @@
             this.picStatus = new System.Windows.Forms.PictureBox();
             this.txtName = new System.Windows.Forms.Label();
             this.txtCount = new System.Windows.Forms.Label();
-            this.remainLifeBar = new CustomControls.CProgressBar();
             this.panelStatus = new System.Windows.Forms.Panel();
+            this.remainLifeBar = new CustomControls.CProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.picStatus)).BeginInit();
             this.panelStatus.SuspendLayout();
             this.SuspendLayout();
@@ -47,6 +47,7 @@
             this.picStatus.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picStatus.TabIndex = 5;
             this.picStatus.TabStop = false;
+            this.picStatus.Visible = false;
             // 
             // txtName
             // 
@@ -76,6 +77,15 @@
             this.txtCount.Text = "100";
             this.txtCount.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
+            // panelStatus
+            // 
+            this.panelStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelStatus.Controls.Add(this.txtCount);
+            this.panelStatus.Location = new System.Drawing.Point(74, 1);
+            this.panelStatus.Name = "panelStatus";
+            this.panelStatus.Size = new System.Drawing.Size(60, 45);
+            this.panelStatus.TabIndex = 7;
+            // 
             // remainLifeBar
             // 
             this.remainLifeBar.ChannelColor = System.Drawing.Color.LightSteelBlue;
@@ -83,6 +93,7 @@
             this.remainLifeBar.ForeBackColor = System.Drawing.Color.RoyalBlue;
             this.remainLifeBar.ForeColor = System.Drawing.Color.White;
             this.remainLifeBar.Location = new System.Drawing.Point(3, 57);
+            this.remainLifeBar.Maximum = 200;
             this.remainLifeBar.Name = "remainLifeBar";
             this.remainLifeBar.PaintedBack = false;
             this.remainLifeBar.ShowMaximun = false;
@@ -95,15 +106,6 @@
             this.remainLifeBar.SymbolBefore = "";
             this.remainLifeBar.TabIndex = 6;
             this.remainLifeBar.Value = 50;
-            // 
-            // panelStatus
-            // 
-            this.panelStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelStatus.Controls.Add(this.txtCount);
-            this.panelStatus.Location = new System.Drawing.Point(74, 1);
-            this.panelStatus.Name = "panelStatus";
-            this.panelStatus.Size = new System.Drawing.Size(60, 45);
-            this.panelStatus.TabIndex = 7;
             // 
             // Grid
             // 

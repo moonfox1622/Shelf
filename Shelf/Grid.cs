@@ -29,7 +29,7 @@ namespace Shelf
             BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
             null, remainLifeBar, new object[] { true });
 
-            txtName.Parent = picStatus;
+            //txtName.Parent = picStatus;
 
             remainLifeBar.Maximum = tool.life;
             //TextResize();

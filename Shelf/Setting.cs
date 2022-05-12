@@ -13,7 +13,8 @@ namespace Shelf
     public partial class Setting : Form
     {
         public List<NewData> datas = new List<NewData>();
-        
+        public List<Tool> tools = new List<Tool>();
+
         Point loc = new Point(8, 139);
         public Setting()
         {
@@ -37,6 +38,20 @@ namespace Shelf
 
         private void btnSend_Click(object sender, EventArgs e)
         {
+            
+            foreach(NewData d in datas)
+            {
+                if (!String.IsNullOrWhiteSpace(d.name)){
+                    Tool t = new Tool
+                    {
+                        name = d.name,
+                        life = d.life,
+                        remain = d.life,
+                        alarm = false
+                    };
+                    tools.Add(t);
+                }
+            }
             this.Close();
         }
     }
