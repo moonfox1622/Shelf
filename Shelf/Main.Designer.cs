@@ -32,9 +32,9 @@
             this.btnRun = new System.Windows.Forms.Button();
             this.btnReupload = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnDelete = new System.Windows.Forms.Button();
             this.btnSetting = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
-            this.btnDelete = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -49,7 +49,7 @@
             this.content.Margin = new System.Windows.Forms.Padding(0);
             this.content.Name = "content";
             this.content.Padding = new System.Windows.Forms.Padding(20);
-            this.content.Size = new System.Drawing.Size(881, 672);
+            this.content.Size = new System.Drawing.Size(1777, 1032);
             this.content.TabIndex = 0;
             // 
             // btnRun
@@ -92,8 +92,23 @@
             this.panel1.Controls.Add(this.btnReupload);
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(115, 686);
+            this.panel1.Size = new System.Drawing.Size(115, 1046);
             this.panel1.TabIndex = 0;
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDelete.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
+            this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDelete.ForeColor = System.Drawing.Color.White;
+            this.btnDelete.Location = new System.Drawing.Point(-5, 876);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(130, 47);
+            this.btnDelete.TabIndex = 5;
+            this.btnDelete.Text = "刪除";
+            this.btnDelete.UseVisualStyleBackColor = false;
+            this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
             // 
             // btnSetting
             // 
@@ -102,7 +117,7 @@
             this.btnSetting.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
             this.btnSetting.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSetting.ForeColor = System.Drawing.Color.White;
-            this.btnSetting.Location = new System.Drawing.Point(-5, 569);
+            this.btnSetting.Location = new System.Drawing.Point(-5, 929);
             this.btnSetting.Name = "btnSetting";
             this.btnSetting.Size = new System.Drawing.Size(130, 47);
             this.btnSetting.TabIndex = 4;
@@ -117,7 +132,7 @@
             this.btnReset.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
             this.btnReset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnReset.ForeColor = System.Drawing.Color.White;
-            this.btnReset.Location = new System.Drawing.Point(-5, 622);
+            this.btnReset.Location = new System.Drawing.Point(-5, 982);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(130, 47);
             this.btnReset.TabIndex = 3;
@@ -125,28 +140,14 @@
             this.btnReset.UseVisualStyleBackColor = false;
             this.btnReset.Click += new System.EventHandler(this.BtnResetClick);
             // 
-            // btnDelete
-            // 
-            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDelete.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
-            this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDelete.ForeColor = System.Drawing.Color.White;
-            this.btnDelete.Location = new System.Drawing.Point(-5, 516);
-            this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(130, 47);
-            this.btnDelete.TabIndex = 5;
-            this.btnDelete.Text = "刪除";
-            this.btnDelete.UseVisualStyleBackColor = false;
-            this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
-            // 
             // Main
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(224)))), ((int)(((byte)(227)))));
-            this.ClientSize = new System.Drawing.Size(1008, 681);
+            this.ClientSize = new System.Drawing.Size(1904, 1041);
             this.Controls.Add(this.content);
             this.Controls.Add(this.panel1);
+            this.MinimumSize = new System.Drawing.Size(1050, 720);
             this.Name = "Main";
             this.Text = "Shelf";
             this.Shown += new System.EventHandler(this.MainShown);

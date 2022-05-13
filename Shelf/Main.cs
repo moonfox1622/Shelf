@@ -21,11 +21,11 @@ namespace Shelf
         int[] checkDatas;
         int updateCount = 0;
         int interruptIndex = 0;
+        TableLayoutPanel table = new TableLayoutPanel();
 
         public Main()
         {
             InitializeComponent();
-
         }
 
         private void MainShown(object sender, EventArgs e)
@@ -46,6 +46,8 @@ namespace Shelf
                 UpdateStatus('1', tools);
             }
 
+            TableLayoutPanel table = InitalTablePanel();
+
             Random randNum = new Random();
             checkDatas = Enumerable
                 .Repeat(0, tools.Count)
@@ -56,20 +58,42 @@ namespace Shelf
             {
                 tools[i].check = checkDatas[i];
                 tools[i].Location = loc;
-                tools[i].Anchor = AnchorStyles.Left | AnchorStyles.Top;
-
-                content.Controls.Add(tools[i]);
+                //tools[i].Dock = DockStyle.Fill;
+                //tools[i].AutoSize = true;
+                //tools[i].Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+                
+                table.Controls.Add(tools[i], i % 6, table.RowCount);
+                //content.Controls.Add(tools[i]);
                 //設定方框位置，每六個換一行
                 if ((i + 1) % 6 == 0)
                 {
-                    loc.X = 10;
-                    loc.Y += tools[i].Height + 15;
+                    table.RowCount += 1;
+                    table.RowStyles.Add(new RowStyle(SizeType.Absolute, 100));
                 }
                 else
                 {
-                    loc.X += tools[i].Width + 11;
+                    //loc.X += tools[i].Width + 11;
                 }
             }
+            table.RowCount += 1;
+            content.Controls.Add(table);
+        }
+
+        private TableLayoutPanel InitalTablePanel()
+        {
+            table = new TableLayoutPanel();
+            table.ColumnCount = 6;
+            table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
+            table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
+            table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
+            table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
+            table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
+            table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
+            table.RowStyles.Add(new RowStyle(SizeType.Absolute, 100));
+            
+            table.Dock = DockStyle.Fill;
+
+            return table;
         }
 
         /// <summary>
@@ -145,11 +169,9 @@ namespace Shelf
         {
             
             try {
-                for (int i =interruptIndex; i < tools.Count; i++)
-                {
-                    interruptIndex = i;
-
-                    if (!UpdateTool(tools[i].tool))
+                while (interruptIndex < tools.Count) 
+                { 
+                    if (!UpdateTool(tools[interruptIndex].tool))
                     {
                         MessageBox.Show("儲存發生錯誤，請進行重新上傳");
                         btnReupload.Visible = true;
@@ -157,13 +179,14 @@ namespace Shelf
                         throw new Exception("儲存失敗");
                     }
                         
-                    if (!InsertHistory(tools[i].tool, start))
+                    if (!InsertHistory(tools[interruptIndex].tool, start))
                     {
                         MessageBox.Show("儲存發生錯誤，請進行重新上傳");
                         btnReupload.Visible = true;
                         btnRun.Enabled = false;
                         throw new Exception("儲存失敗");
                     }
+                    interruptIndex++;
                 }
                 interruptIndex = 0;
                 btnReupload.Visible = false;
@@ -272,35 +295,38 @@ namespace Shelf
         /// <param name="e"></param>
         private void btnSetting_Click(object sender, EventArgs e)
         {
-            Setting setting = new Setting();
-            setting.ShowDialog();
-            if(setting.tools.Count > 0)
-            {
-                bool check = true;
-                foreach (NewData d in setting.datas)
-                {
-                    Tool t = new Tool
-                    {
-                        name = d.name,
-                        life = d.life,
-                        remain = d.life,
-                        alarm = false
-                    };
-                    check = SendData(t);
-                    if (!check)
-                    {
-                        MessageBox.Show("發生錯誤");
-                        break;
-                    }
-                }
-                initalContent(false);
-                if (check)
-                    MessageBox.Show("上傳完成");
-            }
-            else
-            {
-                MessageBox.Show("未給予資料");
-            }
+            SettingPage settingPage = new SettingPage();
+            content.Controls.Clear();
+            content.Controls.Add(settingPage);
+            //Setting setting = new Setting();
+            //setting.ShowDialog();
+            //if(setting.tools.Count > 0)
+            //{
+            //    bool check = true;
+            //    foreach (NewData d in setting.datas)
+            //    {
+            //        Tool t = new Tool
+            //        {
+            //            name = d.name,
+            //            life = d.life,
+            //            remain = d.life,
+            //            alarm = false
+            //        };
+            //        check = SendData(t);
+            //        if (!check)
+            //        {
+            //            MessageBox.Show("發生錯誤");
+            //            break;
+            //        }
+            //    }
+            //    initalContent(false);
+            //    if (check)
+            //        MessageBox.Show("上傳完成");
+            //}
+            //else
+            //{
+            //    MessageBox.Show("未給予資料");
+            //}
             
         }
 
@@ -625,5 +651,9 @@ namespace Shelf
             return false;
         }
 
+        private void Main_Resize(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -63,13 +63,10 @@
             // 
             // txtCount
             // 
-            this.txtCount.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCount.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtCount.ForeColor = System.Drawing.Color.Black;
             this.txtCount.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.txtCount.Location = new System.Drawing.Point(-33, -7);
+            this.txtCount.Location = new System.Drawing.Point(-8, -6);
             this.txtCount.Margin = new System.Windows.Forms.Padding(0);
             this.txtCount.Name = "txtCount";
             this.txtCount.Size = new System.Drawing.Size(105, 49);
@@ -81,24 +78,26 @@
             // 
             this.panelStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panelStatus.Controls.Add(this.txtCount);
-            this.panelStatus.Location = new System.Drawing.Point(74, 1);
+            this.panelStatus.Location = new System.Drawing.Point(86, 3);
             this.panelStatus.Name = "panelStatus";
-            this.panelStatus.Size = new System.Drawing.Size(60, 45);
+            this.panelStatus.Size = new System.Drawing.Size(85, 45);
             this.panelStatus.TabIndex = 7;
             // 
             // remainLifeBar
             // 
+            this.remainLifeBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.remainLifeBar.ChannelColor = System.Drawing.Color.LightSteelBlue;
             this.remainLifeBar.ChannelHeight = 12;
             this.remainLifeBar.ForeBackColor = System.Drawing.Color.RoyalBlue;
             this.remainLifeBar.ForeColor = System.Drawing.Color.White;
-            this.remainLifeBar.Location = new System.Drawing.Point(3, 57);
+            this.remainLifeBar.Location = new System.Drawing.Point(3, 63);
             this.remainLifeBar.Maximum = 200;
             this.remainLifeBar.Name = "remainLifeBar";
             this.remainLifeBar.PaintedBack = false;
             this.remainLifeBar.ShowMaximun = false;
             this.remainLifeBar.ShowValue = CustomControls.TextPosition.None;
-            this.remainLifeBar.Size = new System.Drawing.Size(130, 20);
+            this.remainLifeBar.Size = new System.Drawing.Size(168, 20);
             this.remainLifeBar.SliderColor = System.Drawing.Color.RoyalBlue;
             this.remainLifeBar.SliderHeight = 20;
             this.remainLifeBar.StopPainting = false;
@@ -117,7 +116,7 @@
             this.Controls.Add(this.picStatus);
             this.Controls.Add(this.panelStatus);
             this.Name = "Grid";
-            this.Size = new System.Drawing.Size(136, 85);
+            this.Size = new System.Drawing.Size(174, 91);
             this.Load += new System.EventHandler(this.Grid_Load);
             ((System.ComponentModel.ISupportInitialize)(this.picStatus)).EndInit();
             this.panelStatus.ResumeLayout(false);

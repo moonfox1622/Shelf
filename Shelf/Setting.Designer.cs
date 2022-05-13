@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
             this.newData1 = new Shelf.NewData();
+            this.button1 = new System.Windows.Forms.Button();
             this.btnSend = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -48,6 +48,16 @@
             this.panel1.Size = new System.Drawing.Size(275, 379);
             this.panel1.TabIndex = 0;
             // 
+            // newData1
+            // 
+            this.newData1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.newData1.life = 0;
+            this.newData1.Location = new System.Drawing.Point(8, 50);
+            this.newData1.name = null;
+            this.newData1.Name = "newData1";
+            this.newData1.Size = new System.Drawing.Size(259, 79);
+            this.newData1.TabIndex = 1;
+            // 
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("新細明體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
@@ -58,16 +68,6 @@
             this.button1.Text = "+";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // newData1
-            // 
-            this.newData1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.newData1.life = 0;
-            this.newData1.Location = new System.Drawing.Point(8, 50);
-            this.newData1.name = null;
-            this.newData1.Name = "newData1";
-            this.newData1.Size = new System.Drawing.Size(259, 79);
-            this.newData1.TabIndex = 1;
             // 
             // btnSend
             // 

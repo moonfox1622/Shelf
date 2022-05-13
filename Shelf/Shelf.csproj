@@ -72,6 +72,12 @@
     <Compile Include="Setting.Designer.cs">
       <DependentUpon>Setting.cs</DependentUpon>
     </Compile>
+    <Compile Include="SettingPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SettingPage.Designer.cs">
+      <DependentUpon>SettingPage.cs</DependentUpon>
+    </Compile>
     <Compile Include="Tool.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
@@ -116,6 +122,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Setting.resx">
       <DependentUpon>Setting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SettingPage.resx">
+      <DependentUpon>SettingPage.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

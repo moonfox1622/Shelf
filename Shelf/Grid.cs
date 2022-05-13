@@ -66,17 +66,6 @@ namespace Shelf
             txtCount.Text = tool.remain.ToString();
             LoadProgressBar();
 
-            if(txtCount.Text.Length >= 3)
-            {
-                panelStatus.Size = new Size(86, 45);
-                panelStatus.Location = new Point(48, 1);
-            }
-            else
-            {
-                panelStatus.Size = new Size(64, 45);
-                panelStatus.Location = new Point(74, 1);
-            }
-
             //count>80:green, 80>count>=50:yellow, count<50:red
             if (tool.remain >= 80)
             {
