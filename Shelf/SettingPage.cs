@@ -15,6 +15,7 @@ namespace Shelf
     {
         private readonly string _connectStr = @"Data Source = 127.0.0.1; Initial Catalog = Shelf; User ID = MES2014; Password = PMCMES;"; //資料庫連線設定
         List<Tool> tools = new List<Tool>();
+        ToolDatabase tdb = new ToolDatabase();
 
         public SettingPage()
         {
@@ -81,13 +82,13 @@ namespace Shelf
         {
             if (e.RowIndex == -1)
                 return;
-            DataGridViewCellCollection row = tableView.Rows[e.RowIndex].Cells;
+            DataGridViewRow row = tableView.Rows[e.RowIndex];
             Tool originTool = new Tool
             {
-                name = row["name"].Value.ToString(),
-                life = int.Parse(row["life"].Value.ToString()),
-                remain = int.Parse(row["remain"].Value.ToString()),
-                alarm = bool.Parse(row["alarm"].Value.ToString())
+                name = row.Cells["name"].Value.ToString(),
+                life = int.Parse(row.Cells["life"].Value.ToString()),
+                remain = int.Parse(row.Cells["remain"].Value.ToString()),
+                alarm = bool.Parse(row.Cells["alarm"].Value.ToString())
             };
             // e.ColumnIndex 4:換刀 5:修改 6:刪除
             if(e.ColumnIndex == 4)
@@ -96,12 +97,22 @@ namespace Shelf
             }
             else if (e.ColumnIndex == 5)
             {
-                EditTool(row, originTool);
+                EditTool(row.Cells, originTool);
             }
             else if(e.ColumnIndex == 6)
             {
-
+                DeleteTool(row, originTool);
             }
+        }
+        
+        /// <summary>
+        /// 新增刀具
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NewTool(object sender, EventArgs e)
+        {
+
         }
 
         /// <summary>
@@ -138,9 +149,18 @@ namespace Shelf
             }
         }
 
-        private void NewTool(object sender, EventArgs e)
+        
+        private void DeleteTool(DataGridViewRow row, Tool t)
         {
-
+            if (MessageBox.Show("確定要刪除嗎", "刪除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                bool result = tdb.DeleteTool(t.name);
+                if (result)
+                {
+                    tableView.Rows.Remove(row);
+                    tdb.InsertHistory(t, '2');
+                }
+            }
         }
     }
 }

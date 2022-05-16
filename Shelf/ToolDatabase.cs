@@ -221,7 +221,7 @@ namespace Shelf
         }
 
         /// <summary>
-        /// 新增歷程
+        /// 新增歷程 0:損耗更新, 1:軟體開啟紀錄, 2:刀具移除, 3:執行換刀
         /// </summary>
         /// <param name="t"></param>
         /// <param name="mark">0:損耗更新, 1:軟體開啟紀錄, 2:刀具移除, 3:執行換刀</param>>
