@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Shelf
 {
     public class Tool
@@ -13,5 +8,6 @@ namespace Shelf
         public int life { get; set; }
         public int remain { get; set; }
         public bool alarm { get; set; }
+
     }
 }

@@ -66,11 +66,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Setting.cs">
+    <Compile Include="Edit.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Setting.Designer.cs">
-      <DependentUpon>Setting.cs</DependentUpon>
+    <Compile Include="Edit.Designer.cs">
+      <DependentUpon>Edit.cs</DependentUpon>
     </Compile>
     <Compile Include="SettingPage.cs">
       <SubType>UserControl</SubType>
@@ -99,6 +99,7 @@
     <Compile Include="Reset.Designer.cs">
       <DependentUpon>Reset.cs</DependentUpon>
     </Compile>
+    <Compile Include="ToolDatabase.cs" />
     <EmbeddedResource Include="Delete.resx">
       <DependentUpon>Delete.cs</DependentUpon>
     </EmbeddedResource>
@@ -120,8 +121,8 @@
     <EmbeddedResource Include="Reset.resx">
       <DependentUpon>Reset.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Setting.resx">
-      <DependentUpon>Setting.cs</DependentUpon>
+    <EmbeddedResource Include="Edit.resx">
+      <DependentUpon>Edit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SettingPage.resx">
       <DependentUpon>SettingPage.cs</DependentUpon>

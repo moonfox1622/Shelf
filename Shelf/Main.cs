@@ -289,6 +289,16 @@ namespace Shelf
         }
 
         /// <summary>
+        /// 主頁
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnMainClick(object sender, EventArgs e)
+        {
+            initalContent(false);
+        }
+
+        /// <summary>
         /// 執行換刀或新增刀具
         /// </summary>
         /// <param name="sender"></param>
@@ -297,6 +307,7 @@ namespace Shelf
         {
             SettingPage settingPage = new SettingPage();
             content.Controls.Clear();
+            settingPage.Dock = DockStyle.Fill;
             content.Controls.Add(settingPage);
             //Setting setting = new Setting();
             //setting.ShowDialog();
@@ -651,9 +662,7 @@ namespace Shelf
             return false;
         }
 
-        private void Main_Resize(object sender, EventArgs e)
-        {
 
-        }
+        
     }
 }

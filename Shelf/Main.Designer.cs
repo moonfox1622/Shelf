@@ -35,6 +35,7 @@
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnSetting = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
+            this.btnMain = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -58,7 +59,7 @@
             this.btnRun.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRun.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnRun.ForeColor = System.Drawing.Color.White;
-            this.btnRun.Location = new System.Drawing.Point(-5, 12);
+            this.btnRun.Location = new System.Drawing.Point(-5, 136);
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(130, 47);
             this.btnRun.TabIndex = 1;
@@ -71,7 +72,7 @@
             this.btnReupload.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
             this.btnReupload.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnReupload.ForeColor = System.Drawing.Color.White;
-            this.btnReupload.Location = new System.Drawing.Point(-5, 65);
+            this.btnReupload.Location = new System.Drawing.Point(-5, 189);
             this.btnReupload.Name = "btnReupload";
             this.btnReupload.Size = new System.Drawing.Size(130, 47);
             this.btnReupload.TabIndex = 2;
@@ -85,6 +86,7 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
+            this.panel1.Controls.Add(this.btnMain);
             this.panel1.Controls.Add(this.btnDelete);
             this.panel1.Controls.Add(this.btnSetting);
             this.panel1.Controls.Add(this.btnReset);
@@ -140,6 +142,20 @@
             this.btnReset.UseVisualStyleBackColor = false;
             this.btnReset.Click += new System.EventHandler(this.BtnResetClick);
             // 
+            // btnMain
+            // 
+            this.btnMain.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
+            this.btnMain.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnMain.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btnMain.ForeColor = System.Drawing.Color.White;
+            this.btnMain.Location = new System.Drawing.Point(-5, 12);
+            this.btnMain.Name = "btnMain";
+            this.btnMain.Size = new System.Drawing.Size(130, 47);
+            this.btnMain.TabIndex = 6;
+            this.btnMain.Text = "主頁";
+            this.btnMain.UseVisualStyleBackColor = false;
+            this.btnMain.Click += new System.EventHandler(this.btnMainClick);
+            // 
             // Main
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -165,6 +181,7 @@
         private System.Windows.Forms.Button btnReset;
         private System.Windows.Forms.Button btnSetting;
         private System.Windows.Forms.Button btnDelete;
+        private System.Windows.Forms.Button btnMain;
     }
 }
 
