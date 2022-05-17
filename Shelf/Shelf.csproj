@@ -46,6 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChangeTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ChangeTool.Designer.cs">
+      <DependentUpon>ChangeTool.cs</DependentUpon>
+    </Compile>
     <Compile Include="CProgressBar.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -55,22 +61,28 @@
     <Compile Include="Delete.Designer.cs">
       <DependentUpon>Delete.cs</DependentUpon>
     </Compile>
-    <Compile Include="NewData.cs">
+    <Compile Include="EditGrid.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="NewData.Designer.cs">
-      <DependentUpon>NewData.cs</DependentUpon>
+    <Compile Include="EditGrid.Designer.cs">
+      <DependentUpon>EditGrid.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NewTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NewTool.Designer.cs">
+      <DependentUpon>NewTool.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Edit.cs">
+    <Compile Include="EditTool.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Edit.Designer.cs">
-      <DependentUpon>Edit.cs</DependentUpon>
+    <Compile Include="EditTool.Designer.cs">
+      <DependentUpon>EditTool.cs</DependentUpon>
     </Compile>
     <Compile Include="SettingPage.cs">
       <SubType>UserControl</SubType>
@@ -100,14 +112,20 @@
       <DependentUpon>Reset.cs</DependentUpon>
     </Compile>
     <Compile Include="ToolDatabase.cs" />
+    <EmbeddedResource Include="ChangeTool.resx">
+      <DependentUpon>ChangeTool.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Delete.resx">
       <DependentUpon>Delete.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditGrid.resx">
+      <DependentUpon>EditGrid.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NewData.resx">
-      <DependentUpon>NewData.cs</DependentUpon>
+    <EmbeddedResource Include="NewTool.resx">
+      <DependentUpon>NewTool.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -121,8 +139,8 @@
     <EmbeddedResource Include="Reset.resx">
       <DependentUpon>Reset.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Edit.resx">
-      <DependentUpon>Edit.cs</DependentUpon>
+    <EmbeddedResource Include="EditTool.resx">
+      <DependentUpon>EditTool.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SettingPage.resx">
       <DependentUpon>SettingPage.cs</DependentUpon>
@@ -163,6 +181,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\yellowwarning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\settings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\add.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

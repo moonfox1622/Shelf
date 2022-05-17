@@ -14,14 +14,16 @@ namespace Shelf
 {
     public partial class Main : Form
     {
+        //資料庫連線設定
         private readonly string _connectStr = @"Data Source = 127.0.0.1; Initial Catalog = Shelf; User ID = MES2014; Password = PMCMES;"; //資料庫連線設定
 
-        List<int> lastDatas = new List<int>();
-        List<Grid> tools = new List<Grid>();
-        int[] checkDatas;
-        int updateCount = 0;
-        int interruptIndex = 0;
+        List<int> lastDatas = new List<int>(); //預防更新失敗之暫存資料
+        List<Grid> tools = new List<Grid>(); //刀具UserController List
+        List<int> checkDatas; //觸發警報數值(隨機生成)
+        int updateCount = 0;//更新次數
+        int interruptIndex = 0;//更新資料庫失敗中斷點
         TableLayoutPanel table = new TableLayoutPanel();
+        ToolDatabase tdb = new ToolDatabase();
 
         public Main()
         {
@@ -52,30 +54,22 @@ namespace Shelf
             checkDatas = Enumerable
                 .Repeat(0, tools.Count)
                 .Select(i => randNum.Next(0, 49))
-                .ToArray();
-            Point loc = new Point(10, 23);
+                .ToList();
+            Point loc = new Point(0, 23);
             for (int i = 0; i < tools.Count; i++)
             {
                 tools[i].check = checkDatas[i];
                 tools[i].Location = loc;
-                //tools[i].Dock = DockStyle.Fill;
-                //tools[i].AutoSize = true;
-                //tools[i].Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
                 
                 table.Controls.Add(tools[i], i % 6, table.RowCount);
-                //content.Controls.Add(tools[i]);
+
                 //設定方框位置，每六個換一行
                 if ((i + 1) % 6 == 0)
                 {
                     table.RowCount += 1;
-                    table.RowStyles.Add(new RowStyle(SizeType.Absolute, 100));
-                }
-                else
-                {
-                    //loc.X += tools[i].Width + 11;
+                    table.RowStyles.Add(new RowStyle(SizeType.Absolute, 130));
                 }
             }
-            table.RowCount += 1;
             content.Controls.Add(table);
         }
 
@@ -89,7 +83,7 @@ namespace Shelf
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
-            table.RowStyles.Add(new RowStyle(SizeType.Absolute, 100));
+            table.RowStyles.Add(new RowStyle(SizeType.Absolute, 130));
             
             table.Dock = DockStyle.Fill;
 
@@ -147,17 +141,28 @@ namespace Shelf
         private void BtnRunClick(object sender, EventArgs e)
         {
             updateCount++;
-            for (int i = 0; i < tools.Count; i++)
+            Random random = new Random();
+            int randIndex = random.Next(0, tools.Count);
+            tools[randIndex].tool.remain -= 3 * updateCount;
+            if (tools[randIndex].tool.remain <= checkDatas[randIndex])
             {
-                lastDatas.Add(tools[i].tool.remain);
-                tools[i].tool.remain -= 3 * updateCount;
-                if (tools[i].tool.remain <= checkDatas[i])
-                {
-                    tools[i].tool.alarm = true;
-                }
-                tools[i].CheckStatus();
+                tools[randIndex].tool.alarm = true;
             }
-            UpdateStatus('0', tools);
+            tools[randIndex].CheckStatus();
+            Tool t = tools[randIndex].tool;
+            tdb.UpdateTool(t.name, t);
+            tdb.InsertHistory(t, '0');
+            //for (int i = 0; i < tools.Count; i++)
+            //{
+            //    lastDatas.Add(tools[i].tool.remain);
+            //    tools[i].tool.remain -= 3 * updateCount;
+            //    if (tools[i].tool.remain <= checkDatas[i])
+            //    {
+            //        tools[i].tool.alarm = true;
+            //    }
+            //    tools[i].CheckStatus();
+            //}
+            //UpdateStatus('0', tools);
         }
 
         /// <summary>
@@ -305,10 +310,29 @@ namespace Shelf
         /// <param name="e"></param>
         private void btnSetting_Click(object sender, EventArgs e)
         {
-            SettingPage settingPage = new SettingPage();
-            content.Controls.Clear();
-            settingPage.Dock = DockStyle.Fill;
-            content.Controls.Add(settingPage);
+            if(btnSetting.Text == "開啟設定")
+            {
+                foreach (Grid g in tools)
+                {
+                    g.OpenSetting();
+                }
+                picNew.Visible = true;
+                btnSetting.Text = "關閉設定";
+            }
+            else
+            {
+                foreach (Grid g in tools)
+                {
+                    g.CloseSetting();
+                }
+                picNew.Visible = false;
+                btnSetting.Text = "開啟設定";
+            }
+            
+            //SettingPage settingPage = new SettingPage();
+            //content.Controls.Clear();
+            //settingPage.Dock = DockStyle.Fill;
+            //content.Controls.Add(settingPage);
             //Setting setting = new Setting();
             //setting.ShowDialog();
             //if(setting.tools.Count > 0)
@@ -662,7 +686,29 @@ namespace Shelf
             return false;
         }
 
-
-        
+        private void NewTool(object sender, EventArgs e)
+        {
+            NewTool newTool = new NewTool();
+            newTool.ShowDialog();
+            if (newTool.hasNew)
+            {
+                Grid g = new Grid
+                {
+                    tool = newTool.tool
+                };
+                if (tools.Count % 6 == 0)
+                {
+                    table.RowCount += 1;
+                    table.RowStyles.Add(new RowStyle(SizeType.Absolute, 130));
+                }
+                table.Controls.Add(g, tools.Count % 6, table.RowCount);
+                tools.Add(g);
+                lastDatas.Add(newTool.tool.remain);
+                Random randNum = new Random(); //隨機檢查數值
+                checkDatas.Add(randNum.Next(0, 49));
+                g.OpenSetting();
+            }
+            
+        }
     }
 }

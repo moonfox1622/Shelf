@@ -14,8 +14,13 @@ namespace Shelf
     public partial class SettingPage : UserControl
     {
         private readonly string _connectStr = @"Data Source = 127.0.0.1; Initial Catalog = Shelf; User ID = MES2014; Password = PMCMES;"; //資料庫連線設定
-        List<Tool> tools = new List<Tool>();
+        List<EditGrid> tools = new List<EditGrid>();
         ToolDatabase tdb = new ToolDatabase();
+        List<int> lastDatas = new List<int>();
+        int[] checkDatas;
+        int updateCount = 0;
+        int interruptIndex = 0;
+        TableLayoutPanel table = new TableLayoutPanel();
 
         public SettingPage()
         {
@@ -24,26 +29,30 @@ namespace Shelf
 
         private void SettingPage_Load(object sender, EventArgs e)
         {
-            LoadTool();
         }
 
-        public void LoadTool()
+
+        /// <summary>
+        /// 取得刀具資料
+        /// </summary>
+        /// <param name="tools"></param>
+        /// <param name="lastDatas"></param>
+        /// <returns></returns>
+        private void LoadData(ref List<EditGrid> tools, ref List<int> lastDatas)
         {
-            string query = @"SELECT * FROM tool";
-            
+            var query = "SELECT id, name, life, remain, alarm FROM tool";
             using (SqlConnection conn = new SqlConnection(_connectStr))
             {
                 using (SqlCommand comm = new SqlCommand(query, conn))
                 {
-                    if (conn.State != ConnectionState.Open)
-                        conn.Open();
-                    using(SqlDataReader data = comm.ExecuteReader())
+                    conn.Open();
+                    using (SqlDataReader data = comm.ExecuteReader())
                     {
                         if (data.HasRows)
                         {
                             while (data.Read())
                             {
-                                Tool t = new Tool
+                                Tool tool = new Tool
                                 {
                                     id = int.Parse(data["id"].ToString()),
                                     name = data["name"].ToString(),
@@ -51,69 +60,23 @@ namespace Shelf
                                     remain = int.Parse(data["remain"].ToString()),
                                     alarm = bool.Parse(data["alarm"].ToString())
                                 };
-                                tableView.Rows.Add(t.name, t.life, t.remain, t.alarm);
+                                EditGrid ed = new EditGrid
+                                {
+                                    tool = tool
+                                };
 
-                                //if alarm == False (正常)
-                                DataGridViewCell cell = tableView.Rows[tableView.Rows.Count-1].Cells["alarm"];
-                                if (cell.Value.ToString() == "False")
-                                {
-                                    cell.Style.ForeColor = Color.FromArgb(89, 201, 165);
-                                    cell.Style.BackColor = Color.FromArgb(89, 201, 165);
-                                    cell.Style.SelectionForeColor = Color.FromArgb(89, 201, 165);
-                                    cell.Style.SelectionBackColor = Color.FromArgb(89, 201, 165);
-                                }
-                                else
-                                {
-                                    cell.Style.ForeColor = Color.FromArgb(216, 30, 91);
-                                    cell.Style.BackColor = Color.FromArgb(216, 30, 91);
-                                    cell.Style.SelectionForeColor = Color.FromArgb(216, 30, 91);
-                                    cell.Style.SelectionBackColor = Color.FromArgb(216, 30, 91);
-                                }
+                                tools.Add(ed);
+                                lastDatas.Add(int.Parse(data["remain"].ToString()));
                             }
                         }
-                        
-
                     }
                 }
             }
         }
 
-        private void TableViewCellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex == -1)
-                return;
-            DataGridViewRow row = tableView.Rows[e.RowIndex];
-            Tool originTool = new Tool
-            {
-                name = row.Cells["name"].Value.ToString(),
-                life = int.Parse(row.Cells["life"].Value.ToString()),
-                remain = int.Parse(row.Cells["remain"].Value.ToString()),
-                alarm = bool.Parse(row.Cells["alarm"].Value.ToString())
-            };
-            // e.ColumnIndex 4:換刀 5:修改 6:刪除
-            if(e.ColumnIndex == 4)
-            {
 
-            }
-            else if (e.ColumnIndex == 5)
-            {
-                EditTool(row.Cells, originTool);
-            }
-            else if(e.ColumnIndex == 6)
-            {
-                DeleteTool(row, originTool);
-            }
-        }
         
-        /// <summary>
-        /// 新增刀具
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void NewTool(object sender, EventArgs e)
-        {
-
-        }
+       
 
         /// <summary>
         /// 開啟修改刀具頁面
@@ -122,10 +85,10 @@ namespace Shelf
         /// <param name="t"></param>
         private void EditTool(DataGridViewCellCollection row, Tool t)
         {
-            Edit setting = new Edit();
+            EditTool setting = new EditTool();
             setting.tool = t;
             setting.ShowDialog();
-            if (setting.update)
+            if (setting.hasUpdate)
             {
                 row["name"].Value = setting.tool.name;
                 row["life"].Value = setting.tool.life;
@@ -145,20 +108,6 @@ namespace Shelf
                     row["alarm"].Style.BackColor = Color.FromArgb(216, 30, 91);
                     row["alarm"].Style.SelectionForeColor = Color.FromArgb(216, 30, 91);
                     row["alarm"].Style.SelectionBackColor = Color.FromArgb(216, 30, 91);
-                }
-            }
-        }
-
-        
-        private void DeleteTool(DataGridViewRow row, Tool t)
-        {
-            if (MessageBox.Show("確定要刪除嗎", "刪除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-            {
-                bool result = tdb.DeleteTool(t.name);
-                if (result)
-                {
-                    tableView.Rows.Remove(row);
-                    tdb.InsertHistory(t, '2');
                 }
             }
         }

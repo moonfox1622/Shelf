@@ -11,18 +11,16 @@ using System.Reflection;
 
 namespace Shelf
 {
-    public partial class Grid : UserControl
+    public partial class EditGrid : UserControl
     {
         public Tool tool { get; set; }
         public int check { get; set; }
-        
-        ToolDatabase tdb = new ToolDatabase();
-        
 
-        public Grid()
+        ToolDatabase tdb = new ToolDatabase();
+
+        public EditGrid()
         {
             InitializeComponent();
-
         }
 
         private void Grid_Load(object sender, EventArgs e)
@@ -32,21 +30,11 @@ namespace Shelf
             BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
             null, remainLifeBar, new object[] { true });
 
-            tipSetting.SetToolTip(picChange, "換刀");
-            tipSetting.SetToolTip(picEdit, "修改");
-            tipSetting.SetToolTip(picDelete, "刪除");
+            //txtName.Parent = picStatus;
 
             remainLifeBar.Maximum = tool.life;
+            //TextResize();
             CheckStatus();
-        }
-        
-        private void TextResize()
-        {
-            LoadProgressBar();
-            if (tool.name.Length >= 6)
-            {
-                txtName.Font = new Font("Arial", 18, FontStyle.Bold);
-            }
         }
 
         private void LoadProgressBar()
@@ -74,19 +62,19 @@ namespace Shelf
             if (tool.remain >= 80)
             {
                 //this.BackColor = Color.FromArgb(89, 201, 165);
-                //picStatus.Image = Shelf.Properties.Resources.greenLight;
+                picStatus.Image = Shelf.Properties.Resources.greenLight;
                 remainLifeBar.SliderColor = Color.FromArgb(89, 201, 165);
             }
-            else if(tool.remain < 80 && tool.remain >= 50)
+            else if (tool.remain < 80 && tool.remain >= 50)
             {
                 //this.BackColor = Color.FromArgb(255, 253, 152);
-               // picStatus.Image = Shelf.Properties.Resources.yellowLightdark;
+                picStatus.Image = Shelf.Properties.Resources.yellowLightdark;
                 remainLifeBar.SliderColor = Color.FromArgb(242, 236, 0);
             }
             else
             {
                 //this.BackColor = Color.FromArgb(216, 30, 91);
-                //picStatus.Image = Shelf.Properties.Resources.yellowLightdark;
+                picStatus.Image = Shelf.Properties.Resources.yellowLightdark;
                 remainLifeBar.SliderColor = Color.FromArgb(216, 30, 91);
             }
 
@@ -101,9 +89,7 @@ namespace Shelf
 
         private void DeleteTool(object sender, EventArgs e)
         {
-
-            panelGrid.BorderStyle = BorderStyle.Fixed3D;
-            if (MessageBox.Show("確定要刪除「" + tool.name + "」嗎", "刪除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            if (MessageBox.Show("確定要刪除嗎", "刪除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 bool result = tdb.DeleteTool(tool.name);
                 if (result)
@@ -111,49 +97,20 @@ namespace Shelf
                     this.Parent.Controls.Remove(this);
                 }
             }
-            panelGrid.BorderStyle = BorderStyle.None;
         }
 
         private void EditTool(object sender, EventArgs e)
         {
-            panelGrid.BorderStyle = BorderStyle.Fixed3D;
             EditTool setting = new EditTool();
             setting.tool = tool;
             setting.ShowDialog();
-            panelGrid.BorderStyle = BorderStyle.None;
             if (setting.hasUpdate)
             {
-                tool = setting.tool;
-                CheckStatus();
+                
             }
         }
 
         private void ChangeTool(object sender, EventArgs e)
-        {
-            ChangeTool change = new ChangeTool();
-            change.tool = tool;
-            change.ShowDialog();
-            if (!change.hasChange)
-                return;
-            tool = change.tool;
-            CheckStatus();
-        }
-
-        public void OpenSetting()
-        {
-            picChange.Visible = true;
-            picEdit.Visible = true;
-            picDelete.Visible = true;
-        }
-
-        public void CloseSetting()
-        {
-            picChange.Visible = false;
-            picEdit.Visible = false;
-            picDelete.Visible = false;
-        }
-
-        private void PaintBoder(object sender, PaintEventArgs e)
         {
 
         }

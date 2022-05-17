@@ -1,47 +1,31 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Shelf
 {
-    public partial class Edit : Form
+    public partial class NewTool : Form
     {
-
+        public bool hasNew = false;
         public Tool tool { get; set; }
-        public bool update = false;
-        public Edit()
+
+        public NewTool()
         {
             InitializeComponent();
         }
 
         /// <summary>
-        /// 讀取欲修改刀具資料
+        /// 確認新增
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Setting_Load(object sender, EventArgs e)
-        {
-            txtAlarm.Items.Add("正常");
-            txtAlarm.Items.Add("警報");
-
-            txtName.Text = tool.name;
-            txtLife.Value = tool.life;
-            txtRemain.Value = tool.remain;
-            if (tool.alarm)
-            {
-                txtAlarm.SelectedIndex = 1;
-            }
-            else
-            {
-                txtAlarm.SelectedIndex = 0;
-            }
-        }
-
-        /// <summary>
-        /// 確認送出修改
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnComfirmClick(object sender, EventArgs e)
+        private void Comfirm(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtName.Text))
             {
@@ -54,17 +38,16 @@ namespace Shelf
             else
             {
                 ToolDatabase tb = new ToolDatabase();
-                string originName = tool.name;
 
-                if (tb.checkExist(txtName.Text) && originName != txtName.Text)
+                if (tb.checkExist(txtName.Text))
                 {
                     MessageBox.Show("名稱重複，請重新命名");
                     return;
                 }
 
-                if (MessageBox.Show("確定要修改嗎", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (MessageBox.Show("確定要新增嗎", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    
+
 
                     tool = new Tool
                     {
@@ -73,21 +56,28 @@ namespace Shelf
                         remain = Convert.ToInt32(txtRemain.Value),
                         alarm = Convert.ToBoolean(txtAlarm.SelectedIndex)
                     };
-                    tb.UpdateTool(originName, tool);
-                    update = true;
+                    tb.InsertTool(tool);
+                    hasNew = true;
                     this.Close();
                 }
             }
         }
 
         /// <summary>
-        /// 取消修改
+        /// 取消新增
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnCancelClick(object sender, EventArgs e)
+        private void Cancel(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void NewTool_Load(object sender, EventArgs e)
+        {
+            txtAlarm.Items.Add("正常");
+            txtAlarm.Items.Add("警報");
+            txtAlarm.SelectedIndex = 0;
         }
     }
 }
