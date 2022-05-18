@@ -99,6 +99,11 @@ namespace Shelf
             }
         }
 
+        /// <summary>
+        /// 刪除刀具
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DeleteTool(object sender, EventArgs e)
         {
 
@@ -130,9 +135,11 @@ namespace Shelf
 
         private void ChangeTool(object sender, EventArgs e)
         {
+            panelGrid.BorderStyle = BorderStyle.Fixed3D;
             ChangeTool change = new ChangeTool();
             change.tool = tool;
             change.ShowDialog();
+            panelGrid.BorderStyle = BorderStyle.None;
             if (!change.hasChange)
                 return;
             tool = change.tool;
@@ -153,9 +160,5 @@ namespace Shelf
             picDelete.Visible = false;
         }
 
-        private void PaintBoder(object sender, PaintEventArgs e)
-        {
-
-        }
     }
 }

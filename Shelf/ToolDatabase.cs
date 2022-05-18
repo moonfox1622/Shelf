@@ -96,11 +96,11 @@ namespace Shelf
         }
 
         /// <summary>
-        /// 更新tool目前數值及狀態
+        /// 修改刀具
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        public bool UpdateTool(string originName, Tool t)
+        public bool EditTool(string originName, Tool t)
         {
             var queryData = @"UPDATE tool SET name = @name, life = @life, remain = @remain, alarm = @alarm WHERE name = @originName";
             try
@@ -118,6 +118,47 @@ namespace Shelf
                         comm.Parameters.AddWithValue("@remain", t.remain);
                         comm.Parameters.AddWithValue("@alarm", t.alarm);
                         comm.Parameters.AddWithValue("@originName", originName);
+                        int affectRows = comm.ExecuteNonQuery();
+                        if (affectRows > 0)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("資料庫發生問題" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("發生錯誤" + ex.Message);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 更新tool目前數值及狀態
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public bool UpdateTool(Tool t)
+        {
+            var queryData = @"UPDATE tool SET remain = @remain, alarm = @alarm WHERE name = @name";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectStr))
+                {
+                    //更新 tool data
+                    using (SqlCommand comm = new SqlCommand(queryData, conn))
+                    {
+                        if (conn.State != ConnectionState.Open)
+                            conn.Open();
+
+                        comm.Parameters.AddWithValue("@remain", t.remain);
+                        comm.Parameters.AddWithValue("@alarm", t.alarm);
+                        comm.Parameters.AddWithValue("@name", t.name);
                         int affectRows = comm.ExecuteNonQuery();
                         if (affectRows > 0)
                         {
@@ -254,7 +295,7 @@ namespace Shelf
             }
             catch (SqlException ex)
             {
-                MessageBox.Show("資料庫處理發生錯誤" + ex.Message);
+                MessageBox.Show("新增歷史紀錄時資料庫處理發生錯誤" + ex.Message);
             }
             catch (Exception ex)
             {

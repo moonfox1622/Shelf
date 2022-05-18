@@ -25,6 +25,7 @@ namespace Shelf
         TableLayoutPanel table = new TableLayoutPanel();
         ToolDatabase tdb = new ToolDatabase();
 
+        
         public Main()
         {
             InitializeComponent();
@@ -38,7 +39,9 @@ namespace Shelf
         /// <summary>
         /// 初始化界面
         /// </summary>
-        private void initalContent(bool save)
+        /// <param name="save">紀錄歷史</param>
+        /// <param name="edit">設定模式</param>
+        private void initalContent(bool save, bool edit)
         {
             content.Controls.Clear();
             tools = new List<Grid>();
@@ -150,7 +153,7 @@ namespace Shelf
             }
             tools[randIndex].CheckStatus();
             Tool t = tools[randIndex].tool;
-            tdb.UpdateTool(t.name, t);
+            tdb.UpdateTool(t);
             tdb.InsertHistory(t, '0');
             //for (int i = 0; i < tools.Count; i++)
             //{
@@ -176,7 +179,7 @@ namespace Shelf
             try {
                 while (interruptIndex < tools.Count) 
                 { 
-                    if (!UpdateTool(tools[interruptIndex].tool))
+                    if (!tdb.UpdateTool(tools[interruptIndex].tool))
                     {
                         MessageBox.Show("儲存發生錯誤，請進行重新上傳");
                         btnReupload.Visible = true;
@@ -184,7 +187,7 @@ namespace Shelf
                         throw new Exception("儲存失敗");
                     }
                         
-                    if (!InsertHistory(tools[interruptIndex].tool, start))
+                    if (!tdb.InsertHistory(tools[interruptIndex].tool, start))
                     {
                         MessageBox.Show("儲存發生錯誤，請進行重新上傳");
                         btnReupload.Visible = true;
@@ -372,30 +375,30 @@ namespace Shelf
         private bool SendData(Tool t)
         {
             Tool originData = new Tool();
-            bool check = GetToolByName(t.name, ref originData);
+            bool check = tdb.GetToolByName(t.name, ref originData);
             try
             {
                 if (check)
                 {
-                    check = ChangeTool(t);
+                    check = tdb.ChangeTool(t);
                     //執行換刀
 
                     if (check)
                     {
                         //新增換刀歷程
-                        InsertHistory(originData, '2');
-                        InsertHistory(t, '3');
+                        tdb.InsertHistory(originData, '2');
+                        tdb.InsertHistory(t, '3');
                         return true;
                     }
                 }
                 else
                 {
                     //insert data
-                    if (InsertTool(t))
+                    if (tdb.InsertTool(t))
                     {
                         Tool newTool = new Tool();
-                        GetToolByName(t.name, ref newTool);
-                        InsertHistory(newTool, '1');
+                        tdb.GetToolByName(t.name, ref newTool);
+                        tdb.InsertHistory(newTool, '1');
                         return true;
                     }
                 }
@@ -416,11 +419,11 @@ namespace Shelf
             if (!string.IsNullOrWhiteSpace(delete.name))
             {
                 Tool t = new Tool();
-                GetToolByName(delete.name, ref t);
-                if (DeleteTool(delete.name))
+                tdb.GetToolByName(delete.name, ref t);
+                if (tdb.DeleteTool(delete.name))
                 {
                     MessageBox.Show("刪除成功");
-                    InsertHistory(t, '2');
+                    tdb.InsertHistory(t, '2');
                     initalContent(false);
                 }
                 else
@@ -428,6 +431,36 @@ namespace Shelf
                     MessageBox.Show("刪除失敗或是該刀具不存在");
                 }
             }
+        }
+
+        /// <summary>
+        /// 新增刀具
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NewTool(object sender, EventArgs e)
+        {
+            NewTool newTool = new NewTool();
+            newTool.ShowDialog();
+            if (newTool.hasNew)
+            {
+                Grid g = new Grid
+                {
+                    tool = newTool.tool
+                };
+                if (tools.Count % 6 == 0)
+                {
+                    table.RowCount += 1;
+                    table.RowStyles.Add(new RowStyle(SizeType.Absolute, 130));
+                }
+                table.Controls.Add(g, tools.Count % 6, table.RowCount);
+                tools.Add(g);
+                lastDatas.Add(newTool.tool.remain);
+                Random randNum = new Random(); //隨機檢查數值
+                checkDatas.Add(randNum.Next(0, 49));
+                g.OpenSetting();
+            }
+
         }
 
         //以下都為資料庫操作
@@ -686,29 +719,6 @@ namespace Shelf
             return false;
         }
 
-        private void NewTool(object sender, EventArgs e)
-        {
-            NewTool newTool = new NewTool();
-            newTool.ShowDialog();
-            if (newTool.hasNew)
-            {
-                Grid g = new Grid
-                {
-                    tool = newTool.tool
-                };
-                if (tools.Count % 6 == 0)
-                {
-                    table.RowCount += 1;
-                    table.RowStyles.Add(new RowStyle(SizeType.Absolute, 130));
-                }
-                table.Controls.Add(g, tools.Count % 6, table.RowCount);
-                tools.Add(g);
-                lastDatas.Add(newTool.tool.remain);
-                Random randNum = new Random(); //隨機檢查數值
-                checkDatas.Add(randNum.Next(0, 49));
-                g.OpenSetting();
-            }
-            
-        }
+
     }
 }

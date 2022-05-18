@@ -67,7 +67,7 @@ namespace Shelf
                     remain = Convert.ToInt32(txtRemain.Value),
                     alarm = Convert.ToBoolean(txtAlarm.SelectedIndex)
                 };
-                tb.UpdateTool(originName, tool);
+                tb.EditTool(originName, tool);
                 hasUpdate = true;
                 this.Close();
             }
