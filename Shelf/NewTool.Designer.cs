@@ -38,6 +38,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtLife)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtRemain)).BeginInit();
@@ -66,6 +67,7 @@
             // panel1
             // 
             this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.txtAlarm);
             this.panel1.Controls.Add(this.txtLife);
             this.panel1.Controls.Add(this.txtRemain);
@@ -81,59 +83,76 @@
             // txtAlarm
             // 
             this.txtAlarm.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.txtAlarm.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold);
             this.txtAlarm.FormattingEnabled = true;
-            this.txtAlarm.Location = new System.Drawing.Point(34, 247);
+            this.txtAlarm.Location = new System.Drawing.Point(33, 244);
             this.txtAlarm.Name = "txtAlarm";
-            this.txtAlarm.Size = new System.Drawing.Size(121, 20);
+            this.txtAlarm.Size = new System.Drawing.Size(121, 29);
             this.txtAlarm.TabIndex = 8;
             // 
             // txtLife
             // 
-            this.txtLife.Location = new System.Drawing.Point(35, 113);
+            this.txtLife.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold);
+            this.txtLife.Location = new System.Drawing.Point(34, 110);
             this.txtLife.Name = "txtLife";
-            this.txtLife.Size = new System.Drawing.Size(120, 22);
+            this.txtLife.Size = new System.Drawing.Size(120, 29);
             this.txtLife.TabIndex = 6;
             // 
             // txtRemain
             // 
-            this.txtRemain.Location = new System.Drawing.Point(35, 183);
+            this.txtRemain.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold);
+            this.txtRemain.Location = new System.Drawing.Point(34, 179);
             this.txtRemain.Name = "txtRemain";
-            this.txtRemain.Size = new System.Drawing.Size(120, 22);
+            this.txtRemain.Size = new System.Drawing.Size(120, 29);
             this.txtRemain.TabIndex = 7;
             // 
             // txtName
             // 
+            this.txtName.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold);
             this.txtName.Location = new System.Drawing.Point(34, 40);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(120, 22);
+            this.txtName.Size = new System.Drawing.Size(120, 29);
             this.txtName.TabIndex = 3;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold);
             this.label3.Location = new System.Drawing.Point(13, 152);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(89, 12);
+            this.label3.Size = new System.Drawing.Size(143, 24);
             this.label3.TabIndex = 2;
             this.label3.Text = "剩餘使用次數：";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold);
             this.label2.Location = new System.Drawing.Point(13, 83);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(77, 12);
+            this.label2.Size = new System.Drawing.Size(124, 24);
             this.label2.TabIndex = 1;
             this.label2.Text = "可使用次數：";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold);
             this.label1.Location = new System.Drawing.Point(13, 15);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(41, 12);
+            this.label1.Size = new System.Drawing.Size(67, 24);
             this.label1.TabIndex = 0;
             this.label1.Text = "名稱：";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold);
+            this.label4.Location = new System.Drawing.Point(13, 217);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(105, 24);
+            this.label4.TabIndex = 10;
+            this.label4.Text = "警報狀態：";
             // 
             // NewTool
             // 
@@ -171,5 +190,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label4;
     }
 }

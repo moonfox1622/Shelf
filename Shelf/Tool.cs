@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace Shelf
 {
     public class Tool
@@ -8,6 +10,8 @@ namespace Shelf
         public int life { get; set; }
         public int remain { get; set; }
         public bool alarm { get; set; }
-
+        public Nullable<DateTime> startTime { get; set; }
+        public Nullable<DateTime> endTime { get; set; }
+        
     }
 }

@@ -90,8 +90,16 @@ namespace Shelf
                 remainLifeBar.SliderColor = Color.FromArgb(216, 30, 91);
             }
 
+            if(tool.remain < check)
+            {
+                tool.alarm = true;
+            }
+            else
+            {
+                tool.alarm = false;
+            }
             //alarm == true show picAlarm
-            if (tool.remain <= check)
+            if (tool.alarm == true)
             {
                 //picWarning.Visible = true;
                 txtCount.ForeColor = Color.White;
@@ -133,6 +141,11 @@ namespace Shelf
             }
         }
 
+        /// <summary>
+        /// 執行更換刀具
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ChangeTool(object sender, EventArgs e)
         {
             panelGrid.BorderStyle = BorderStyle.Fixed3D;
@@ -146,6 +159,9 @@ namespace Shelf
             CheckStatus();
         }
 
+        /// <summary>
+        /// 開啟設定按鈕
+        /// </summary>
         public void OpenSetting()
         {
             picChange.Visible = true;

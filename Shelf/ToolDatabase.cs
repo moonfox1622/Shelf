@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
@@ -8,6 +9,50 @@ namespace Shelf
     class ToolDatabase
     {
         private readonly string _connectStr = @"Data Source = 127.0.0.1; Initial Catalog = Shelf; User ID = MES2014; Password = PMCMES;"; //資料庫連線設定
+
+        public bool GetAllTool(ref List<Tool> tools)
+        {
+            var query = "SELECT id, name, life, remain, alarm FROM tool";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectStr))
+                {
+                    using (SqlCommand comm = new SqlCommand(query, conn))
+                    {
+                        conn.Open();
+                        using (SqlDataReader data = comm.ExecuteReader())
+                        {
+                            if (data.HasRows)
+                            {
+                                while (data.Read())
+                                {
+                                    Tool tool = new Tool
+                                    {
+                                        id = int.Parse(data["id"].ToString()),
+                                        name = data["name"].ToString(),
+                                        life = int.Parse(data["life"].ToString()),
+                                        remain = int.Parse(data["remain"].ToString()),
+                                        alarm = bool.Parse(data["alarm"].ToString())
+                                    };
+                                    tools.Add(tool);
+                                }
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("資料庫發生問題" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("發生錯誤" + ex.Message);
+            }
+            
+            return false;
+        }
 
         public bool checkExist(string name)
         {
@@ -261,15 +306,72 @@ namespace Shelf
             return false;
         }
 
+        public bool GetLastHistory(ref Tool t)
+        {
+            var query = @"SELECT TOP(1) * FROM history WHERE name = @name DESC";
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectStr))
+                {
+                    using (SqlCommand comm = new SqlCommand(query, conn))
+                    {
+                        conn.Open();
+                        comm.Parameters.AddWithValue("@name", t.name);
+                        using (SqlDataReader data = comm.ExecuteReader())
+                        {
+                            if (data.HasRows)
+                            {
+                                while (data.Read())
+                                {
+                                    t.startTime = DateTime.Parse(data["startTime"].ToString());
+                                    t.endTime = DateTime.Parse(data["endTime"].ToString());
+                                };
+
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("新增歷史紀錄時資料庫處理發生錯誤" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("發生錯誤" + ex.Message);
+            }
+            
+            return false;
+        }
+
         /// <summary>
-        /// 新增歷程 0:損耗更新, 1:軟體開啟紀錄, 2:刀具移除, 3:執行換刀
+        /// 新增歷程
         /// </summary>
         /// <param name="t"></param>
-        /// <param name="mark">0:損耗更新, 1:軟體開啟紀錄, 2:刀具移除, 3:執行換刀</param>>
+        /// <param name="mark">0:軟體開啟紀錄, 1:取出刀具, 2:放回刀具, 3:執行換刀, 4:新增刀具, 5:刀具修改, 6: 刀具刪除, 7: 機台錯誤</param>>
         /// <returns></returns>
         public bool InsertHistory(Tool t, char mark)
         {
-            var query = @"INSERT INTO history(toolId, name, life, remain, alarm, mark) VALUES(@toolId, @name, @life, @remain, @alarm, @mark)";
+            if(mark == 1)
+            {
+                if (!UseToolHistory(t))
+                    return false;
+                return true;
+            }
+            if(mark == 2)
+            {
+                if (!ReturnToolHistory(t))
+                    return false;
+                return true;
+            }
+            if(mark == 3)
+            {
+                
+            }
+            var query = @"INSERT INTO history(name, life, remain, alarm, mark) VALUES( @name, @life, @remain, @alarm, @mark)";
+            
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -278,7 +380,6 @@ namespace Shelf
                     {
                         if (conn.State != ConnectionState.Open)
                             conn.Open();
-                        comm.Parameters.AddWithValue("@toolId", t.id);
                         comm.Parameters.AddWithValue("@name", t.name);
                         comm.Parameters.AddWithValue("@life", t.life);
                         comm.Parameters.AddWithValue("@remain", t.remain);
@@ -303,6 +404,104 @@ namespace Shelf
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// 新增使用刀具歷史
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        private bool UseToolHistory(Tool t)
+        {
+
+            var query = @"INSERT INTO history(name, life, remain, alarm, startTime, mark) VALUES( @name, @life, @remain, @alarm, @startTime, @mark)";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectStr))
+                {
+                    using (SqlCommand comm = new SqlCommand(query, conn))
+                    {
+                        if (conn.State != ConnectionState.Open)
+                            conn.Open();
+                        comm.Parameters.AddWithValue("@name", t.name);
+                        comm.Parameters.AddWithValue("@life", t.life);
+                        comm.Parameters.AddWithValue("@remain", t.remain);
+                        comm.Parameters.AddWithValue("@alarm", t.alarm);
+                        comm.Parameters.AddWithValue("@startTime", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                        comm.Parameters.AddWithValue("@mark", '1');
+
+                        int affectRows = comm.ExecuteNonQuery();
+                        if (affectRows > 0)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("新增歷史紀錄時資料庫處理發生錯誤" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("發生錯誤" + ex.Message);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 新增結束刀具歷史
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        private bool ReturnToolHistory(Tool t)
+        {
+            var query = @"INSERT INTO history(name, life, remain, alarm, startTime, endTime, mark) VALUES( @name, @life, @remain, @alarm, @startTime, @endTime, @mark)";
+            if (!GetLastHistory(ref t))
+                return false;
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectStr))
+                {
+                    using (SqlCommand comm = new SqlCommand(query, conn))
+                    {
+                        if (conn.State != ConnectionState.Open)
+                            conn.Open();
+                        comm.Parameters.AddWithValue("@name", t.name);
+                        comm.Parameters.AddWithValue("@life", t.life);
+                        comm.Parameters.AddWithValue("@remain", t.remain);
+                        comm.Parameters.AddWithValue("@alarm", t.alarm);
+                        comm.Parameters.AddWithValue("@startTime", t.startTime);
+                        comm.Parameters.AddWithValue("@endTime", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                        comm.Parameters.AddWithValue("@mark", '2');
+
+                        int affectRows = comm.ExecuteNonQuery();
+                        if (affectRows > 0)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("新增歷史紀錄時資料庫處理發生錯誤" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("發生錯誤" + ex.Message);
+            }
+            return false;
+        }
+
+        private bool ChangeToolHistory(Tool t)
+        {
+            if (!GetLastHistory(ref t))
+                return false;
+           if(t.startTime == null)
+           {
+
+           }
         }
 
         /// <summary>

@@ -129,6 +129,7 @@
             this.btnDelete.TabIndex = 5;
             this.btnDelete.Text = "刪除";
             this.btnDelete.UseVisualStyleBackColor = false;
+            this.btnDelete.Visible = false;
             this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
             // 
             // btnSetting
@@ -165,6 +166,7 @@
             // 
             // picNew
             // 
+            this.picNew.Cursor = System.Windows.Forms.Cursors.Hand;
             this.picNew.Image = global::Shelf.Properties.Resources.add;
             this.picNew.Location = new System.Drawing.Point(131, 12);
             this.picNew.Name = "picNew";
@@ -183,7 +185,8 @@
             this.Controls.Add(this.picNew);
             this.Controls.Add(this.content);
             this.Controls.Add(this.panel1);
-            this.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.Cursor = System.Windows.Forms.Cursors.Default;
+            this.DoubleBuffered = true;
             this.MinimumSize = new System.Drawing.Size(1050, 720);
             this.Name = "Main";
             this.Text = "Shelf";

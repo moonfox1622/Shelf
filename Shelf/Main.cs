@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,15 +18,19 @@ namespace Shelf
         //資料庫連線設定
         private readonly string _connectStr = @"Data Source = 127.0.0.1; Initial Catalog = Shelf; User ID = MES2014; Password = PMCMES;"; //資料庫連線設定
 
-        List<int> lastDatas = new List<int>(); //預防更新失敗之暫存資料
+        //List<int> lastDatas = new List<int>(); //預防更新失敗之暫存資料
         List<Grid> tools = new List<Grid>(); //刀具UserController List
         List<int> checkDatas; //觸發警報數值(隨機生成)
-        int updateCount = 0;//更新次數
-        int interruptIndex = 0;//更新資料庫失敗中斷點
+        //int updateCount = 0; //更新次數
+        int interruptIndex = 0; //更新資料庫失敗中斷點
+        bool keepUpdate = true; //持續更新刀具資料
         TableLayoutPanel table = new TableLayoutPanel();
         ToolDatabase tdb = new ToolDatabase();
 
-        
+        //Delegate function
+        private delegate void updateGridUI();
+        private delegate void deleInitialContent(bool save);
+
         public Main()
         {
             InitializeComponent();
@@ -33,7 +38,11 @@ namespace Shelf
 
         private void MainShown(object sender, EventArgs e)
         {
-            initalContent(true);
+            SetDoubleBuffered(content);
+            initialContent(true);
+            Thread thread = new Thread(ToolUpdate);
+            thread.IsBackground = true;
+            thread.Start();
         }
 
         /// <summary>
@@ -41,28 +50,29 @@ namespace Shelf
         /// </summary>
         /// <param name="save">紀錄歷史</param>
         /// <param name="edit">設定模式</param>
-        private void initalContent(bool save, bool edit)
+        private void initialContent(bool save)
         {
             content.Controls.Clear();
             tools = new List<Grid>();
-            LoadData(ref tools, ref lastDatas);
+            LoadData(ref tools);
+            
             if (save)
             {
                 UpdateStatus('1', tools);
             }
 
-            TableLayoutPanel table = InitalTablePanel();
+            table = initialTablePanel();
 
             Random randNum = new Random();
             checkDatas = Enumerable
                 .Repeat(0, tools.Count)
                 .Select(i => randNum.Next(0, 49))
                 .ToList();
-            Point loc = new Point(0, 23);
+            //Point loc = new Point(0, 23);
             for (int i = 0; i < tools.Count; i++)
             {
                 tools[i].check = checkDatas[i];
-                tools[i].Location = loc;
+                //tools[i].Location = loc;
                 
                 table.Controls.Add(tools[i], i % 6, table.RowCount);
 
@@ -76,7 +86,68 @@ namespace Shelf
             content.Controls.Add(table);
         }
 
-        private TableLayoutPanel InitalTablePanel()
+        private TableLayoutPanel reloadtable(List<Grid> tools)
+        {
+            TableLayoutPanel newtable = new TableLayoutPanel();
+            Point loc = new Point(0, 23);
+            for (int i = 0; i < tools.Count; i++)
+            {
+                tools[i].check = checkDatas[i];
+
+                newtable.Controls.Add(tools[i], i % 6, table.RowCount);
+
+                //設定方框位置，每六個換一行
+                if ((i + 1) % 6 == 0)
+                {
+                    newtable.RowCount += 1;
+                    newtable.RowStyles.Add(new RowStyle(SizeType.Absolute, 130));
+                }
+            }
+            return newtable;
+        }
+
+        /// <summary>
+        /// 取得刀具資料
+        /// </summary>
+        /// <param name="tools"></param>
+        /// <param name="lastDatas"></param>
+        /// <returns></returns>
+        private void LoadData(ref List<Grid> tools)
+        {
+            List<Tool> toolsData = new List<Tool>();
+            if (!tdb.GetAllTool(ref toolsData))
+            {
+                MessageBox.Show("無法取得資料");
+                return;
+            }
+
+            foreach(Tool t in toolsData)
+            {
+                Grid g = new Grid
+                {
+                    tool = t
+                };
+
+                tools.Add(g);
+            }
+        }
+
+        /// <summary>
+        /// 當有 Grid 被刪除整理畫面
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TableControlRemoved(object sender, ControlEventArgs e)
+        {
+            initialContent(false);
+            for(int i = 0; i < tools.Count; i++)
+            {
+                tools[i].OpenSetting();
+            }
+            //throw new NotImplementedException();
+        }
+
+        private TableLayoutPanel initialTablePanel()
         {
             table = new TableLayoutPanel();
             table.ColumnCount = 6;
@@ -87,54 +158,36 @@ namespace Shelf
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
             table.RowStyles.Add(new RowStyle(SizeType.Absolute, 130));
-            
             table.Dock = DockStyle.Fill;
-
+            table.ControlRemoved += TableControlRemoved;
             return table;
         }
 
-        /// <summary>
-        /// 取得刀具資料
-        /// </summary>
-        /// <param name="tools"></param>
-        /// <param name="lastDatas"></param>
-        /// <returns></returns>
-        private void LoadData(ref List<Grid> tools, ref List<int> lastDatas)
+        private void ToolUpdate()
         {
-            var query = "SELECT id, name, life, remain, alarm FROM tool";
-            using (SqlConnection conn = new SqlConnection(_connectStr))
+            while (keepUpdate)
             {
-                using (SqlCommand comm = new SqlCommand(query, conn))
+                List<Tool> toolData = new List<Tool>();
+                if(!tdb.GetAllTool(ref toolData))
                 {
-                    conn.Open();
-                    using (SqlDataReader data = comm.ExecuteReader())
-                    {
-                        if (data.HasRows)
-                        {
-                            while (data.Read())
-                            {
-                                Tool tool = new Tool
-                                {
-                                    id = int.Parse(data["id"].ToString()),
-                                    name = data["name"].ToString(),
-                                    life = int.Parse(data["life"].ToString()),
-                                    remain = int.Parse(data["remain"].ToString()),
-                                    alarm = bool.Parse(data["alarm"].ToString())
-                                };
-                                Grid d = new Grid
-                                {
-                                    tool = tool
-                                };
-
-                                tools.Add(d);
-                                lastDatas.Add(int.Parse(data["remain"].ToString()));
-                            }
-                        }
-                    }
+                    return;
                 }
+                if(toolData.Count != tools.Count)
+                {
+                    Invoke(new deleInitialContent(initialContent), false);
+                    continue;
+                }
+                for(int i = 0; i < tools.Count; i++)
+                {
+                    tools[i].tool.name = toolData[i].name;
+                    tools[i].tool.life = toolData[i].life;
+                    tools[i].tool.remain = toolData[i].remain;
+                    tools[i].tool.alarm = toolData[i].alarm;
+                    Invoke(new updateGridUI(tools[i].CheckStatus));
+                }
+                Thread.Sleep(5000);
             }
         }
-
 
         /// <summary>
         ///  資料更新
@@ -143,10 +196,10 @@ namespace Shelf
         /// <param name="e"></param>
         private void BtnRunClick(object sender, EventArgs e)
         {
-            updateCount++;
+            //updateCount++;
             Random random = new Random();
             int randIndex = random.Next(0, tools.Count);
-            tools[randIndex].tool.remain -= 3 * updateCount;
+            tools[randIndex].tool.remain -= 3;
             if (tools[randIndex].tool.remain <= checkDatas[randIndex])
             {
                 tools[randIndex].tool.alarm = true;
@@ -155,17 +208,6 @@ namespace Shelf
             Tool t = tools[randIndex].tool;
             tdb.UpdateTool(t);
             tdb.InsertHistory(t, '0');
-            //for (int i = 0; i < tools.Count; i++)
-            //{
-            //    lastDatas.Add(tools[i].tool.remain);
-            //    tools[i].tool.remain -= 3 * updateCount;
-            //    if (tools[i].tool.remain <= checkDatas[i])
-            //    {
-            //        tools[i].tool.alarm = true;
-            //    }
-            //    tools[i].CheckStatus();
-            //}
-            //UpdateStatus('0', tools);
         }
 
         /// <summary>
@@ -229,7 +271,7 @@ namespace Shelf
             reset.ShowDialog();
             if (reset.resetCount != 0)
             {
-                updateCount = 0;
+                //updateCount = 0;
                 int insertCount = 0;
                 List<Tool> newDatas = new List<Tool>();
                 Random randNum = new Random();
@@ -286,7 +328,7 @@ namespace Shelf
                 else
                 {
                     MessageBox.Show("新增成功");
-                    initalContent(true);
+                    initialContent(true);
                 }
             }
             else
@@ -303,7 +345,9 @@ namespace Shelf
         /// <param name="e"></param>
         private void btnMainClick(object sender, EventArgs e)
         {
-            initalContent(false);
+            initialContent(false);
+            picNew.Visible = false;
+            btnSetting.Text = "開啟設定";
         }
 
         /// <summary>
@@ -357,7 +401,7 @@ namespace Shelf
             //            break;
             //        }
             //    }
-            //    initalContent(false);
+            //    initialContent(false);
             //    if (check)
             //        MessageBox.Show("上傳完成");
             //}
@@ -424,7 +468,7 @@ namespace Shelf
                 {
                     MessageBox.Show("刪除成功");
                     tdb.InsertHistory(t, '2');
-                    initalContent(false);
+                    initialContent(false);
                 }
                 else
                 {
@@ -455,7 +499,7 @@ namespace Shelf
                 }
                 table.Controls.Add(g, tools.Count % 6, table.RowCount);
                 tools.Add(g);
-                lastDatas.Add(newTool.tool.remain);
+                //lastDatas.Add(newTool.tool.remain);
                 Random randNum = new Random(); //隨機檢查數值
                 checkDatas.Add(randNum.Next(0, 49));
                 g.OpenSetting();
@@ -463,262 +507,36 @@ namespace Shelf
 
         }
 
-        //以下都為資料庫操作
-
-        /// <summary>
-        /// 給予名稱取得完整的Tool資料
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="t"></param>
-        /// <returns></returns>
-        private bool GetToolByName(string name, ref Tool t)
+        public static void SetDoubleBuffered(Control c)
         {
-            string query = @"SELECT * FROM tool WHERE name = @name";
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(_connectStr))
-                {
-                    using (SqlCommand comm = new SqlCommand(query, conn))
-                    {
-                        if (conn.State != ConnectionState.Open)
-                            conn.Open();
-                        comm.Parameters.AddWithValue("@name", name);
-                        using (SqlDataReader data = comm.ExecuteReader())
-                        {
-                            if (data.HasRows)
-                            {
-                                while (data.Read())
-                                {
-                                    t = new Tool
-                                    {
-                                        id = int.Parse(data["id"].ToString()),
-                                        name = data["name"].ToString(),
-                                        life = int.Parse(data["life"].ToString()),
-                                        remain = int.Parse(data["remain"].ToString()),
-                                        alarm = bool.Parse(data["alarm"].ToString())
-                                    };
-                                }
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-            catch (SqlException ex)
-            {
-                MessageBox.Show("資料庫發生問題" + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("發生錯誤" + ex.Message);
-            }
-            
-            return false;
+            if (SystemInformation.TerminalServerSession)
+                return;
+            PropertyInfo aProp = typeof(Control).GetProperty("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance);
+            aProp.SetValue(c, true, null);
         }
 
-        /// <summary>
-        /// 更新tool目前數值及狀態
-        /// </summary>
-        /// <param name="t"></param>
-        /// <returns></returns>
-        private bool UpdateTool(Tool t)
+        private void ArrangeContent(Tool t)
         {
-            var queryData = @"UPDATE tool SET remain = @remain, alarm = @alarm WHERE id = @toolId";
-            try
+            for(int i = 0; i < tools.Count; i++)
             {
-                using (SqlConnection conn = new SqlConnection(_connectStr))
+                if(tools[i].tool.name == t.name)
                 {
-                    //更新 tool data
-                    using (SqlCommand comm = new SqlCommand(queryData, conn))
+                    tools.Remove(tools[i]);
+                    
+                    
+                    for(int j = i; j < tools.Count; j++)
                     {
-                        if (conn.State != ConnectionState.Open)
-                            conn.Open();
-                        comm.Parameters.AddWithValue("@remain", t.remain);
-                        comm.Parameters.AddWithValue("@alarm", t.alarm);
-                        comm.Parameters.AddWithValue("@toolId", t.id);
-                        int affectRows = comm.ExecuteNonQuery();
-                        if (affectRows > 0)
-                        {
-                            return true;
-                        }
+                        int row = j / 6;
+                        int col = j % 6;
+
+                        table.Controls.Remove(table.GetControlFromPosition(col, row));
+                        table.Controls.Add(tools[j], col, row);
+                        tools[j].OpenSetting();
                     }
+                    return;
                 }
             }
-            catch (SqlException ex)
-            {
-                MessageBox.Show("資料庫發生問題" + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("發生錯誤" + ex.Message);
-            }
-
-            return false;
         }
-
-        /// <summary>
-        /// 換刀
-        /// </summary>
-        /// <param name="t"></param>
-        /// <returns></returns>
-        private bool ChangeTool(Tool t)
-        {
-            string query = "UPDATE tool SET life = @life, remain = @remain, alarm = 0 WHERE name = @name";
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(_connectStr))
-                {
-                    using (SqlCommand comm = new SqlCommand(query, conn))
-                    {
-                        if (conn.State != ConnectionState.Open)
-                            conn.Open();
-                        comm.Parameters.AddWithValue("@life", t.life);
-                        comm.Parameters.AddWithValue("@remain", t.life);
-                        comm.Parameters.AddWithValue("@name", t.name);
-                        int affectRows = comm.ExecuteNonQuery();
-                        if (affectRows > 0)
-                        {
-                            //Success
-                            return true;
-                        }
-                    }
-                }
-            }
-            catch (SqlException ex)
-            {
-                MessageBox.Show("資料庫發生問題" + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("發生錯誤" + ex.Message);
-            }
-            //Failed
-            return false;
-        }
-
-        /// <summary>
-        /// 新增 Tool 資料 
-        /// </summary>
-        /// <param name="t"></param>
-        /// <returns></returns>
-        private bool InsertTool(Tool t)
-        {
-            string maxId = "(SELECT MAX(id) FROM tool)";
-            string query = @"INSERT INTO tool(id, name, life, remain, alarm) VALUES(" + maxId + "+1, @name, @life, @remain, 0)";
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(_connectStr))
-                {
-                    using (SqlCommand comm = new SqlCommand(query, conn))
-                    {
-                        if (conn.State != ConnectionState.Open)
-                            conn.Open();
-                        comm.Parameters.AddWithValue("@name", t.name);
-                        comm.Parameters.AddWithValue("@life", t.life);
-                        comm.Parameters.AddWithValue("@remain", t.remain);
-
-                        int affectRows = comm.ExecuteNonQuery();
-                        if (affectRows > 0)
-                        {
-                            //Success
-                            return true;
-                        }
-                    }
-                }
-            }
-            catch (SqlException ex)
-            {
-                MessageBox.Show("資料庫處理發生錯誤" + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("發生錯誤" + ex.Message);
-            }
-            //Failed
-            return false;
-        }
-
-        /// <summary>
-        /// 新增歷程
-        /// </summary>
-        /// <param name="t"></param>
-        /// <param name="mark">0:損耗更新, 1:軟體開啟紀錄, 2:刀具移除, 3:執行換刀</param>>
-        /// <returns></returns>
-        private bool InsertHistory(Tool t, char mark)
-        {
-            var query = @"INSERT INTO history(toolId, name, life, remain, alarm, mark) VALUES(@toolId, @name, @life, @remain, @alarm, @mark)";
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(_connectStr))
-                {
-                    using (SqlCommand comm = new SqlCommand(query, conn))
-                    {
-                        if (conn.State != ConnectionState.Open)
-                            conn.Open();
-                        comm.Parameters.AddWithValue("@toolId", t.id);
-                        comm.Parameters.AddWithValue("@name", t.name);
-                        comm.Parameters.AddWithValue("@life", t.life);
-                        comm.Parameters.AddWithValue("@remain", t.remain);
-                        comm.Parameters.AddWithValue("@alarm", t.alarm);
-                        comm.Parameters.AddWithValue("@mark", mark);
-
-                        int affectRows = comm.ExecuteNonQuery();
-                        if (affectRows == 0)
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-            catch (SqlException ex)
-            {
-                MessageBox.Show("資料庫處理發生錯誤" + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("發生錯誤" + ex.Message);
-            }
-            
-            return true;
-        }
-
-        /// <summary>
-        /// 刪除刀具
-        /// </summary>
-        /// <param name="t"></param>
-        /// <returns></returns>
-        private bool DeleteTool(string name)
-        {
-            string query = "DELETE FROM tool WHERE name = @name";
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(_connectStr))
-                {
-                    using (SqlCommand comm = new SqlCommand(query, conn))
-                    {
-                        comm.Parameters.AddWithValue("@name", name);
-                        if (conn.State != ConnectionState.Open)
-                            conn.Open();
-                        int affectRows = comm.ExecuteNonQuery();
-                        if (affectRows > 0)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            catch (SqlException ex)
-            {
-                MessageBox.Show("資料庫處理發生錯誤" + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("發生錯誤" + ex.Message);
-            }
-            
-            return false;
-        }
-
 
     }
 }
