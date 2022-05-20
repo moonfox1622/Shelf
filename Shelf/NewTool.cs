@@ -37,9 +37,9 @@ namespace Shelf
             }
             else
             {
-                ToolDatabase tb = new ToolDatabase();
+                ToolDatabase tdb = new ToolDatabase();
 
-                if (tb.checkExist(txtName.Text))
+                if (tdb.checkExist(txtName.Text))
                 {
                     MessageBox.Show("名稱重複，請重新命名");
                     return;
@@ -56,8 +56,10 @@ namespace Shelf
                         remain = Convert.ToInt32(txtRemain.Value),
                         alarm = Convert.ToBoolean(txtAlarm.SelectedIndex)
                     };
-                    tb.InsertTool(tool);
+                    tdb.InsertTool(tool);
+                    tdb.HistoryInsert(tool, '4');
                     hasNew = true;
+
                     this.Close();
                 }
             }

@@ -308,7 +308,7 @@ namespace Shelf
 
         public bool GetLastHistory(ref Tool t)
         {
-            var query = @"SELECT TOP(1) * FROM history WHERE name = @name DESC";
+            var query = @"SELECT TOP(1) * FROM history WHERE name = @name order by id DESC";
 
             try
             {
@@ -324,8 +324,10 @@ namespace Shelf
                             {
                                 while (data.Read())
                                 {
-                                    t.startTime = DateTime.Parse(data["startTime"].ToString());
-                                    t.endTime = DateTime.Parse(data["endTime"].ToString());
+                                    if(!string.IsNullOrWhiteSpace(data["startTime"].ToString()))
+                                        t.startTime = DateTime.Parse(data["startTime"].ToString());
+                                    if (!string.IsNullOrWhiteSpace(data["endTime"].ToString()))
+                                        t.endTime = DateTime.Parse(data["endTime"].ToString());
                                 };
 
                                 return true;
@@ -352,58 +354,22 @@ namespace Shelf
         /// <param name="t"></param>
         /// <param name="mark">0:軟體開啟紀錄, 1:取出刀具, 2:放回刀具, 3:執行換刀, 4:新增刀具, 5:刀具修改, 6: 刀具刪除, 7: 機台錯誤</param>>
         /// <returns></returns>
-        public bool InsertHistory(Tool t, char mark)
+        public bool HistoryInsert(Tool t, char mark)
         {
-            if(mark == 1)
+            bool result;
+            switch (mark)
             {
-                if (!UseToolHistory(t))
-                    return false;
-                return true;
+                case '1':
+                    result = HistoryUseTool(t);
+                    break;
+                case '2':
+                    result = HistoryReturnTool(t);
+                    break;
+                default:
+                    result = OtherTypeHistory(t, mark);
+                    break;
             }
-            if(mark == 2)
-            {
-                if (!ReturnToolHistory(t))
-                    return false;
-                return true;
-            }
-            if(mark == 3)
-            {
-                
-            }
-            var query = @"INSERT INTO history(name, life, remain, alarm, mark) VALUES( @name, @life, @remain, @alarm, @mark)";
-            
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(_connectStr))
-                {
-                    using (SqlCommand comm = new SqlCommand(query, conn))
-                    {
-                        if (conn.State != ConnectionState.Open)
-                            conn.Open();
-                        comm.Parameters.AddWithValue("@name", t.name);
-                        comm.Parameters.AddWithValue("@life", t.life);
-                        comm.Parameters.AddWithValue("@remain", t.remain);
-                        comm.Parameters.AddWithValue("@alarm", t.alarm);
-                        comm.Parameters.AddWithValue("@mark", mark);
-
-                        int affectRows = comm.ExecuteNonQuery();
-                        if (affectRows == 0)
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-            catch (SqlException ex)
-            {
-                MessageBox.Show("新增歷史紀錄時資料庫處理發生錯誤" + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("發生錯誤" + ex.Message);
-            }
-
-            return true;
+            return result;
         }
 
         /// <summary>
@@ -411,9 +377,8 @@ namespace Shelf
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        private bool UseToolHistory(Tool t)
+        private bool HistoryUseTool(Tool t)
         {
-
             var query = @"INSERT INTO history(name, life, remain, alarm, startTime, mark) VALUES( @name, @life, @remain, @alarm, @startTime, @mark)";
             try
             {
@@ -454,7 +419,7 @@ namespace Shelf
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        private bool ReturnToolHistory(Tool t)
+        private bool HistoryReturnTool(Tool t)
         {
             var query = @"INSERT INTO history(name, life, remain, alarm, startTime, endTime, mark) VALUES( @name, @life, @remain, @alarm, @startTime, @endTime, @mark)";
             if (!GetLastHistory(ref t))
@@ -494,16 +459,146 @@ namespace Shelf
             return false;
         }
 
-        private bool ChangeToolHistory(Tool t)
+        /// <summary>
+        /// 新增換刀歷史
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        //private bool HistoryChangeTool(Tool t)
+        //{
+        //    if (!GetLastHistory(ref t))
+        //        return false;
+        //    var query = @"INSERT INTO history(name, life, remain, alarm, mark) VALUES( @name, @life, @remain, @alarm,  @mark)";
+        //    if (t.startTime != null)
+        //        query = @"INSERT INTO history(name, life, remain, alarm, startTime, mark) VALUES( @name, @life, @remain, @alarm, @startTime, @mark)";
+
+        //    try
+        //    {
+        //        using (SqlConnection conn = new SqlConnection(_connectStr))
+        //        {
+        //            using (SqlCommand comm = new SqlCommand(query, conn))
+        //            {
+        //                if (conn.State != ConnectionState.Open)
+        //                    conn.Open();
+        //                comm.Parameters.AddWithValue("@name", t.name);
+        //                comm.Parameters.AddWithValue("@life", t.life);
+        //                comm.Parameters.AddWithValue("@remain", t.remain);
+        //                comm.Parameters.AddWithValue("@alarm", t.alarm);
+        //                if (t.startTime != null)
+        //                    comm.Parameters.AddWithValue("@startTime", t.startTime);
+        //                comm.Parameters.AddWithValue("@mark", '3');
+
+        //                int affectRows = comm.ExecuteNonQuery();
+        //                if (affectRows > 0)
+        //                {
+        //                    return true;
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        MessageBox.Show("新增歷史紀錄時資料庫處理發生錯誤" + ex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("發生錯誤" + ex.Message);
+        //    }
+        //    return false;
+        //}
+
+        //private bool HistoryMachineError(Tool t)
+        //{
+        //    if (!GetLastHistory(ref t))
+        //        return false;
+        //    var query = @"INSERT INTO history(name, life, remain, alarm, mark) VALUES( @name, @life, @remain, @alarm,  @mark)";
+        //    if (t.startTime == null)
+        //        return false;
+        //    try
+        //    {
+        //        using (SqlConnection conn = new SqlConnection(_connectStr))
+        //        {
+        //            using (SqlCommand comm = new SqlCommand(query, conn))
+        //            {
+        //                if (conn.State != ConnectionState.Open)
+        //                    conn.Open();
+        //                comm.Parameters.AddWithValue("@name", t.name);
+        //                comm.Parameters.AddWithValue("@life", t.life);
+        //                comm.Parameters.AddWithValue("@remain", t.remain);
+        //                comm.Parameters.AddWithValue("@alarm", t.alarm);
+        //                if (t.startTime != null)
+        //                    comm.Parameters.AddWithValue("@startTime", t.startTime);
+        //                comm.Parameters.AddWithValue("@mark", '2');
+
+        //                int affectRows = comm.ExecuteNonQuery();
+        //                if (affectRows > 0)
+        //                {
+        //                    return true;
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        MessageBox.Show("新增歷史紀錄時資料庫處理發生錯誤" + ex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("發生錯誤" + ex.Message);
+        //    }
+        //    return false;
+        //}
+
+        /// <summary>
+        /// 新增歷程 包含(0:軟體開啟紀錄 4:新增刀具, 5:刀具修改, 6: 刀具刪除)
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="mark"></param>
+        /// <returns></returns>
+        private bool OtherTypeHistory(Tool t, char mark)
         {
-            if (!GetLastHistory(ref t))
-                return false;
-           if(t.startTime == null)
-           {
+            GetLastHistory(ref t);
+            var query = @"INSERT INTO history(name, life, remain, alarm, mark) VALUES( @name, @life, @remain, @alarm,  @mark)";
+            if (t.startTime != null)
+                query = @"INSERT INTO history(name, life, remain, alarm, startTime, mark) VALUES( @name, @life, @remain, @alarm, @startTime, @mark)";
+            if(t.endTime != null)
+                query = @"INSERT INTO history(name, life, remain, alarm, startTime, endTime, mark) VALUES( @name, @life, @remain, @alarm, @startTime, @endTime, @mark)";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectStr))
+                {
+                    using (SqlCommand comm = new SqlCommand(query, conn))
+                    {
+                        if (conn.State != ConnectionState.Open)
+                            conn.Open();
+                        comm.Parameters.AddWithValue("@name", t.name);
+                        comm.Parameters.AddWithValue("@life", t.life);
+                        comm.Parameters.AddWithValue("@remain", t.remain);
+                        comm.Parameters.AddWithValue("@alarm", t.alarm);
+                        if (t.startTime != null)
+                            comm.Parameters.AddWithValue("@startTime", t.startTime);
+                        if(t.endTime != null)
+                            comm.Parameters.AddWithValue("@endTime", t.endTime);
+                        comm.Parameters.AddWithValue("@mark", mark);
 
-           }
+                        int affectRows = comm.ExecuteNonQuery();
+                        if (affectRows > 0)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("新增歷史紀錄時資料庫處理發生錯誤" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("發生錯誤" + ex.Message);
+            }
+            return false;
         }
-
         /// <summary>
         /// 刪除刀具
         /// </summary>

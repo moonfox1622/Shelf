@@ -58,7 +58,7 @@ namespace Shelf
             
             if (save)
             {
-                UpdateStatus('1', tools);
+                UpdateStatus('0', tools);
             }
 
             table = initialTablePanel();
@@ -121,8 +121,10 @@ namespace Shelf
                 return;
             }
 
-            foreach(Tool t in toolsData)
+            for(int i=0 ; i<toolsData.Count ; i++)
             {
+                Tool t = toolsData[i];
+                tdb.GetLastHistory(ref t);
                 Grid g = new Grid
                 {
                     tool = t
@@ -144,7 +146,6 @@ namespace Shelf
             {
                 tools[i].OpenSetting();
             }
-            //throw new NotImplementedException();
         }
 
         private TableLayoutPanel initialTablePanel()
@@ -196,9 +197,14 @@ namespace Shelf
         /// <param name="e"></param>
         private void BtnRunClick(object sender, EventArgs e)
         {
-            //updateCount++;
             Random random = new Random();
             int randIndex = random.Next(0, tools.Count);
+            if(btnRun.Text == "使用")
+            {
+                btnRun.Text = "結束";
+                tdb.HistoryInsert(tools[randIndex].tool, '1');
+                return;
+            }
             tools[randIndex].tool.remain -= 3;
             if (tools[randIndex].tool.remain <= checkDatas[randIndex])
             {
@@ -206,8 +212,11 @@ namespace Shelf
             }
             tools[randIndex].CheckStatus();
             Tool t = tools[randIndex].tool;
+            
             tdb.UpdateTool(t);
-            tdb.InsertHistory(t, '0');
+            if(tdb.HistoryInsert(t, '2')){
+                btnRun.Text = "使用";
+            }
         }
 
         /// <summary>
@@ -229,7 +238,7 @@ namespace Shelf
                         throw new Exception("儲存失敗");
                     }
                         
-                    if (!tdb.InsertHistory(tools[interruptIndex].tool, start))
+                    if (!tdb.HistoryInsert(tools[interruptIndex].tool, start))
                     {
                         MessageBox.Show("儲存發生錯誤，請進行重新上傳");
                         btnReupload.Visible = true;
@@ -430,8 +439,8 @@ namespace Shelf
                     if (check)
                     {
                         //新增換刀歷程
-                        tdb.InsertHistory(originData, '2');
-                        tdb.InsertHistory(t, '3');
+                        tdb.HistoryInsert(originData, '2');
+                        tdb.HistoryInsert(t, '3');
                         return true;
                     }
                 }
@@ -442,7 +451,7 @@ namespace Shelf
                     {
                         Tool newTool = new Tool();
                         tdb.GetToolByName(t.name, ref newTool);
-                        tdb.InsertHistory(newTool, '1');
+                        tdb.HistoryInsert(newTool, '1');
                         return true;
                     }
                 }
@@ -467,7 +476,7 @@ namespace Shelf
                 if (tdb.DeleteTool(delete.name))
                 {
                     MessageBox.Show("刪除成功");
-                    tdb.InsertHistory(t, '2');
+                    tdb.HistoryInsert(t, '2');
                     initialContent(false);
                 }
                 else
@@ -504,7 +513,6 @@ namespace Shelf
                 checkDatas.Add(randNum.Next(0, 49));
                 g.OpenSetting();
             }
-
         }
 
         public static void SetDoubleBuffered(Control c)

@@ -66,7 +66,7 @@
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(130, 47);
             this.btnRun.TabIndex = 1;
-            this.btnRun.Text = "更新";
+            this.btnRun.Text = "使用";
             this.btnRun.UseVisualStyleBackColor = false;
             this.btnRun.Click += new System.EventHandler(this.BtnRunClick);
             // 

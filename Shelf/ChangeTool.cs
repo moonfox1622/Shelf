@@ -17,7 +17,10 @@ namespace Shelf
         {
             txtName.Text = tool.name;
             txtLife.Value = tool.life;
-            txtRemain.Value = tool.remain;
+            if (tool.remain < 0)
+                txtRemain.Value = 0;
+            else
+                txtRemain.Value = tool.remain;
         }
 
         private void Comfirm(object sender, EventArgs e)
@@ -45,7 +48,7 @@ namespace Shelf
             if (tb.ChangeTool(tool))
             {
                 hasChange = true;
-                tb.InsertHistory(tool, '3');
+                tb.HistoryInsert(tool, '3');
                 this.Close();
             }
         }

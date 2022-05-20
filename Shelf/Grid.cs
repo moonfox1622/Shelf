@@ -57,6 +57,7 @@ namespace Shelf
             }
             else
             {
+                remainLifeBar.Maximum = tool.life;
                 remainLifeBar.Value = tool.remain;
             }
         }
@@ -73,20 +74,14 @@ namespace Shelf
             //count>80:green, 80>count>=50:yellow, count<50:red
             if (tool.remain >= 80)
             {
-                //this.BackColor = Color.FromArgb(89, 201, 165);
-                //picStatus.Image = Shelf.Properties.Resources.greenLight;
                 remainLifeBar.SliderColor = Color.FromArgb(89, 201, 165);
             }
             else if(tool.remain < 80 && tool.remain >= 50)
             {
-                //this.BackColor = Color.FromArgb(255, 253, 152);
-               // picStatus.Image = Shelf.Properties.Resources.yellowLightdark;
                 remainLifeBar.SliderColor = Color.FromArgb(242, 236, 0);
             }
             else
             {
-                //this.BackColor = Color.FromArgb(216, 30, 91);
-                //picStatus.Image = Shelf.Properties.Resources.yellowLightdark;
                 remainLifeBar.SliderColor = Color.FromArgb(216, 30, 91);
             }
 
@@ -105,6 +100,13 @@ namespace Shelf
                 txtCount.ForeColor = Color.White;
                 panelStatus.BackColor = Color.FromArgb(216, 30, 91);
             }
+
+            if(tool.startTime != null && tool.endTime == null)
+            {
+                btnRun.Image = Properties.Resources.stop;
+                btnRun.Tag = "stop";
+            }
+
         }
 
         /// <summary>
@@ -118,9 +120,9 @@ namespace Shelf
             panelGrid.BorderStyle = BorderStyle.Fixed3D;
             if (MessageBox.Show("確定要刪除「" + tool.name + "」嗎", "刪除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
-                bool result = tdb.DeleteTool(tool.name);
-                if (result)
+                if (tdb.DeleteTool(tool.name))
                 {
+                    tdb.HistoryInsert(tool, '6');
                     this.Parent.Controls.Remove(this);
                 }
             }
@@ -137,6 +139,7 @@ namespace Shelf
             if (setting.hasUpdate)
             {
                 tool = setting.tool;
+                tdb.HistoryInsert(tool, '5');
                 CheckStatus();
             }
         }
@@ -176,5 +179,33 @@ namespace Shelf
             picDelete.Visible = false;
         }
 
+        private void BtnRunClick(object sender, EventArgs e)
+        {
+            if(btnRun.Tag.ToString() == "play")
+            {
+                if (!tdb.HistoryInsert(tool, '1'))
+                    return;
+                btnRun.Tag = "stop";
+                btnRun.Image = Properties.Resources.stop;
+                return;
+            }
+
+            tool.remain -= 3;
+            if (!tdb.UpdateTool(tool))
+                return;
+            if (!tdb.HistoryInsert(tool, '2'))
+                return;
+            btnRun.Tag = "play";
+            Tool t = tool;
+            tdb.GetLastHistory(ref t);
+            tool = t;
+            btnRun.Image = Properties.Resources.play;
+            CheckStatus();
+        }
+
+        private void BtnWarnClick(object sender, EventArgs e)
+        {
+
+        }
     }
 }

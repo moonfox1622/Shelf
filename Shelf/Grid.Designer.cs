@@ -33,13 +33,17 @@
             this.txtCount = new System.Windows.Forms.Label();
             this.panelStatus = new System.Windows.Forms.Panel();
             this.panelGrid = new System.Windows.Forms.Panel();
+            this.remainLifeBar = new CustomControls.CProgressBar();
             this.tipSetting = new System.Windows.Forms.ToolTip(this.components);
+            this.btnWarn = new System.Windows.Forms.PictureBox();
+            this.btnRun = new System.Windows.Forms.PictureBox();
             this.picChange = new System.Windows.Forms.PictureBox();
             this.picEdit = new System.Windows.Forms.PictureBox();
             this.picDelete = new System.Windows.Forms.PictureBox();
-            this.remainLifeBar = new CustomControls.CProgressBar();
             this.panelStatus.SuspendLayout();
             this.panelGrid.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.btnWarn)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnRun)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picChange)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picEdit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picDelete)).BeginInit();
@@ -94,6 +98,57 @@
             this.panelGrid.Size = new System.Drawing.Size(174, 88);
             this.panelGrid.TabIndex = 8;
             // 
+            // remainLifeBar
+            // 
+            this.remainLifeBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.remainLifeBar.ChannelColor = System.Drawing.Color.LightSteelBlue;
+            this.remainLifeBar.ChannelHeight = 12;
+            this.remainLifeBar.ForeBackColor = System.Drawing.Color.RoyalBlue;
+            this.remainLifeBar.ForeColor = System.Drawing.Color.White;
+            this.remainLifeBar.Location = new System.Drawing.Point(3, 58);
+            this.remainLifeBar.Maximum = 200;
+            this.remainLifeBar.Name = "remainLifeBar";
+            this.remainLifeBar.PaintedBack = false;
+            this.remainLifeBar.ShowMaximun = false;
+            this.remainLifeBar.ShowValue = CustomControls.TextPosition.None;
+            this.remainLifeBar.Size = new System.Drawing.Size(168, 20);
+            this.remainLifeBar.SliderColor = System.Drawing.Color.RoyalBlue;
+            this.remainLifeBar.SliderHeight = 20;
+            this.remainLifeBar.StopPainting = false;
+            this.remainLifeBar.SymbolAfter = "";
+            this.remainLifeBar.SymbolBefore = "";
+            this.remainLifeBar.TabIndex = 6;
+            this.remainLifeBar.Value = 50;
+            // 
+            // btnWarn
+            // 
+            this.btnWarn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnWarn.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnWarn.Image = global::Shelf.Properties.Resources.warning1;
+            this.btnWarn.Location = new System.Drawing.Point(29, 4);
+            this.btnWarn.Name = "btnWarn";
+            this.btnWarn.Size = new System.Drawing.Size(20, 20);
+            this.btnWarn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.btnWarn.TabIndex = 21;
+            this.btnWarn.TabStop = false;
+            this.btnWarn.Tag = "play";
+            this.btnWarn.Click += new System.EventHandler(this.BtnWarnClick);
+            // 
+            // btnRun
+            // 
+            this.btnRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRun.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnRun.Image = global::Shelf.Properties.Resources.play;
+            this.btnRun.Location = new System.Drawing.Point(3, 3);
+            this.btnRun.Name = "btnRun";
+            this.btnRun.Size = new System.Drawing.Size(20, 20);
+            this.btnRun.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.btnRun.TabIndex = 20;
+            this.btnRun.TabStop = false;
+            this.btnRun.Tag = "play";
+            this.btnRun.Click += new System.EventHandler(this.BtnRunClick);
+            // 
             // picChange
             // 
             this.picChange.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -136,34 +191,13 @@
             this.picDelete.Visible = false;
             this.picDelete.Click += new System.EventHandler(this.DeleteTool);
             // 
-            // remainLifeBar
-            // 
-            this.remainLifeBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.remainLifeBar.ChannelColor = System.Drawing.Color.LightSteelBlue;
-            this.remainLifeBar.ChannelHeight = 12;
-            this.remainLifeBar.ForeBackColor = System.Drawing.Color.RoyalBlue;
-            this.remainLifeBar.ForeColor = System.Drawing.Color.White;
-            this.remainLifeBar.Location = new System.Drawing.Point(3, 58);
-            this.remainLifeBar.Maximum = 200;
-            this.remainLifeBar.Name = "remainLifeBar";
-            this.remainLifeBar.PaintedBack = false;
-            this.remainLifeBar.ShowMaximun = false;
-            this.remainLifeBar.ShowValue = CustomControls.TextPosition.None;
-            this.remainLifeBar.Size = new System.Drawing.Size(168, 20);
-            this.remainLifeBar.SliderColor = System.Drawing.Color.RoyalBlue;
-            this.remainLifeBar.SliderHeight = 20;
-            this.remainLifeBar.StopPainting = false;
-            this.remainLifeBar.SymbolAfter = "";
-            this.remainLifeBar.SymbolBefore = "";
-            this.remainLifeBar.TabIndex = 6;
-            this.remainLifeBar.Value = 50;
-            // 
             // Grid
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(224)))), ((int)(((byte)(227)))));
+            this.Controls.Add(this.btnWarn);
+            this.Controls.Add(this.btnRun);
             this.Controls.Add(this.picChange);
             this.Controls.Add(this.picEdit);
             this.Controls.Add(this.picDelete);
@@ -173,6 +207,8 @@
             this.Load += new System.EventHandler(this.Grid_Load);
             this.panelStatus.ResumeLayout(false);
             this.panelGrid.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.btnWarn)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnRun)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picChange)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picEdit)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picDelete)).EndInit();
@@ -190,5 +226,7 @@
         private System.Windows.Forms.PictureBox picEdit;
         private System.Windows.Forms.PictureBox picDelete;
         private System.Windows.Forms.ToolTip tipSetting;
+        private System.Windows.Forms.PictureBox btnRun;
+        private System.Windows.Forms.PictureBox btnWarn;
     }
 }
