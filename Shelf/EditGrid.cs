@@ -62,19 +62,19 @@ namespace Shelf
             if (tool.remain >= 80)
             {
                 //this.BackColor = Color.FromArgb(89, 201, 165);
-                picStatus.Image = Shelf.Properties.Resources.greenLight;
+                
                 remainLifeBar.SliderColor = Color.FromArgb(89, 201, 165);
             }
             else if (tool.remain < 80 && tool.remain >= 50)
             {
                 //this.BackColor = Color.FromArgb(255, 253, 152);
-                picStatus.Image = Shelf.Properties.Resources.yellowLightdark;
+               
                 remainLifeBar.SliderColor = Color.FromArgb(242, 236, 0);
             }
             else
             {
                 //this.BackColor = Color.FromArgb(216, 30, 91);
-                picStatus.Image = Shelf.Properties.Resources.yellowLightdark;
+                
                 remainLifeBar.SliderColor = Color.FromArgb(216, 30, 91);
             }
 

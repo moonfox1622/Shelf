@@ -37,7 +37,7 @@
             this.AutoValidate = System.Windows.Forms.AutoValidate.Disable;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(224)))), ((int)(((byte)(227)))));
             this.Name = "SettingPage";
-            this.Size = new System.Drawing.Size(1715, 970);
+            this.Size = new System.Drawing.Size(1006, 438);
             this.Load += new System.EventHandler(this.SettingPage_Load);
             this.ResumeLayout(false);
 

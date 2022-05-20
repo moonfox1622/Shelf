@@ -29,20 +29,18 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
-            this.txtCount = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.Label();
-            this.panelStatus = new System.Windows.Forms.Panel();
             this.remainLifeBar = new CustomControls.CProgressBar();
+            this.panelStatus = new System.Windows.Forms.Panel();
+            this.txtCount = new System.Windows.Forms.Label();
             this.picChange = new System.Windows.Forms.PictureBox();
             this.picEdit = new System.Windows.Forms.PictureBox();
             this.picDelete = new System.Windows.Forms.PictureBox();
-            this.picStatus = new System.Windows.Forms.PictureBox();
             this.panel1.SuspendLayout();
             this.panelStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picChange)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picEdit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picDelete)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picStatus)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -52,25 +50,11 @@
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(241)))), ((int)(((byte)(241)))));
             this.panel1.Controls.Add(this.txtName);
             this.panel1.Controls.Add(this.remainLifeBar);
-            this.panel1.Controls.Add(this.picStatus);
             this.panel1.Controls.Add(this.panelStatus);
             this.panel1.Location = new System.Drawing.Point(0, 24);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(174, 91);
             this.panel1.TabIndex = 13;
-            // 
-            // txtCount
-            // 
-            this.txtCount.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtCount.ForeColor = System.Drawing.Color.Black;
-            this.txtCount.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.txtCount.Location = new System.Drawing.Point(-8, -6);
-            this.txtCount.Margin = new System.Windows.Forms.Padding(0);
-            this.txtCount.Name = "txtCount";
-            this.txtCount.Size = new System.Drawing.Size(105, 49);
-            this.txtCount.TabIndex = 3;
-            this.txtCount.Text = "100";
-            this.txtCount.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
             // txtName
             // 
@@ -83,15 +67,6 @@
             this.txtName.TabIndex = 8;
             this.txtName.Text = "T1";
             this.txtName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // panelStatus
-            // 
-            this.panelStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelStatus.Controls.Add(this.txtCount);
-            this.panelStatus.Location = new System.Drawing.Point(87, 5);
-            this.panelStatus.Name = "panelStatus";
-            this.panelStatus.Size = new System.Drawing.Size(85, 45);
-            this.panelStatus.TabIndex = 11;
             // 
             // remainLifeBar
             // 
@@ -115,6 +90,28 @@
             this.remainLifeBar.SymbolBefore = "";
             this.remainLifeBar.TabIndex = 10;
             this.remainLifeBar.Value = 50;
+            // 
+            // panelStatus
+            // 
+            this.panelStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelStatus.Controls.Add(this.txtCount);
+            this.panelStatus.Location = new System.Drawing.Point(87, 5);
+            this.panelStatus.Name = "panelStatus";
+            this.panelStatus.Size = new System.Drawing.Size(85, 45);
+            this.panelStatus.TabIndex = 11;
+            // 
+            // txtCount
+            // 
+            this.txtCount.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtCount.ForeColor = System.Drawing.Color.Black;
+            this.txtCount.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.txtCount.Location = new System.Drawing.Point(-8, -6);
+            this.txtCount.Margin = new System.Windows.Forms.Padding(0);
+            this.txtCount.Name = "txtCount";
+            this.txtCount.Size = new System.Drawing.Size(105, 49);
+            this.txtCount.TabIndex = 3;
+            this.txtCount.Text = "100";
+            this.txtCount.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
             // picChange
             // 
@@ -152,18 +149,6 @@
             this.picDelete.TabStop = false;
             this.picDelete.Click += new System.EventHandler(this.DeleteTool);
             // 
-            // picStatus
-            // 
-            this.picStatus.BackColor = System.Drawing.Color.Transparent;
-            this.picStatus.Image = global::Shelf.Properties.Resources.greenLight;
-            this.picStatus.Location = new System.Drawing.Point(7, 11);
-            this.picStatus.Name = "picStatus";
-            this.picStatus.Size = new System.Drawing.Size(36, 36);
-            this.picStatus.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picStatus.TabIndex = 9;
-            this.picStatus.TabStop = false;
-            this.picStatus.Visible = false;
-            // 
             // EditGrid
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -181,7 +166,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.picChange)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picEdit)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picDelete)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picStatus)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -191,7 +175,6 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label txtName;
         private CustomControls.CProgressBar remainLifeBar;
-        private System.Windows.Forms.PictureBox picStatus;
         private System.Windows.Forms.Panel panelStatus;
         private System.Windows.Forms.Label txtCount;
         private System.Windows.Forms.PictureBox picDelete;

@@ -205,7 +205,7 @@ namespace Shelf
 
         private void BtnWarnClick(object sender, EventArgs e)
         {
-
+            tdb.HistoryInsert(tool, '7');
         }
     }
 }
