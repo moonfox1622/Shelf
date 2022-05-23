@@ -22,7 +22,6 @@ namespace Shelf
         public Grid()
         {
             InitializeComponent();
-
         }
 
         private void Grid_Load(object sender, EventArgs e)
@@ -32,23 +31,14 @@ namespace Shelf
             BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
             null, remainLifeBar, new object[] { true });
 
-            tipSetting.SetToolTip(picChange, "換刀");
-            tipSetting.SetToolTip(picEdit, "修改");
-            tipSetting.SetToolTip(picDelete, "刪除");
 
             remainLifeBar.Maximum = tool.life;
             CheckStatus();
         }
         
-        private void TextResize()
-        {
-            LoadProgressBar();
-            if (tool.name.Length >= 6)
-            {
-                txtName.Font = new Font("Arial", 18, FontStyle.Bold);
-            }
-        }
-
+        /// <summary>
+        /// 剩餘壽命條
+        /// </summary>
         private void LoadProgressBar()
         {
             if (tool.remain <= 0)
@@ -109,76 +99,32 @@ namespace Shelf
 
         }
 
+
         /// <summary>
-        /// 刪除刀具
+        /// 開啟設定頁面
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void DeleteTool(object sender, EventArgs e)
+        private void SettingPage(object sender, EventArgs e)
         {
-
-            panelGrid.BorderStyle = BorderStyle.Fixed3D;
-            if (MessageBox.Show("確定要刪除「" + tool.name + "」嗎", "刪除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-            {
-                if (tdb.DeleteTool(tool.name))
-                {
-                    tdb.HistoryInsert(tool, '6');
-                    this.Parent.Controls.Remove(this);
-                }
-            }
-            panelGrid.BorderStyle = BorderStyle.None;
-        }
-
-        private void EditTool(object sender, EventArgs e)
-        {
-            panelGrid.BorderStyle = BorderStyle.Fixed3D;
-            EditTool setting = new EditTool();
-            setting.tool = tool;
+            Setting setting = new Setting { id = tool.id };
             setting.ShowDialog();
-            panelGrid.BorderStyle = BorderStyle.None;
-            if (setting.hasUpdate)
+            if (setting.isDelete)
             {
-                tool = setting.tool;
-                tdb.HistoryInsert(tool, '5');
-                CheckStatus();
+                this.Parent.Controls.Remove(this);
+                return;
             }
+            Tool t = new Tool();
+            tdb.GetToolById(tool.id, ref t);
+            tool = t;
+            this.CheckStatus();
         }
 
         /// <summary>
-        /// 執行更換刀具
+        /// 執行更新
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ChangeTool(object sender, EventArgs e)
-        {
-            panelGrid.BorderStyle = BorderStyle.Fixed3D;
-            ChangeTool change = new ChangeTool();
-            change.tool = tool;
-            change.ShowDialog();
-            panelGrid.BorderStyle = BorderStyle.None;
-            if (!change.hasChange)
-                return;
-            tool = change.tool;
-            CheckStatus();
-        }
-
-        /// <summary>
-        /// 開啟設定按鈕
-        /// </summary>
-        public void OpenSetting()
-        {
-            picChange.Visible = true;
-            picEdit.Visible = true;
-            picDelete.Visible = true;
-        }
-
-        public void CloseSetting()
-        {
-            picChange.Visible = false;
-            picEdit.Visible = false;
-            picDelete.Visible = false;
-        }
-
         private void BtnRunClick(object sender, EventArgs e)
         {
             if(btnRun.Tag.ToString() == "play")
@@ -203,6 +149,11 @@ namespace Shelf
             CheckStatus();
         }
 
+        /// <summary>
+        /// 觸發機台故障
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnWarnClick(object sender, EventArgs e)
         {
             tdb.HistoryInsert(tool, '7');

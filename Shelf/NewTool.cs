@@ -30,39 +30,39 @@ namespace Shelf
             if (string.IsNullOrWhiteSpace(txtName.Text))
             {
                 MessageBox.Show("名稱不可以為空");
+                return;
             }
-            else if (txtLife.Value < txtRemain.Value)
+            if (txtLife.Value < txtRemain.Value)
             {
                 MessageBox.Show("可使用次數不能小於剩餘使用次數");
+                return;
             }
-            else
+            ToolDatabase tdb = new ToolDatabase();
+
+            if (tdb.checkExist(txtName.Text))
             {
-                ToolDatabase tdb = new ToolDatabase();
-
-                if (tdb.checkExist(txtName.Text))
-                {
-                    MessageBox.Show("名稱重複，請重新命名");
-                    return;
-                }
-
-                if (MessageBox.Show("確定要新增嗎", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                {
-
-
-                    tool = new Tool
-                    {
-                        name = txtName.Text,
-                        life = Convert.ToInt32(txtLife.Value),
-                        remain = Convert.ToInt32(txtRemain.Value),
-                        alarm = Convert.ToBoolean(txtAlarm.SelectedIndex)
-                    };
-                    tdb.InsertTool(tool);
-                    tdb.HistoryInsert(tool, '4');
-                    hasNew = true;
-
-                    this.Close();
-                }
+                MessageBox.Show("名稱重複，請重新命名");
+                return;
             }
+
+            if (MessageBox.Show("確定要新增嗎", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+
+
+                tool = new Tool
+                {
+                    name = txtName.Text,
+                    life = Convert.ToInt32(txtLife.Value),
+                    remain = Convert.ToInt32(txtRemain.Value),
+                    alarm = Convert.ToBoolean(txtAlarm.SelectedIndex)
+                };
+                tdb.InsertTool(tool);
+                tdb.HistoryInsert(tool, '4');
+                hasNew = true;
+
+                this.Close();
+            }
+            
         }
 
         /// <summary>

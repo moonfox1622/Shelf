@@ -89,6 +89,92 @@ namespace Shelf
             return false;
         }
 
+        public bool CheckRepeatName(int id, string name)
+        {
+            string query = "SELECT * FROM tool WHERE name = @name AND id != @id";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectStr))
+                {
+                    using (SqlCommand comm = new SqlCommand(query, conn))
+                    {
+                        if (conn.State != ConnectionState.Open)
+                            conn.Open();
+                        comm.Parameters.AddWithValue("@name", name);
+                        comm.Parameters.AddWithValue("@id", id);
+                        using (SqlDataReader data = comm.ExecuteReader())
+                        {
+                            if (data.HasRows)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("資料庫發生問題" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("發生錯誤" + ex.Message);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 給予ID取得完整的Tool資料
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public bool GetToolById(int id, ref Tool t)
+        {
+            string query = @"SELECT * FROM tool WHERE id = @id";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectStr))
+                {
+                    using (SqlCommand comm = new SqlCommand(query, conn))
+                    {
+                        if (conn.State != ConnectionState.Open)
+                            conn.Open();
+                        comm.Parameters.AddWithValue("@id", id);
+                        using (SqlDataReader data = comm.ExecuteReader())
+                        {
+                            if (data.HasRows)
+                            {
+                                while (data.Read())
+                                {
+                                    t = new Tool
+                                    {
+                                        id = int.Parse(data["id"].ToString()),
+                                        name = data["name"].ToString(),
+                                        life = int.Parse(data["life"].ToString()),
+                                        remain = int.Parse(data["remain"].ToString()),
+                                        alarm = bool.Parse(data["alarm"].ToString())
+                                    };
+                                }
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("資料庫發生問題" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("發生錯誤" + ex.Message);
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// 給予名稱取得完整的Tool資料
         /// </summary>
@@ -145,9 +231,9 @@ namespace Shelf
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        public bool EditTool(string originName, Tool t)
+        public bool EditTool(Tool t)
         {
-            var queryData = @"UPDATE tool SET name = @name, life = @life, remain = @remain, alarm = @alarm WHERE name = @originName";
+            var queryData = @"UPDATE tool SET name = @name, life = @life, remain = @remain, alarm = @alarm WHERE id = @id";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -162,7 +248,7 @@ namespace Shelf
                         comm.Parameters.AddWithValue("@life", t.life);
                         comm.Parameters.AddWithValue("@remain", t.remain);
                         comm.Parameters.AddWithValue("@alarm", t.alarm);
-                        comm.Parameters.AddWithValue("@originName", originName);
+                        comm.Parameters.AddWithValue("@id", t.id);
                         int affectRows = comm.ExecuteNonQuery();
                         if (affectRows > 0)
                         {
@@ -379,7 +465,7 @@ namespace Shelf
         /// <returns></returns>
         private bool HistoryUseTool(Tool t)
         {
-            var query = @"INSERT INTO history(name, life, remain, alarm, startTime, mark) VALUES( @name, @life, @remain, @alarm, @startTime, @mark)";
+            var query = @"INSERT INTO history(toolId, name, life, remain, alarm, startTime, mark) VALUES(@toolId, @name, @life, @remain, @alarm, @startTime, @mark)";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -388,6 +474,7 @@ namespace Shelf
                     {
                         if (conn.State != ConnectionState.Open)
                             conn.Open();
+                        comm.Parameters.AddWithValue("@toolId", t.id);
                         comm.Parameters.AddWithValue("@name", t.name);
                         comm.Parameters.AddWithValue("@life", t.life);
                         comm.Parameters.AddWithValue("@remain", t.remain);
@@ -421,7 +508,7 @@ namespace Shelf
         /// <returns></returns>
         private bool HistoryReturnTool(Tool t)
         {
-            var query = @"INSERT INTO history(name, life, remain, alarm, startTime, endTime, mark) VALUES( @name, @life, @remain, @alarm, @startTime, @endTime, @mark)";
+            var query = @"INSERT INTO history(toolId, name, life, remain, alarm, startTime, endTime, mark) VALUES(@toolId, @name, @life, @remain, @alarm, @startTime, @endTime, @mark)";
             if (!GetLastHistory(ref t))
                 return false;
             try
@@ -432,6 +519,7 @@ namespace Shelf
                     {
                         if (conn.State != ConnectionState.Open)
                             conn.Open();
+                        comm.Parameters.AddWithValue("@toolId", t.id);
                         comm.Parameters.AddWithValue("@name", t.name);
                         comm.Parameters.AddWithValue("@life", t.life);
                         comm.Parameters.AddWithValue("@remain", t.remain);
@@ -558,11 +646,11 @@ namespace Shelf
         private bool OtherTypeHistory(Tool t, char mark)
         {
             GetLastHistory(ref t);
-            var query = @"INSERT INTO history(name, life, remain, alarm, mark) VALUES( @name, @life, @remain, @alarm,  @mark)";
+            var query = @"INSERT INTO history(toolId, name, life, remain, alarm, mark) VALUES(@toolId, @name, @life, @remain, @alarm,  @mark)";
             if (t.startTime != null)
-                query = @"INSERT INTO history(name, life, remain, alarm, startTime, mark) VALUES( @name, @life, @remain, @alarm, @startTime, @mark)";
+                query = @"INSERT INTO history(toolId, name, life, remain, alarm, startTime, mark) VALUES( @toolId, @name, @life, @remain, @alarm, @startTime, @mark)";
             if(t.endTime != null)
-                query = @"INSERT INTO history(name, life, remain, alarm, startTime, endTime, mark) VALUES( @name, @life, @remain, @alarm, @startTime, @endTime, @mark)";
+                query = @"INSERT INTO history(toolId, name, life, remain, alarm, startTime, endTime, mark) VALUES( @toolId, @name, @life, @remain, @alarm, @startTime, @endTime, @mark)";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -571,6 +659,7 @@ namespace Shelf
                     {
                         if (conn.State != ConnectionState.Open)
                             conn.Open();
+                        comm.Parameters.AddWithValue("@toolId", t.id);
                         comm.Parameters.AddWithValue("@name", t.name);
                         comm.Parameters.AddWithValue("@life", t.life);
                         comm.Parameters.AddWithValue("@remain", t.remain);
@@ -604,16 +693,16 @@ namespace Shelf
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        public bool DeleteTool(string name)
+        public bool DeleteTool(int id)
         {
-            string query = "DELETE FROM tool WHERE name = @name";
+            string query = "DELETE FROM tool WHERE id = @id";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
                 {
                     using (SqlCommand comm = new SqlCommand(query, conn))
                     {
-                        comm.Parameters.AddWithValue("@name", name);
+                        comm.Parameters.AddWithValue("@id", id);
                         if (conn.State != ConnectionState.Open)
                             conn.Open();
                         int affectRows = comm.ExecuteNonQuery();

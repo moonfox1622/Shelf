@@ -142,10 +142,6 @@ namespace Shelf
         private void TableControlRemoved(object sender, ControlEventArgs e)
         {
             initialContent(false);
-            for(int i = 0; i < tools.Count; i++)
-            {
-                tools[i].OpenSetting();
-            }
         }
 
         private TableLayoutPanel initialTablePanel()
@@ -356,70 +352,8 @@ namespace Shelf
         {
             initialContent(false);
             picNew.Visible = false;
-            btnSetting.Text = "開啟設定";
         }
 
-        /// <summary>
-        /// 執行換刀或新增刀具
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnSetting_Click(object sender, EventArgs e)
-        {
-            if(btnSetting.Text == "開啟設定")
-            {
-                foreach (Grid g in tools)
-                {
-                    g.OpenSetting();
-                }
-                picNew.Visible = true;
-                btnSetting.Text = "關閉設定";
-            }
-            else
-            {
-                foreach (Grid g in tools)
-                {
-                    g.CloseSetting();
-                }
-                picNew.Visible = false;
-                btnSetting.Text = "開啟設定";
-            }
-            
-            //SettingPage settingPage = new SettingPage();
-            //content.Controls.Clear();
-            //settingPage.Dock = DockStyle.Fill;
-            //content.Controls.Add(settingPage);
-            //Setting setting = new Setting();
-            //setting.ShowDialog();
-            //if(setting.tools.Count > 0)
-            //{
-            //    bool check = true;
-            //    foreach (NewData d in setting.datas)
-            //    {
-            //        Tool t = new Tool
-            //        {
-            //            name = d.name,
-            //            life = d.life,
-            //            remain = d.life,
-            //            alarm = false
-            //        };
-            //        check = SendData(t);
-            //        if (!check)
-            //        {
-            //            MessageBox.Show("發生錯誤");
-            //            break;
-            //        }
-            //    }
-            //    initialContent(false);
-            //    if (check)
-            //        MessageBox.Show("上傳完成");
-            //}
-            //else
-            //{
-            //    MessageBox.Show("未給予資料");
-            //}
-            
-        }
 
         /// <summary>
         /// 確認資料庫內是否有同樣資料存在
@@ -465,26 +399,6 @@ namespace Shelf
             return false;
         }
 
-        private void BtnDelete_Click(object sender, EventArgs e)
-        {
-            Delete delete = new Delete();
-            delete.ShowDialog();
-            if (!string.IsNullOrWhiteSpace(delete.name))
-            {
-                Tool t = new Tool();
-                tdb.GetToolByName(delete.name, ref t);
-                if (tdb.DeleteTool(delete.name))
-                {
-                    MessageBox.Show("刪除成功");
-                    tdb.HistoryInsert(t, '2');
-                    initialContent(false);
-                }
-                else
-                {
-                    MessageBox.Show("刪除失敗或是該刀具不存在");
-                }
-            }
-        }
 
         /// <summary>
         /// 新增刀具
@@ -511,7 +425,6 @@ namespace Shelf
                 //lastDatas.Add(newTool.tool.remain);
                 Random randNum = new Random(); //隨機檢查數值
                 checkDatas.Add(randNum.Next(0, 49));
-                g.OpenSetting();
             }
         }
 
@@ -539,7 +452,6 @@ namespace Shelf
 
                         table.Controls.Remove(table.GetControlFromPosition(col, row));
                         table.Controls.Add(tools[j], col, row);
-                        tools[j].OpenSetting();
                     }
                     return;
                 }
