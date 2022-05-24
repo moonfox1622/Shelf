@@ -26,6 +26,7 @@ namespace Shelf
         bool keepUpdate = true; //持續更新刀具資料
         TableLayoutPanel table = new TableLayoutPanel();
         ToolDatabase tdb = new ToolDatabase();
+        bool simulateRun = true;
 
         //Delegate function
         private delegate void updateGridUI();
@@ -193,25 +194,19 @@ namespace Shelf
         /// <param name="e"></param>
         private void BtnRunClick(object sender, EventArgs e)
         {
-            Random random = new Random();
-            int randIndex = random.Next(0, tools.Count);
-            if(btnRun.Text == "使用")
+            if(btnRun.Tag.ToString() == "start")
             {
+                Thread sim = new Thread(simulate);
+                simulateRun = true;
+                btnRun.Tag = "end";
                 btnRun.Text = "結束";
-                tdb.HistoryInsert(tools[randIndex].tool, '1');
-                return;
+                sim.Start();
             }
-            tools[randIndex].tool.remain -= 3;
-            if (tools[randIndex].tool.remain <= checkDatas[randIndex])
+            else
             {
-                tools[randIndex].tool.alarm = true;
-            }
-            tools[randIndex].CheckStatus();
-            Tool t = tools[randIndex].tool;
-            
-            tdb.UpdateTool(t);
-            if(tdb.HistoryInsert(t, '2')){
-                btnRun.Text = "使用";
+                simulateRun = false;
+                btnRun.Tag = "start";
+                btnRun.Text = "開始";
             }
         }
 
@@ -436,27 +431,51 @@ namespace Shelf
             aProp.SetValue(c, true, null);
         }
 
-        private void ArrangeContent(Tool t)
+        private void simulate()
         {
-            for(int i = 0; i < tools.Count; i++)
+            while (simulateRun)
             {
-                if(tools[i].tool.name == t.name)
-                {
-                    tools.Remove(tools[i]);
-                    
-                    
-                    for(int j = i; j < tools.Count; j++)
-                    {
-                        int row = j / 6;
-                        int col = j % 6;
+                Random rand = new Random();
+                int randNum = rand.Next(0, tools.Count);
+                Tool randTool = tools[randNum].tool;
+                UseTool(randTool.name);
+                Thread.Sleep(3000);
 
-                        table.Controls.Remove(table.GetControlFromPosition(col, row));
-                        table.Controls.Add(tools[j], col, row);
-                    }
-                    return;
-                }
+                ReturnTool(randTool.name, 3);
             }
         }
 
+        private void UseTool(string name)
+        {
+            Tool t = new Tool();
+            if(!tdb.GetToolByName(name, ref t))
+            {
+                return;
+            }
+            tdb.HistoryInsert(t, '1');
+        }
+
+        private void ReturnTool(string name, int decrease)
+        {
+            Tool t = new Tool();
+            if (!tdb.GetToolByName(name, ref t))
+            {
+                return;
+            }
+            t.remain -= decrease;
+
+            if (!tdb.UpdateTool(t))
+            {
+                return;
+            }
+
+            tdb.HistoryInsert(t, '2');
+        }
+
+        private void BtnHistoryClick(object sender, EventArgs e)
+        {
+            History history = new History();
+            history.Show();
+        }
     }
 }

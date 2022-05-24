@@ -10,6 +10,11 @@ namespace Shelf
     {
         private readonly string _connectStr = @"Data Source = 127.0.0.1; Initial Catalog = Shelf; User ID = MES2014; Password = PMCMES;"; //資料庫連線設定
 
+        /// <summary>
+        /// 取得所有刀具
+        /// </summary>
+        /// <param name="tools"></param>
+        /// <returns></returns>
         public bool GetAllTool(ref List<Tool> tools)
         {
             var query = "SELECT id, name, life, remain, alarm FROM tool";
@@ -73,6 +78,60 @@ namespace Shelf
                                 return true;
                             }
                             return false;
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("資料庫發生問題" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("發生錯誤" + ex.Message);
+            }
+
+            return false;
+        }
+
+
+        public bool GetAllHistory(ref List<ToolHistory> histories)
+        {
+            var query = "SELECT id, toolId, name, life, remain, alarm, startTime, endTime, mark, dateTime FROM history";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectStr))
+                {
+                    using (SqlCommand comm = new SqlCommand(query, conn))
+                    {
+                        conn.Open();
+                        using (SqlDataReader data = comm.ExecuteReader())
+                        {
+                            if (!data.HasRows)
+                            {
+                                return false;
+                            }
+                            while (data.Read())
+                            {
+                                ToolHistory history = new ToolHistory
+                                {
+                                    id = Convert.ToInt32(data["id"].ToString()),
+                                    toolId = Convert.ToInt32(data["toolId"].ToString()),
+                                    name = data["name"].ToString(),
+                                    life = Convert.ToInt32(data["life"].ToString()),
+                                    remain = Convert.ToInt32(data["remain"].ToString()),
+                                    alarm = Convert.ToBoolean(data["alarm"].ToString()),
+                                    mark = data["mark"].ToString(),
+                                    dateTime = Convert.ToDateTime(data["dateTime"].ToString())
+
+                                };
+                                if (!string.IsNullOrWhiteSpace(data["startTime"].ToString()))
+                                    history.startTime = Convert.ToDateTime(data["startTime"].ToString());
+                                if (!string.IsNullOrWhiteSpace(data["endTime"].ToString()))
+                                    history.endTime = Convert.ToDateTime(data["endTime"].ToString());
+                                histories.Add(history);
+                            }
+                            return true;
                         }
                     }
                 }
@@ -415,7 +474,6 @@ namespace Shelf
                                     if (!string.IsNullOrWhiteSpace(data["endTime"].ToString()))
                                         t.endTime = DateTime.Parse(data["endTime"].ToString());
                                 };
-
                                 return true;
                             }
                         }

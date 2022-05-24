@@ -33,14 +33,10 @@
             this.txtCount = new System.Windows.Forms.Label();
             this.panelStatus = new System.Windows.Forms.Panel();
             this.panelGrid = new System.Windows.Forms.Panel();
-            this.remainLifeBar = new CustomControls.CProgressBar();
             this.tipSetting = new System.Windows.Forms.ToolTip(this.components);
-            this.btnWarn = new System.Windows.Forms.PictureBox();
-            this.btnRun = new System.Windows.Forms.PictureBox();
+            this.remainLifeBar = new CustomControls.CProgressBar();
             this.panelStatus.SuspendLayout();
             this.panelGrid.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.btnWarn)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.btnRun)).BeginInit();
             this.SuspendLayout();
             // 
             // txtName
@@ -84,15 +80,13 @@
             // 
             // panelGrid
             // 
-            this.panelGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelGrid.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.panelGrid.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(241)))), ((int)(((byte)(241)))));
             this.panelGrid.Controls.Add(this.panelStatus);
             this.panelGrid.Controls.Add(this.txtName);
             this.panelGrid.Controls.Add(this.remainLifeBar);
             this.panelGrid.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.panelGrid.Location = new System.Drawing.Point(0, 27);
+            this.panelGrid.Location = new System.Drawing.Point(0, 0);
             this.panelGrid.Name = "panelGrid";
             this.panelGrid.Size = new System.Drawing.Size(174, 88);
             this.panelGrid.TabIndex = 8;
@@ -123,47 +117,17 @@
             this.remainLifeBar.Value = 50;
             this.remainLifeBar.Click += new System.EventHandler(this.SettingPage);
             // 
-            // btnWarn
-            // 
-            this.btnWarn.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnWarn.Image = global::Shelf.Properties.Resources.warning1;
-            this.btnWarn.Location = new System.Drawing.Point(29, 4);
-            this.btnWarn.Name = "btnWarn";
-            this.btnWarn.Size = new System.Drawing.Size(20, 20);
-            this.btnWarn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.btnWarn.TabIndex = 21;
-            this.btnWarn.TabStop = false;
-            this.btnWarn.Tag = "play";
-            this.btnWarn.Click += new System.EventHandler(this.BtnWarnClick);
-            // 
-            // btnRun
-            // 
-            this.btnRun.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnRun.Image = global::Shelf.Properties.Resources.play;
-            this.btnRun.Location = new System.Drawing.Point(3, 3);
-            this.btnRun.Name = "btnRun";
-            this.btnRun.Size = new System.Drawing.Size(20, 20);
-            this.btnRun.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.btnRun.TabIndex = 20;
-            this.btnRun.TabStop = false;
-            this.btnRun.Tag = "play";
-            this.btnRun.Click += new System.EventHandler(this.BtnRunClick);
-            // 
             // Grid
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(224)))), ((int)(((byte)(227)))));
-            this.Controls.Add(this.btnWarn);
-            this.Controls.Add(this.btnRun);
             this.Controls.Add(this.panelGrid);
             this.Name = "Grid";
-            this.Size = new System.Drawing.Size(174, 115);
+            this.Size = new System.Drawing.Size(174, 88);
             this.Load += new System.EventHandler(this.Grid_Load);
             this.panelStatus.ResumeLayout(false);
             this.panelGrid.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.btnWarn)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.btnRun)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -175,7 +139,5 @@
         private System.Windows.Forms.Panel panelStatus;
         private System.Windows.Forms.Panel panelGrid;
         private System.Windows.Forms.ToolTip tipSetting;
-        private System.Windows.Forms.PictureBox btnRun;
-        private System.Windows.Forms.PictureBox btnWarn;
     }
 }

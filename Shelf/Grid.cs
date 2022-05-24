@@ -91,12 +91,6 @@ namespace Shelf
                 panelStatus.BackColor = Color.FromArgb(216, 30, 91);
             }
 
-            if(tool.startTime != null && tool.endTime == null)
-            {
-                btnRun.Image = Properties.Resources.stop;
-                btnRun.Tag = "stop";
-            }
-
         }
 
 
@@ -125,29 +119,29 @@ namespace Shelf
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void BtnRunClick(object sender, EventArgs e)
-        {
-            if(btnRun.Tag.ToString() == "play")
-            {
-                if (!tdb.HistoryInsert(tool, '1'))
-                    return;
-                btnRun.Tag = "stop";
-                btnRun.Image = Properties.Resources.stop;
-                return;
-            }
+        //private void BtnRunClick(object sender, EventArgs e)
+        //{
+        //    if(btnRun.Tag.ToString() == "play")
+        //    {
+        //        if (!tdb.HistoryInsert(tool, '1'))
+        //            return;
+        //        btnRun.Tag = "stop";
+        //        btnRun.Image = Properties.Resources.stop;
+        //        return;
+        //    }
 
-            tool.remain -= 3;
-            if (!tdb.UpdateTool(tool))
-                return;
-            if (!tdb.HistoryInsert(tool, '2'))
-                return;
-            btnRun.Tag = "play";
-            Tool t = tool;
-            tdb.GetLastHistory(ref t);
-            tool = t;
-            btnRun.Image = Properties.Resources.play;
-            CheckStatus();
-        }
+        //    tool.remain -= 3;
+        //    if (!tdb.UpdateTool(tool))
+        //        return;
+        //    if (!tdb.HistoryInsert(tool, '2'))
+        //        return;
+        //    btnRun.Tag = "play";
+        //    Tool t = tool;
+        //    tdb.GetLastHistory(ref t);
+        //    tool = t;
+        //    btnRun.Image = Properties.Resources.play;
+        //    CheckStatus();
+        //}
 
         /// <summary>
         /// 觸發機台故障

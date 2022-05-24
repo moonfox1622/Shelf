@@ -35,6 +35,7 @@
             this.btnMain = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
             this.picNew = new System.Windows.Forms.PictureBox();
+            this.btnHistory = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picNew)).BeginInit();
             this.SuspendLayout();
@@ -64,6 +65,7 @@
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(130, 47);
             this.btnRun.TabIndex = 1;
+            this.btnRun.Tag = "start";
             this.btnRun.Text = "使用";
             this.btnRun.UseVisualStyleBackColor = false;
             this.btnRun.Click += new System.EventHandler(this.BtnRunClick);
@@ -88,6 +90,7 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
+            this.panel1.Controls.Add(this.btnHistory);
             this.panel1.Controls.Add(this.btnMain);
             this.panel1.Controls.Add(this.btnReset);
             this.panel1.Controls.Add(this.btnRun);
@@ -140,6 +143,22 @@
             this.picNew.Visible = false;
             this.picNew.Click += new System.EventHandler(this.NewTool);
             // 
+            // btnHistory
+            // 
+            this.btnHistory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnHistory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
+            this.btnHistory.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnHistory.Font = new System.Drawing.Font("微軟正黑體", 15.75F, System.Drawing.FontStyle.Bold);
+            this.btnHistory.ForeColor = System.Drawing.Color.White;
+            this.btnHistory.Location = new System.Drawing.Point(-5, 242);
+            this.btnHistory.Name = "btnHistory";
+            this.btnHistory.Size = new System.Drawing.Size(130, 47);
+            this.btnHistory.TabIndex = 7;
+            this.btnHistory.Text = "歷史紀錄";
+            this.btnHistory.UseVisualStyleBackColor = false;
+            this.btnHistory.Click += new System.EventHandler(this.BtnHistoryClick);
+            // 
             // Main
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -170,6 +189,7 @@
         private System.Windows.Forms.Button btnReset;
         private System.Windows.Forms.Button btnMain;
         private System.Windows.Forms.PictureBox picNew;
+        private System.Windows.Forms.Button btnHistory;
     }
 }
 
