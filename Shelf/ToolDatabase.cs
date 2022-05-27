@@ -97,7 +97,7 @@ namespace Shelf
 
         public bool GetAllHistory(ref List<ToolHistory> histories)
         {
-            var query = "SELECT id, toolId, name, life, remain, alarm, startTime, endTime, mark, dateTime FROM history";
+            var query = "SELECT id, toolId, name, life, remain, alarm, startTime, endTime, mark, dateTime FROM history WHERE mark != '0'";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))

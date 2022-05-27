@@ -475,7 +475,7 @@ namespace Shelf
         private void BtnHistoryClick(object sender, EventArgs e)
         {
             History history = new History();
-            history.Show();
+            history.ShowDialog();
         }
     }
 }
