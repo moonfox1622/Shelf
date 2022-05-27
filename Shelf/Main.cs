@@ -1,14 +1,12 @@
-﻿using System;
+﻿using Shelf.Model;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Shelf
@@ -445,31 +443,47 @@ namespace Shelf
             }
         }
 
-        private void UseTool(string name)
+        private Respond UseTool(string name)
         {
             Tool t = new Tool();
+            Respond respond = new Respond();
+
+
             if(!tdb.GetToolByName(name, ref t))
             {
-                return;
+                respond.statusCode = 1;
+                respond.message = "該刀具不存在";
+                return respond;
             }
             tdb.HistoryInsert(t, '1');
+            respond.statusCode = 0;
+            respond.message = "成功";
+            return respond;
         }
 
-        private void ReturnTool(string name, int decrease)
+        private Respond ReturnTool(string name, int decrease)
         {
             Tool t = new Tool();
+            Respond respond = new Respond();
             if (!tdb.GetToolByName(name, ref t))
             {
-                return;
+                respond.statusCode = 1;
+                respond.message = "該刀具不存在";
+                return respond;
             }
             t.remain -= decrease;
 
             if (!tdb.UpdateTool(t))
             {
-                return;
+                respond.statusCode = 2;
+                respond.message = "刀具狀態更新失敗";
+                return respond;
             }
 
             tdb.HistoryInsert(t, '2');
+            respond.statusCode = 0;
+            respond.message = "成功";
+            return respond;
         }
 
         private void BtnHistoryClick(object sender, EventArgs e)

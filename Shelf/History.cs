@@ -16,7 +16,6 @@ namespace Shelf
         ToolDatabase tdb = new ToolDatabase();
         private DataTable table = new DataTable();
         private BindingSource bs = new BindingSource();
-        private BackgroundWorker bw;
 
         public History()
         {
@@ -38,7 +37,6 @@ namespace Shelf
                 MessageBox.Show("讀取歷史資料失敗", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            int count = 1;
             foreach (ToolHistory th in histories)
             {
                 string mark = "";
@@ -67,8 +65,7 @@ namespace Shelf
                         break;
                 }
 
-                table.Rows.Add(count, th.name, th.life, th.remain, th.alarm, th.startTime, th.endTime, mark, th.dateTime);
-                count++;
+                table.Rows.Add(th.name, th.life, th.remain, th.alarm, th.startTime, th.endTime, mark, th.dateTime);
             }
             bs.DataSource = table;
             TableViewStyle();
@@ -84,11 +81,6 @@ namespace Shelf
 
                 if (row.Cells["alarm"].Value.ToString() == "True")
                 {
-                    //cellStyle.BackColor = Color.FromArgb(216, 30, 91);
-                    //cellStyle.ForeColor = Color.FromArgb(216, 30, 91);
-                    //cellStyle.SelectionBackColor = Color.FromArgb(216, 30, 91);
-                    //cellStyle.SelectionForeColor = Color.FromArgb(216, 30, 91);
-
                     buttonCell.Style.BackColor = Color.FromArgb(216, 30, 91);
                     buttonCell.Style.ForeColor = Color.FromArgb(216, 30, 91);
                     buttonCell.Style.SelectionBackColor = Color.FromArgb(216, 30, 91);
@@ -118,7 +110,6 @@ namespace Shelf
         private void TableViewStyle()
         {
             tableView.DataSource = bs;
-            tableView.Columns["id"].HeaderText = "ID";
             tableView.Columns["name"].HeaderText = "刀具名稱";
             tableView.Columns["life"].HeaderText = "最大損耗";
             tableView.Columns["remain"].HeaderText = "剩餘損耗";
@@ -129,7 +120,6 @@ namespace Shelf
             tableView.Columns["dateTime"].HeaderText = "紀錄時間";
 
             int width = 110;
-            tableView.Columns["id"].Width = width;
             tableView.Columns["name"].Width = width;
             tableView.Columns["life"].Width = width;
             tableView.Columns["remain"].Width = width;
@@ -156,12 +146,6 @@ namespace Shelf
             DataTable dt = new DataTable();
 
             DataColumn dc = new DataColumn();
-            dc.ColumnName = "id";
-            dc.DataType = dc.DataType = Type.GetType("System.Int32");
-            dt.Columns.Add(dc);
-
-            
-
             dc = new DataColumn();
             dc.ColumnName = "name";
             dt.Columns.Add(dc);
@@ -255,7 +239,7 @@ namespace Shelf
             {
                 DataGridViewCellCollection row = tableView.Rows[i].Cells;
                 selectedData.Rows.Add(
-                    i, row["name"].Value, row["life"].Value, row["remain"].Value, row["alarm"].Value, row["startTime"].Value, row["endTime"].Value, row["mark"].Value, row["dateTime"].Value
+                    row["name"].Value, row["life"].Value, row["remain"].Value, row["alarm"].Value, row["startTime"].Value, row["endTime"].Value, row["mark"].Value, row["dateTime"].Value
                     );
             }
 

@@ -97,6 +97,7 @@
     <Compile Include="LoadingForm.Designer.cs">
       <DependentUpon>LoadingForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\Respond.cs" />
     <Compile Include="NewTool.cs">
       <SubType>Form</SubType>
     </Compile>
