@@ -101,7 +101,7 @@ namespace Shelf
         /// <param name="e"></param>
         private void SettingPage(object sender, EventArgs e)
         {
-            Setting setting = new Setting { id = tool.id };
+            Setting setting = new Setting { name = tool.name };
             setting.ShowDialog();
             if (setting.isDelete)
             {

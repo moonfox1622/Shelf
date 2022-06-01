@@ -25,6 +25,13 @@ namespace Shelf
         private void HistoryShown(object sender, EventArgs e)
         {
             LoadData();
+            DateTime dateTime = DateTime.Today;
+            var thisWeekStart = dateTime.AddDays(-(int)dateTime.DayOfWeek);
+            var thisWeekEnd = thisWeekStart.AddDays(7).AddSeconds(-1);
+            startDateTimePicker.Value = thisWeekStart;
+            endDateTimePicker.Value = thisWeekEnd;
+
+            QuickSearch(sender, e);
         }
 
         private void LoadData()
@@ -42,25 +49,25 @@ namespace Shelf
                 string mark = "";
                 switch (th.mark)
                 {
-                    case "1":
+                    case '1':
                         mark = "取出刀具";
                         break;
-                    case "2":
+                    case '2':
                         mark = "放回刀具";
                         break;
-                    case "3":
+                    case '3':
                         mark = "執行換刀";
                         break;
-                    case "4":
+                    case '4':
                         mark = "新增刀具";
                         break;
-                    case "5":
+                    case '5':
                         mark = "刀具修改";
                         break;
-                    case "6":
+                    case '6':
                         mark = "刀具刪除";
                         break;
-                    case "7":
+                    case '7':
                         mark = "機台錯誤";
                         break;
                 }
@@ -211,7 +218,7 @@ namespace Shelf
 
             try
             {
-                bs.Filter = string.Format("(convert(id, 'System.String') LIKE '%{0}%' OR convert(name, 'System.String') LIKE '%{0}%' OR convert(life, 'System.String')  LIKE '%{0}%' OR convert(remain, 'System.String') LIKE '%{0}%' OR" +
+                bs.Filter = string.Format("(convert(name, 'System.String') LIKE '%{0}%' OR convert(life, 'System.String')  LIKE '%{0}%' OR convert(remain, 'System.String') LIKE '%{0}%' OR" +
                        " convert(mark, 'System.String') LIKE '%{0}%')", searchBox.Text);
                 if (!useAnyTime)
                     bs.Filter += string.Format("AND (dateTime >= '{0:yyyy-MM-dd} 00:00:00' AND dateTime <= '{1:yyyy-MM-dd} 23:59:59')", startDateTimePicker.Value, endDateTimePicker.Value);

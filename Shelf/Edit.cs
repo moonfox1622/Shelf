@@ -13,7 +13,7 @@ namespace Shelf
     public partial class Edit : UserControl
     {
         public int id { get; set; }
-
+        public string name { get; set; }
         Tool tool = new Tool();
         ToolDatabase tdb = new ToolDatabase();
 
@@ -24,7 +24,7 @@ namespace Shelf
 
         private void EditLoad(object sender, EventArgs e)
         {
-            tdb.GetToolById(id, ref tool);
+            tdb.GetToolByName(this.name, ref tool);
             txtName.Text = tool.name;
             txtLife.Value = tool.life;
             txtRemain.Value = tool.remain;
@@ -58,7 +58,6 @@ namespace Shelf
 
             tool = new Tool
             {
-                id = this.id,
                 name = txtName.Text,
                 life = Convert.ToInt32(txtLife.Value),
                 remain = Convert.ToInt32(txtRemain.Value),

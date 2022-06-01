@@ -8,7 +8,6 @@ namespace Shelf
 {
     class ToolHistory
     {
-        public int id { get; set; }
         public int toolId { get; set; }
         public string name { get; set; }
         public int life { get; set; }
@@ -16,7 +15,7 @@ namespace Shelf
         public bool alarm { get; set; }
         public Nullable<DateTime> startTime { get; set; }
         public Nullable<DateTime> endTime { get; set; }
-        public string mark { get; set; }
+        public char mark { get; set; }
         public DateTime dateTime { get; set; }
     }
 }

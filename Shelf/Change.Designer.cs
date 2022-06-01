@@ -29,13 +29,10 @@
         private void InitializeComponent()
         {
             this.btnChange = new System.Windows.Forms.Button();
-            this.txtRemain = new System.Windows.Forms.NumericUpDown();
             this.txtLife = new System.Windows.Forms.NumericUpDown();
-            this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.txtRemain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtLife)).BeginInit();
             this.SuspendLayout();
             // 
@@ -50,14 +47,6 @@
             this.btnChange.UseVisualStyleBackColor = true;
             this.btnChange.Click += new System.EventHandler(this.BtnChangeClick);
             // 
-            // txtRemain
-            // 
-            this.txtRemain.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold);
-            this.txtRemain.Location = new System.Drawing.Point(73, 244);
-            this.txtRemain.Name = "txtRemain";
-            this.txtRemain.Size = new System.Drawing.Size(100, 33);
-            this.txtRemain.TabIndex = 27;
-            // 
             // txtLife
             // 
             this.txtLife.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold);
@@ -65,16 +54,6 @@
             this.txtLife.Name = "txtLife";
             this.txtLife.Size = new System.Drawing.Size(100, 33);
             this.txtLife.TabIndex = 26;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label3.Location = new System.Drawing.Point(16, 210);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(105, 24);
-            this.label3.TabIndex = 23;
-            this.label3.Text = "剩餘壽命：";
             // 
             // label2
             // 
@@ -112,15 +91,12 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.txtName);
             this.Controls.Add(this.btnChange);
-            this.Controls.Add(this.txtRemain);
             this.Controls.Add(this.txtLife);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "Change";
             this.Size = new System.Drawing.Size(265, 361);
             this.Load += new System.EventHandler(this.ChangeLoad);
-            ((System.ComponentModel.ISupportInitialize)(this.txtRemain)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtLife)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -130,9 +106,7 @@
         #endregion
 
         private System.Windows.Forms.Button btnChange;
-        private System.Windows.Forms.NumericUpDown txtRemain;
         private System.Windows.Forms.NumericUpDown txtLife;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label txtName;

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -30,6 +31,7 @@ namespace Shelf
         private delegate void updateGridUI();
         private delegate void deleInitialContent(bool save);
 
+
         public Main()
         {
             InitializeComponent();
@@ -37,7 +39,11 @@ namespace Shelf
 
         private void MainShown(object sender, EventArgs e)
         {
-            SetDoubleBuffered(content);
+            //回傳本地資料指資料庫
+            Thread restoreThread = new Thread(SendLocalData);
+            restoreThread.Start();
+
+            //SetDoubleBuffered(content);
             initialContent(true);
             Thread thread = new Thread(ToolUpdate);
             thread.IsBackground = true;
@@ -85,25 +91,6 @@ namespace Shelf
             content.Controls.Add(table);
         }
 
-        private TableLayoutPanel reloadtable(List<Grid> tools)
-        {
-            TableLayoutPanel newtable = new TableLayoutPanel();
-            Point loc = new Point(0, 23);
-            for (int i = 0; i < tools.Count; i++)
-            {
-                tools[i].check = checkDatas[i];
-
-                newtable.Controls.Add(tools[i], i % 6, table.RowCount);
-
-                //設定方框位置，每六個換一行
-                if ((i + 1) % 6 == 0)
-                {
-                    newtable.RowCount += 1;
-                    newtable.RowStyles.Add(new RowStyle(SizeType.Absolute, 130));
-                }
-            }
-            return newtable;
-        }
 
         /// <summary>
         /// 取得刀具資料
@@ -143,6 +130,10 @@ namespace Shelf
             initialContent(false);
         }
 
+        /// <summary>
+        /// 刀具方框排版設定
+        /// </summary>
+        /// <returns></returns>
         private TableLayoutPanel initialTablePanel()
         {
             table = new TableLayoutPanel();
@@ -159,6 +150,9 @@ namespace Shelf
             return table;
         }
 
+        /// <summary>
+        /// 持續更新刀具資料
+        /// </summary>
         private void ToolUpdate()
         {
             while (keepUpdate)
@@ -344,83 +338,20 @@ namespace Shelf
         private void btnMainClick(object sender, EventArgs e)
         {
             initialContent(false);
-            picNew.Visible = false;
-        }
-
-
-        /// <summary>
-        /// 確認資料庫內是否有同樣資料存在
-        /// </summary>
-        /// <param name="t">刀具資料</param>
-        private bool SendData(Tool t)
-        {
-            Tool originData = new Tool();
-            bool check = tdb.GetToolByName(t.name, ref originData);
-            try
+            btnRun.Visible = true;
+            if (!keepUpdate)
             {
-                if (check)
-                {
-                    check = tdb.ChangeTool(t);
-                    //執行換刀
-
-                    if (check)
-                    {
-                        //新增換刀歷程
-                        tdb.HistoryInsert(originData, '2');
-                        tdb.HistoryInsert(t, '3');
-                        return true;
-                    }
-                }
-                else
-                {
-                    //insert data
-                    if (tdb.InsertTool(t))
-                    {
-                        Tool newTool = new Tool();
-                        tdb.GetToolByName(t.name, ref newTool);
-                        tdb.HistoryInsert(newTool, '1');
-                        return true;
-                    }
-                }
-            }catch(SqlException ex)
-            {
-                MessageBox.Show("資料庫發生問題" + ex.Message);
-            }catch(Exception ex)
-            {
-                MessageBox.Show("發生錯誤" + ex.Message);
-            }
-            return false;
-        }
-
-
-        /// <summary>
-        /// 新增刀具
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void NewTool(object sender, EventArgs e)
-        {
-            NewTool newTool = new NewTool();
-            newTool.ShowDialog();
-            if (newTool.hasNew)
-            {
-                Grid g = new Grid
-                {
-                    tool = newTool.tool
-                };
-                if (tools.Count % 6 == 0)
-                {
-                    table.RowCount += 1;
-                    table.RowStyles.Add(new RowStyle(SizeType.Absolute, 130));
-                }
-                table.Controls.Add(g, tools.Count % 6, table.RowCount);
-                tools.Add(g);
-                //lastDatas.Add(newTool.tool.remain);
-                Random randNum = new Random(); //隨機檢查數值
-                checkDatas.Add(randNum.Next(0, 49));
+                keepUpdate = true;
+                Thread thread = new Thread(ToolUpdate);
+                thread.IsBackground = true;
+                thread.Start();
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="c"></param>
         public static void SetDoubleBuffered(Control c)
         {
             if (SystemInformation.TerminalServerSession)
@@ -429,20 +360,33 @@ namespace Shelf
             aProp.SetValue(c, true, null);
         }
 
+        /// <summary>
+        /// 模擬刀具使用
+        /// </summary>
         private void simulate()
         {
+            int count = 0;
+            int decrease = 0;
             while (simulateRun)
             {
+                if (count % 3 == 0)
+                    decrease++;
                 Random rand = new Random();
                 int randNum = rand.Next(0, tools.Count);
                 Tool randTool = tools[randNum].tool;
                 UseTool(randTool.name);
                 Thread.Sleep(3000);
 
-                ReturnTool(randTool.name, 3);
+                ReturnTool(randTool.name, randTool.remain - decrease);
+                count++;
             }
         }
 
+        /// <summary>
+        /// 使用刀具
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         private Respond UseTool(string name)
         {
             Tool t = new Tool();
@@ -453,6 +397,7 @@ namespace Shelf
             {
                 respond.statusCode = 1;
                 respond.message = "該刀具不存在";
+
                 return respond;
             }
             tdb.HistoryInsert(t, '1');
@@ -461,7 +406,13 @@ namespace Shelf
             return respond;
         }
 
-        private Respond ReturnTool(string name, int decrease)
+        /// <summary>
+        /// 刀具使用完畢
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="remain"></param>
+        /// <returns></returns>
+        private Respond ReturnTool(string name, int remain)
         {
             Tool t = new Tool();
             Respond respond = new Respond();
@@ -471,7 +422,7 @@ namespace Shelf
                 respond.message = "該刀具不存在";
                 return respond;
             }
-            t.remain -= decrease;
+            t.remain = remain;
 
             if (!tdb.UpdateTool(t))
             {
@@ -486,10 +437,51 @@ namespace Shelf
             return respond;
         }
 
+        /// <summary>
+        /// 刀具歷史紀錄
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnHistoryClick(object sender, EventArgs e)
         {
             History history = new History();
             history.ShowDialog();
+        }
+
+        /// <summary>
+        /// 設定頁面
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnSettingClick(object sender, EventArgs e)
+        {
+            keepUpdate = false;
+            content.Controls.Clear();
+            SettingPage settingPage = new SettingPage();
+            settingPage.Dock = DockStyle.Fill;
+            content.Controls.Add(settingPage);
+            btnRun.Visible = false;
+            settingPage.GridViewStyle();
+        }
+
+        private void test_Click(object sender, EventArgs e)
+        {
+            Tool t = tools[0].tool;
+            TempSave tempSave = new TempSave();
+            tempSave.SaveTempHistory(t, '2');
+        }
+
+
+        private void SendLocalData()
+        {
+            if (!File.Exists("Temp\\TempHistoryData.csv"))
+                return;
+            if (!tdb.IsDatabaseConnected())
+            {
+
+            }                
+            TempSave tempSave = new TempSave();
+            tempSave.SaveToolTempInDatabase();
         }
     }
 }

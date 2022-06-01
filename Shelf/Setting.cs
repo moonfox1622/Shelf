@@ -12,7 +12,7 @@ namespace Shelf
 {
     public partial class Setting : Form
     {
-        public int id { get; set; }
+        public string name { get; set; }
         public bool isDelete { get; set; }
         ToolDatabase tdb = new ToolDatabase();
         public Setting()
@@ -24,7 +24,7 @@ namespace Shelf
         private void SettingShown(object sender, EventArgs e)
         {
             settingPanel.Controls.Clear();
-            Info info = new Info { id = this.id };
+            Info info = new Info { name = this.name };
             info.Dock = DockStyle.Fill;
             settingPanel.Controls.Add(info);
 
@@ -34,7 +34,7 @@ namespace Shelf
         private void InfoPage(object sender, EventArgs e)
         {
             settingPanel.Controls.Clear();
-            Info info = new Info { id = this.id};
+            Info info = new Info { name = this.name};
             info.Dock = DockStyle.Fill;
             settingPanel.Controls.Add(info);
 
@@ -46,7 +46,7 @@ namespace Shelf
         private void ChangePage(object sender, EventArgs e)
         {
             settingPanel.Controls.Clear();
-            Change change = new Change { id = this.id };
+            Change change = new Change { name = this.name };
             change.Dock = DockStyle.Fill;
             settingPanel.Controls.Add(change);
 
@@ -58,7 +58,7 @@ namespace Shelf
         private void EditPage(object sender, EventArgs e)
         {
             settingPanel.Controls.Clear();
-            Edit edit = new Edit { id = this.id };
+            Edit edit = new Edit { name = this.name };
             edit.Dock = DockStyle.Fill;
             settingPanel.Controls.Add(edit);
 
@@ -75,10 +75,10 @@ namespace Shelf
         private void DeleteTool(object sender, EventArgs e)
         {
             Tool t = new Tool();
-            tdb.GetToolById(id, ref t);
+            tdb.GetToolByName(name, ref t);
             if (MessageBox.Show("確定要刪除「" + t.name + "」嗎", "刪除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
-                if (tdb.DeleteTool(id))
+                if (tdb.DeleteTool(name))
                 {
                     tdb.HistoryInsert(t, '6');
                     isDelete = true;

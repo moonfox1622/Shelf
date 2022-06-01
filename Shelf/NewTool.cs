@@ -15,6 +15,7 @@ namespace Shelf
         public bool hasNew = false;
         public Tool tool { get; set; }
 
+
         public NewTool()
         {
             InitializeComponent();

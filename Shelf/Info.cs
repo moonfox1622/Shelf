@@ -12,7 +12,7 @@ namespace Shelf
 {
     public partial class Info : UserControl
     {
-        public int id { get; set; }
+        public string name { get; set; }
         Tool tool = new Tool();
         ToolDatabase tdb = new ToolDatabase();
         public Info()
@@ -22,7 +22,7 @@ namespace Shelf
 
         private void InfoLoad(object sender, EventArgs e)
         {
-            tdb.GetToolById(id, ref tool);
+            tdb.GetToolByName(name, ref tool);
             txtName.Text = tool.name;
             txtLife.Text = tool.life.ToString();
             txtRemain.Text = tool.remain.ToString();

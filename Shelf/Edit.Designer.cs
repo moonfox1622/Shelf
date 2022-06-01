@@ -32,11 +32,11 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.txtName = new System.Windows.Forms.TextBox();
             this.txtLife = new System.Windows.Forms.NumericUpDown();
             this.txtRemain = new System.Windows.Forms.NumericUpDown();
             this.txtStatus = new System.Windows.Forms.ComboBox();
             this.btnEdit = new System.Windows.Forms.Button();
+            this.txtName = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.txtLife)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtRemain)).BeginInit();
             this.SuspendLayout();
@@ -81,14 +81,6 @@
             this.label1.TabIndex = 8;
             this.label1.Text = "名稱：";
             // 
-            // txtName
-            // 
-            this.txtName.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold);
-            this.txtName.Location = new System.Drawing.Point(71, 50);
-            this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(100, 33);
-            this.txtName.TabIndex = 16;
-            // 
             // txtLife
             // 
             this.txtLife.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold);
@@ -129,15 +121,25 @@
             this.btnEdit.UseVisualStyleBackColor = true;
             this.btnEdit.Click += new System.EventHandler(this.BtnChangeClick);
             // 
+            // txtName
+            // 
+            this.txtName.AutoSize = true;
+            this.txtName.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.txtName.Location = new System.Drawing.Point(67, 51);
+            this.txtName.Name = "txtName";
+            this.txtName.Size = new System.Drawing.Size(66, 24);
+            this.txtName.TabIndex = 21;
+            this.txtName.Text = "Name";
+            // 
             // Edit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.txtName);
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.txtRemain);
             this.Controls.Add(this.txtLife);
-            this.Controls.Add(this.txtName);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -157,10 +159,10 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtName;
         private System.Windows.Forms.NumericUpDown txtLife;
         private System.Windows.Forms.NumericUpDown txtRemain;
         private System.Windows.Forms.ComboBox txtStatus;
         private System.Windows.Forms.Button btnEdit;
+        private System.Windows.Forms.Label txtName;
     }
 }

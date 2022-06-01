@@ -12,8 +12,7 @@ namespace Shelf
 {
     public partial class Change : UserControl
     {
-        public int id { get; set; }
-
+        public string name { get; set; }
         Tool tool = new Tool();
         ToolDatabase tdb = new ToolDatabase();
 
@@ -24,25 +23,20 @@ namespace Shelf
 
         private void ChangeLoad(object sender, EventArgs e)
         {
-            tdb.GetToolById(id, ref tool);
+            tdb.GetToolByName(name, ref tool);
             txtName.Text = tool.name;
             txtLife.Value = tool.life;
-            txtRemain.Value = tool.remain;
+            
         }
 
         private void BtnChangeClick(object sender, EventArgs e)
         {
-            if(txtLife.Value < txtRemain.Value)
-            {
-                MessageBox.Show("壽命不可小於剩餘壽命", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
 
             if (MessageBox.Show("確定要執行更換嗎", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
             {
                 return;
             }
-
+            tool.life = Convert.ToInt32(txtLife.Value);
             if (tdb.ChangeTool(tool))
             {
                 tdb.HistoryInsert(tool, '3');

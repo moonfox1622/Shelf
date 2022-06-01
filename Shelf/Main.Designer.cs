@@ -32,12 +32,11 @@
             this.btnRun = new System.Windows.Forms.Button();
             this.btnReupload = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnSetting = new System.Windows.Forms.Button();
+            this.btnHistory = new System.Windows.Forms.Button();
             this.btnMain = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
-            this.picNew = new System.Windows.Forms.PictureBox();
-            this.btnHistory = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picNew)).BeginInit();
             this.SuspendLayout();
             // 
             // content
@@ -90,6 +89,7 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
+            this.panel1.Controls.Add(this.btnSetting);
             this.panel1.Controls.Add(this.btnHistory);
             this.panel1.Controls.Add(this.btnMain);
             this.panel1.Controls.Add(this.btnReset);
@@ -99,6 +99,36 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(115, 1046);
             this.panel1.TabIndex = 0;
+            // 
+            // btnSetting
+            // 
+            this.btnSetting.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSetting.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
+            this.btnSetting.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSetting.Font = new System.Drawing.Font("微軟正黑體", 15.75F, System.Drawing.FontStyle.Bold);
+            this.btnSetting.ForeColor = System.Drawing.Color.White;
+            this.btnSetting.Location = new System.Drawing.Point(-5, 916);
+            this.btnSetting.Name = "btnSetting";
+            this.btnSetting.Size = new System.Drawing.Size(130, 47);
+            this.btnSetting.TabIndex = 8;
+            this.btnSetting.Text = "設定";
+            this.btnSetting.UseVisualStyleBackColor = false;
+            this.btnSetting.Click += new System.EventHandler(this.BtnSettingClick);
+            // 
+            // btnHistory
+            // 
+            this.btnHistory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
+            this.btnHistory.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnHistory.Font = new System.Drawing.Font("微軟正黑體", 15.75F, System.Drawing.FontStyle.Bold);
+            this.btnHistory.ForeColor = System.Drawing.Color.White;
+            this.btnHistory.Location = new System.Drawing.Point(-5, 242);
+            this.btnHistory.Name = "btnHistory";
+            this.btnHistory.Size = new System.Drawing.Size(130, 47);
+            this.btnHistory.TabIndex = 7;
+            this.btnHistory.Text = "歷史紀錄";
+            this.btnHistory.UseVisualStyleBackColor = false;
+            this.btnHistory.Click += new System.EventHandler(this.BtnHistoryClick);
             // 
             // btnMain
             // 
@@ -130,52 +160,21 @@
             this.btnReset.UseVisualStyleBackColor = false;
             this.btnReset.Click += new System.EventHandler(this.BtnResetClick);
             // 
-            // picNew
-            // 
-            this.picNew.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.picNew.Image = global::Shelf.Properties.Resources.add;
-            this.picNew.Location = new System.Drawing.Point(131, 12);
-            this.picNew.Name = "picNew";
-            this.picNew.Size = new System.Drawing.Size(50, 50);
-            this.picNew.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picNew.TabIndex = 1;
-            this.picNew.TabStop = false;
-            this.picNew.Visible = false;
-            this.picNew.Click += new System.EventHandler(this.NewTool);
-            // 
-            // btnHistory
-            // 
-            this.btnHistory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnHistory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
-            this.btnHistory.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnHistory.Font = new System.Drawing.Font("微軟正黑體", 15.75F, System.Drawing.FontStyle.Bold);
-            this.btnHistory.ForeColor = System.Drawing.Color.White;
-            this.btnHistory.Location = new System.Drawing.Point(-5, 242);
-            this.btnHistory.Name = "btnHistory";
-            this.btnHistory.Size = new System.Drawing.Size(130, 47);
-            this.btnHistory.TabIndex = 7;
-            this.btnHistory.Text = "歷史紀錄";
-            this.btnHistory.UseVisualStyleBackColor = false;
-            this.btnHistory.Click += new System.EventHandler(this.BtnHistoryClick);
-            // 
             // Main
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(224)))), ((int)(((byte)(227)))));
             this.ClientSize = new System.Drawing.Size(1904, 1041);
-            this.Controls.Add(this.picNew);
             this.Controls.Add(this.content);
             this.Controls.Add(this.panel1);
             this.Cursor = System.Windows.Forms.Cursors.Default;
             this.DoubleBuffered = true;
-            this.MinimumSize = new System.Drawing.Size(1050, 720);
+            this.MinimumSize = new System.Drawing.Size(1280, 720);
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Shelf";
             this.Shown += new System.EventHandler(this.MainShown);
             this.panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picNew)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -188,8 +187,8 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnReset;
         private System.Windows.Forms.Button btnMain;
-        private System.Windows.Forms.PictureBox picNew;
         private System.Windows.Forms.Button btnHistory;
+        private System.Windows.Forms.Button btnSetting;
     }
 }
 

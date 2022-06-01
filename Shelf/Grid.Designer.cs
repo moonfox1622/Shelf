@@ -33,8 +33,8 @@
             this.txtCount = new System.Windows.Forms.Label();
             this.panelStatus = new System.Windows.Forms.Panel();
             this.panelGrid = new System.Windows.Forms.Panel();
-            this.tipSetting = new System.Windows.Forms.ToolTip(this.components);
             this.remainLifeBar = new CustomControls.CProgressBar();
+            this.tipSetting = new System.Windows.Forms.ToolTip(this.components);
             this.panelStatus.SuspendLayout();
             this.panelGrid.SuspendLayout();
             this.SuspendLayout();
@@ -51,7 +51,6 @@
             this.txtName.TabIndex = 0;
             this.txtName.Text = "T1";
             this.txtName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.txtName.Click += new System.EventHandler(this.SettingPage);
             // 
             // txtCount
             // 
@@ -67,7 +66,6 @@
             this.txtCount.TabIndex = 3;
             this.txtCount.Text = "100";
             this.txtCount.TextAlign = System.Drawing.ContentAlignment.BottomRight;
-            this.txtCount.Click += new System.EventHandler(this.SettingPage);
             // 
             // panelStatus
             // 
@@ -90,7 +88,6 @@
             this.panelGrid.Name = "panelGrid";
             this.panelGrid.Size = new System.Drawing.Size(174, 88);
             this.panelGrid.TabIndex = 8;
-            this.panelGrid.Click += new System.EventHandler(this.SettingPage);
             // 
             // remainLifeBar
             // 
@@ -115,7 +112,6 @@
             this.remainLifeBar.SymbolBefore = "";
             this.remainLifeBar.TabIndex = 6;
             this.remainLifeBar.Value = 50;
-            this.remainLifeBar.Click += new System.EventHandler(this.SettingPage);
             // 
             // Grid
             // 

@@ -115,13 +115,12 @@ namespace Shelf
                             {
                                 ToolHistory history = new ToolHistory
                                 {
-                                    id = Convert.ToInt32(data["id"].ToString()),
                                     toolId = Convert.ToInt32(data["toolId"].ToString()),
                                     name = data["name"].ToString(),
                                     life = Convert.ToInt32(data["life"].ToString()),
                                     remain = Convert.ToInt32(data["remain"].ToString()),
                                     alarm = Convert.ToBoolean(data["alarm"].ToString()),
-                                    mark = data["mark"].ToString(),
+                                    mark = Convert.ToChar(data["mark"].ToString()),
                                     dateTime = Convert.ToDateTime(data["dateTime"].ToString())
 
                                 };
@@ -292,7 +291,7 @@ namespace Shelf
         /// <returns></returns>
         public bool EditTool(Tool t)
         {
-            var queryData = @"UPDATE tool SET name = @name, life = @life, remain = @remain, alarm = @alarm WHERE id = @id";
+            var queryData = @"UPDATE tool SET life = @life, remain = @remain, alarm = @alarm WHERE name = @name";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -303,11 +302,10 @@ namespace Shelf
                         if (conn.State != ConnectionState.Open)
                             conn.Open();
 
-                        comm.Parameters.AddWithValue("@name", t.name);
                         comm.Parameters.AddWithValue("@life", t.life);
                         comm.Parameters.AddWithValue("@remain", t.remain);
                         comm.Parameters.AddWithValue("@alarm", t.alarm);
-                        comm.Parameters.AddWithValue("@id", t.id);
+                        comm.Parameters.AddWithValue("@name", t.name);
                         int affectRows = comm.ExecuteNonQuery();
                         if (affectRows > 0)
                         {
@@ -501,12 +499,15 @@ namespace Shelf
         public bool HistoryInsert(Tool t, char mark)
         {
             bool result;
+            
             switch (mark)
             {
                 case '1':
+                    t.startTime = DateTime.Now;
                     result = HistoryUseTool(t);
                     break;
                 case '2':
+                    t.endTime = DateTime.Now;
                     result = HistoryReturnTool(t);
                     break;
                 default:
@@ -521,7 +522,7 @@ namespace Shelf
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        private bool HistoryUseTool(Tool t)
+        public bool HistoryUseTool(Tool t)
         {
             var query = @"INSERT INTO history(toolId, name, life, remain, alarm, startTime, mark) VALUES(@toolId, @name, @life, @remain, @alarm, @startTime, @mark)";
             try
@@ -537,7 +538,7 @@ namespace Shelf
                         comm.Parameters.AddWithValue("@life", t.life);
                         comm.Parameters.AddWithValue("@remain", t.remain);
                         comm.Parameters.AddWithValue("@alarm", t.alarm);
-                        comm.Parameters.AddWithValue("@startTime", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                        comm.Parameters.AddWithValue("@startTime",t.startTime);
                         comm.Parameters.AddWithValue("@mark", '1');
 
                         int affectRows = comm.ExecuteNonQuery();
@@ -556,6 +557,7 @@ namespace Shelf
             {
                 MessageBox.Show("發生錯誤" + ex.Message);
             }
+            SaveHistoryToLocal(t, '1');
             return false;
         }
 
@@ -564,13 +566,14 @@ namespace Shelf
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        private bool HistoryReturnTool(Tool t)
+        public bool HistoryReturnTool(Tool t)
         {
             var query = @"INSERT INTO history(toolId, name, life, remain, alarm, startTime, endTime, mark) VALUES(@toolId, @name, @life, @remain, @alarm, @startTime, @endTime, @mark)";
-            if (!GetLastHistory(ref t))
-                return false;
+            DateTime? endTime = t.endTime;
             try
             {
+                if (!GetLastHistory(ref t))
+                    throw new Exception();
                 using (SqlConnection conn = new SqlConnection(_connectStr))
                 {
                     using (SqlCommand comm = new SqlCommand(query, conn))
@@ -583,7 +586,7 @@ namespace Shelf
                         comm.Parameters.AddWithValue("@remain", t.remain);
                         comm.Parameters.AddWithValue("@alarm", t.alarm);
                         comm.Parameters.AddWithValue("@startTime", t.startTime);
-                        comm.Parameters.AddWithValue("@endTime", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                        comm.Parameters.AddWithValue("@endTime", endTime);
                         comm.Parameters.AddWithValue("@mark", '2');
 
                         int affectRows = comm.ExecuteNonQuery();
@@ -602,8 +605,18 @@ namespace Shelf
             {
                 MessageBox.Show("發生錯誤" + ex.Message);
             }
+            t.startTime = null;
+            t.endTime = endTime;
+            SaveHistoryToLocal(t, '2');
             return false;
         }
+
+        private void SaveHistoryToLocal(Tool t, char mark)
+        {
+            TempSave tempSave = new TempSave();
+            tempSave.SaveTempHistory(t, mark);
+        }
+
 
         /// <summary>
         /// 新增換刀歷史
@@ -751,16 +764,16 @@ namespace Shelf
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        public bool DeleteTool(int id)
+        public bool DeleteTool(string name)
         {
-            string query = "DELETE FROM tool WHERE id = @id";
+            string query = "DELETE FROM tool WHERE name = @name";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
                 {
                     using (SqlCommand comm = new SqlCommand(query, conn))
                     {
-                        comm.Parameters.AddWithValue("@id", id);
+                        comm.Parameters.AddWithValue("@name", name);
                         if (conn.State != ConnectionState.Open)
                             conn.Open();
                         int affectRows = comm.ExecuteNonQuery();
@@ -782,5 +795,22 @@ namespace Shelf
 
             return false;
         }
+
+        public bool IsDatabaseConnected()
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectStr))
+                {
+                    conn.Open();
+                    return true;
+                }
+            }catch (SqlException e)
+            {
+                return false;
+            }
+            
+        }
+
     }
 }
