@@ -1,6 +1,6 @@
 ﻿namespace Shelf
 {
-    partial class Info
+    partial class InfoUserControl
     {
         /// <summary> 
         /// 設計工具所需的變數。
@@ -35,7 +35,7 @@
             this.txtName = new System.Windows.Forms.Label();
             this.txtLife = new System.Windows.Forms.Label();
             this.txtRemain = new System.Windows.Forms.Label();
-            this.txtStatus = new System.Windows.Forms.Label();
+            this.txtAlarm = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -74,9 +74,9 @@
             this.label4.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label4.Location = new System.Drawing.Point(14, 241);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(67, 24);
+            this.label4.Size = new System.Drawing.Size(86, 24);
             this.label4.TabIndex = 3;
-            this.label4.Text = "狀態：";
+            this.label4.Text = "警戒值：";
             // 
             // txtName
             // 
@@ -108,21 +108,21 @@
             this.txtRemain.TabIndex = 6;
             this.txtRemain.Text = "Remain";
             // 
-            // txtStatus
+            // txtAlarm
             // 
-            this.txtStatus.AutoSize = true;
-            this.txtStatus.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.txtStatus.Location = new System.Drawing.Point(79, 279);
-            this.txtStatus.Name = "txtStatus";
-            this.txtStatus.Size = new System.Drawing.Size(67, 24);
-            this.txtStatus.TabIndex = 7;
-            this.txtStatus.Text = "Status";
+            this.txtAlarm.AutoSize = true;
+            this.txtAlarm.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.txtAlarm.Location = new System.Drawing.Point(79, 279);
+            this.txtAlarm.Name = "txtAlarm";
+            this.txtAlarm.Size = new System.Drawing.Size(66, 24);
+            this.txtAlarm.TabIndex = 7;
+            this.txtAlarm.Text = "Alarm";
             // 
             // Info
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.txtStatus);
+            this.Controls.Add(this.txtAlarm);
             this.Controls.Add(this.txtRemain);
             this.Controls.Add(this.txtLife);
             this.Controls.Add(this.txtName);
@@ -147,6 +147,6 @@
         private System.Windows.Forms.Label txtName;
         private System.Windows.Forms.Label txtLife;
         private System.Windows.Forms.Label txtRemain;
-        private System.Windows.Forms.Label txtStatus;
+        private System.Windows.Forms.Label txtAlarm;
     }
 }

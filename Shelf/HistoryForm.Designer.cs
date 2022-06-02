@@ -1,6 +1,6 @@
 ﻿namespace Shelf
 {
-    partial class History
+    partial class HistoryForm
     {
         /// <summary>
         /// Required designer variable.
@@ -38,14 +38,12 @@
             this.labelStartTime = new System.Windows.Forms.Label();
             this.labelEndTime = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.anyTimeSelect = new System.Windows.Forms.CheckBox();
             this.errorSelect = new System.Windows.Forms.CheckBox();
             this.btnDownload = new System.Windows.Forms.Button();
             this.fileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
+            this.btnSearch = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.tableView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -58,7 +56,6 @@
             this.tableView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.tableView.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(241)))), ((int)(((byte)(241)))));
             this.tableView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.tableView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
@@ -87,7 +84,8 @@
             this.tableView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.tableView.Size = new System.Drawing.Size(1240, 554);
             this.tableView.TabIndex = 0;
-            this.tableView.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.TableViewColClick);
+            this.tableView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.tableView_CellFormatting);
+            this.tableView.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.tableViewCellPainting);
             // 
             // searchBox
             // 
@@ -101,25 +99,23 @@
             // startDateTimePicker
             // 
             this.startDateTimePicker.CustomFormat = "YYYY-mm-dd";
-            this.startDateTimePicker.Location = new System.Drawing.Point(260, 33);
+            this.startDateTimePicker.Location = new System.Drawing.Point(108, 8);
             this.startDateTimePicker.Name = "startDateTimePicker";
             this.startDateTimePicker.Size = new System.Drawing.Size(121, 22);
             this.startDateTimePicker.TabIndex = 2;
-            this.startDateTimePicker.ValueChanged += new System.EventHandler(this.QuickSearch);
             // 
             // endDateTimePicker
             // 
-            this.endDateTimePicker.Location = new System.Drawing.Point(260, 60);
+            this.endDateTimePicker.Location = new System.Drawing.Point(108, 35);
             this.endDateTimePicker.Name = "endDateTimePicker";
             this.endDateTimePicker.Size = new System.Drawing.Size(121, 22);
             this.endDateTimePicker.TabIndex = 3;
-            this.endDateTimePicker.ValueChanged += new System.EventHandler(this.QuickSearch);
             // 
             // labelStartTime
             // 
             this.labelStartTime.AutoSize = true;
             this.labelStartTime.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.labelStartTime.Location = new System.Drawing.Point(164, 34);
+            this.labelStartTime.Location = new System.Drawing.Point(12, 9);
             this.labelStartTime.Name = "labelStartTime";
             this.labelStartTime.Size = new System.Drawing.Size(90, 21);
             this.labelStartTime.TabIndex = 4;
@@ -129,7 +125,7 @@
             // 
             this.labelEndTime.AutoSize = true;
             this.labelEndTime.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.labelEndTime.Location = new System.Drawing.Point(164, 60);
+            this.labelEndTime.Location = new System.Drawing.Point(12, 35);
             this.labelEndTime.Name = "labelEndTime";
             this.labelEndTime.Size = new System.Drawing.Size(90, 21);
             this.labelEndTime.TabIndex = 5;
@@ -145,49 +141,29 @@
             this.label3.TabIndex = 6;
             this.label3.Text = "搜尋：";
             // 
-            // anyTimeSelect
-            // 
-            this.anyTimeSelect.AutoSize = true;
-            this.anyTimeSelect.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.anyTimeSelect.Location = new System.Drawing.Point(168, 6);
-            this.anyTimeSelect.Name = "anyTimeSelect";
-            this.anyTimeSelect.Size = new System.Drawing.Size(93, 25);
-            this.anyTimeSelect.TabIndex = 7;
-            this.anyTimeSelect.Text = "不分時段";
-            this.anyTimeSelect.UseVisualStyleBackColor = true;
-            this.anyTimeSelect.CheckedChanged += new System.EventHandler(this.QuickSearch);
-            // 
             // errorSelect
             // 
             this.errorSelect.AutoSize = true;
             this.errorSelect.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.errorSelect.Location = new System.Drawing.Point(427, 56);
+            this.errorSelect.Location = new System.Drawing.Point(16, 63);
             this.errorSelect.Name = "errorSelect";
             this.errorSelect.Size = new System.Drawing.Size(93, 25);
             this.errorSelect.TabIndex = 8;
             this.errorSelect.Text = "異常紀錄";
             this.errorSelect.UseVisualStyleBackColor = true;
-            this.errorSelect.CheckedChanged += new System.EventHandler(this.QuickSearch);
             // 
             // btnDownload
             // 
             this.btnDownload.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnDownload.Font = new System.Drawing.Font("微軟正黑體", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnDownload.Location = new System.Drawing.Point(12, 36);
+            this.btnDownload.Location = new System.Drawing.Point(369, 25);
             this.btnDownload.Name = "btnDownload";
-            this.btnDownload.Size = new System.Drawing.Size(110, 45);
+            this.btnDownload.Size = new System.Drawing.Size(110, 46);
             this.btnDownload.TabIndex = 9;
             this.btnDownload.Text = "歷史下載";
             this.btnDownload.UseVisualStyleBackColor = true;
+            this.btnDownload.Visible = false;
             this.btnDownload.Click += new System.EventHandler(this.BtnDownloadClick);
-            // 
-            // label1
-            // 
-            this.label1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(89)))), ((int)(((byte)(201)))), ((int)(((byte)(165)))));
-            this.label1.Location = new System.Drawing.Point(1078, 652);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(25, 25);
-            this.label1.TabIndex = 10;
             // 
             // label2
             // 
@@ -196,16 +172,6 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(25, 25);
             this.label2.TabIndex = 11;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label4.Location = new System.Drawing.Point(1109, 656);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(42, 21);
-            this.label4.TabIndex = 12;
-            this.label4.Text = "正常";
             // 
             // label5
             // 
@@ -217,19 +183,29 @@
             this.label5.TabIndex = 13;
             this.label5.Text = "異常";
             // 
+            // btnSearch
+            // 
+            this.btnSearch.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSearch.Font = new System.Drawing.Font("微軟正黑體", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btnSearch.Location = new System.Drawing.Point(253, 25);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(110, 46);
+            this.btnSearch.TabIndex = 14;
+            this.btnSearch.Text = "條件搜尋";
+            this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Click += new System.EventHandler(this.BtnSearchClick);
+            // 
             // History
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(224)))), ((int)(((byte)(227)))));
             this.ClientSize = new System.Drawing.Size(1264, 681);
+            this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.btnDownload);
             this.Controls.Add(this.errorSelect);
-            this.Controls.Add(this.anyTimeSelect);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.labelEndTime);
             this.Controls.Add(this.labelStartTime);
@@ -259,13 +235,11 @@
         private System.Windows.Forms.Label labelStartTime;
         private System.Windows.Forms.Label labelEndTime;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.CheckBox anyTimeSelect;
         private System.Windows.Forms.CheckBox errorSelect;
         private System.Windows.Forms.Button btnDownload;
         private System.Windows.Forms.SaveFileDialog fileDialog;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button btnSearch;
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Shelf
 {
-    partial class Edit
+    partial class EditUserControl
     {
         /// <summary> 
         /// 設計工具所需的變數。
@@ -34,11 +34,12 @@
             this.label1 = new System.Windows.Forms.Label();
             this.txtLife = new System.Windows.Forms.NumericUpDown();
             this.txtRemain = new System.Windows.Forms.NumericUpDown();
-            this.txtStatus = new System.Windows.Forms.ComboBox();
             this.btnEdit = new System.Windows.Forms.Button();
             this.txtName = new System.Windows.Forms.Label();
+            this.txtAlarm = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.txtLife)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtRemain)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtAlarm)).BeginInit();
             this.SuspendLayout();
             // 
             // label4
@@ -47,9 +48,9 @@
             this.label4.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label4.Location = new System.Drawing.Point(14, 241);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(67, 24);
+            this.label4.Size = new System.Drawing.Size(86, 24);
             this.label4.TabIndex = 11;
-            this.label4.Text = "狀態：";
+            this.label4.Text = "警戒值：";
             // 
             // label3
             // 
@@ -97,19 +98,6 @@
             this.txtRemain.Size = new System.Drawing.Size(100, 33);
             this.txtRemain.TabIndex = 18;
             // 
-            // txtStatus
-            // 
-            this.txtStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.txtStatus.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold);
-            this.txtStatus.FormattingEnabled = true;
-            this.txtStatus.Items.AddRange(new object[] {
-            "正常",
-            "警告"});
-            this.txtStatus.Location = new System.Drawing.Point(71, 280);
-            this.txtStatus.Name = "txtStatus";
-            this.txtStatus.Size = new System.Drawing.Size(100, 32);
-            this.txtStatus.TabIndex = 19;
-            // 
             // btnEdit
             // 
             this.btnEdit.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
@@ -131,13 +119,21 @@
             this.txtName.TabIndex = 21;
             this.txtName.Text = "Name";
             // 
+            // txtAlarm
+            // 
+            this.txtAlarm.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold);
+            this.txtAlarm.Location = new System.Drawing.Point(71, 279);
+            this.txtAlarm.Name = "txtAlarm";
+            this.txtAlarm.Size = new System.Drawing.Size(100, 33);
+            this.txtAlarm.TabIndex = 22;
+            // 
             // Edit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.txtAlarm);
             this.Controls.Add(this.txtName);
             this.Controls.Add(this.btnEdit);
-            this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.txtRemain);
             this.Controls.Add(this.txtLife);
             this.Controls.Add(this.label4);
@@ -149,6 +145,7 @@
             this.Load += new System.EventHandler(this.EditLoad);
             ((System.ComponentModel.ISupportInitialize)(this.txtLife)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtRemain)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtAlarm)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -161,8 +158,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.NumericUpDown txtLife;
         private System.Windows.Forms.NumericUpDown txtRemain;
-        private System.Windows.Forms.ComboBox txtStatus;
         private System.Windows.Forms.Button btnEdit;
         private System.Windows.Forms.Label txtName;
+        private System.Windows.Forms.NumericUpDown txtAlarm;
     }
 }

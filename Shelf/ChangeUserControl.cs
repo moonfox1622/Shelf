@@ -10,13 +10,13 @@ using System.Windows.Forms;
 
 namespace Shelf
 {
-    public partial class Change : UserControl
+    public partial class ChangeUserControl : UserControl
     {
         public string name { get; set; }
         Tool tool = new Tool();
         ToolDatabase tdb = new ToolDatabase();
 
-        public Change()
+        public ChangeUserControl()
         {
             InitializeComponent();
         }
@@ -39,7 +39,7 @@ namespace Shelf
             tool.life = Convert.ToInt32(txtLife.Value);
             if (tdb.ChangeTool(tool))
             {
-                tdb.HistoryInsert(tool, '3');
+                //db.HistoryInsert(tool, '3');
                 MessageBox.Show("更換成功", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }

@@ -1,6 +1,6 @@
 ﻿namespace Shelf
 {
-    partial class Change
+    partial class ChangeUserControl
     {
         /// <summary> 
         /// 設計工具所需的變數。

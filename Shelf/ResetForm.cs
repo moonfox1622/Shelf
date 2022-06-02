@@ -10,10 +10,10 @@ using System.Windows.Forms;
 
 namespace Shelf
 {
-    public partial class Reset : Form
+    public partial class ResetForm : Form
     {
         public int resetCount { get; set; }
-        public Reset()
+        public ResetForm()
         {
             InitializeComponent();
         }

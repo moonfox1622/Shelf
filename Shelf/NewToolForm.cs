@@ -10,13 +10,13 @@ using System.Windows.Forms;
 
 namespace Shelf
 {
-    public partial class NewTool : Form
+    public partial class NewToolForm : Form
     {
         public bool hasNew = false;
         public Tool tool { get; set; }
 
 
-        public NewTool()
+        public NewToolForm()
         {
             InitializeComponent();
         }
@@ -55,10 +55,10 @@ namespace Shelf
                     name = txtName.Text,
                     life = Convert.ToInt32(txtLife.Value),
                     remain = Convert.ToInt32(txtRemain.Value),
-                    alarm = Convert.ToBoolean(txtAlarm.SelectedIndex)
+                    warning = Convert.ToInt32(txtAlarm.SelectedIndex)
                 };
                 tdb.InsertTool(tool);
-                tdb.HistoryInsert(tool, '4');
+                //tdb.HistoryInsert(tool, '4');
                 hasNew = true;
 
                 this.Close();

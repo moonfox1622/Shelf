@@ -89,32 +89,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Change.cs">
+    <Compile Include="ChangeUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Change.Designer.cs">
-      <DependentUpon>Change.cs</DependentUpon>
+    <Compile Include="ChangeUserControl.Designer.cs">
+      <DependentUpon>ChangeUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CProgressBar.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Delete.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Delete.Designer.cs">
-      <DependentUpon>Delete.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Edit.cs">
+    <Compile Include="EditUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Edit.Designer.cs">
-      <DependentUpon>Edit.cs</DependentUpon>
+    <Compile Include="EditUserControl.Designer.cs">
+      <DependentUpon>EditUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="History.cs">
+    <Compile Include="HistoryForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="History.Designer.cs">
-      <DependentUpon>History.cs</DependentUpon>
+    <Compile Include="HistoryForm.Designer.cs">
+      <DependentUpon>HistoryForm.cs</DependentUpon>
     </Compile>
     <Compile Include="LoadingForm.cs">
       <SubType>Form</SubType>
@@ -123,100 +117,97 @@
       <DependentUpon>LoadingForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\Respond.cs" />
-    <Compile Include="NewTool.cs">
+    <Compile Include="NewToolForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="NewTool.Designer.cs">
-      <DependentUpon>NewTool.cs</DependentUpon>
+    <Compile Include="NewToolForm.Designer.cs">
+      <DependentUpon>NewToolForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Setting.cs">
+    <Compile Include="SettingForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Setting.Designer.cs">
-      <DependentUpon>Setting.cs</DependentUpon>
+    <Compile Include="SettingForm.Designer.cs">
+      <DependentUpon>SettingForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="SettingPage.cs">
+    <Compile Include="SettingPageUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SettingPage.Designer.cs">
-      <DependentUpon>SettingPage.cs</DependentUpon>
+    <Compile Include="SettingPageUserControl.Designer.cs">
+      <DependentUpon>SettingPageUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="TempSave.cs" />
     <Compile Include="Model\Tool.cs" />
-    <Compile Include="Main.cs">
+    <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Main.Designer.cs">
-      <DependentUpon>Main.cs</DependentUpon>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Grid.cs">
+    <Compile Include="GridUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Grid.Designer.cs">
-      <DependentUpon>Grid.cs</DependentUpon>
+    <Compile Include="GridUserControl.Designer.cs">
+      <DependentUpon>GridUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Reset.cs">
+    <Compile Include="ResetForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Reset.Designer.cs">
-      <DependentUpon>Reset.cs</DependentUpon>
+    <Compile Include="ResetForm.Designer.cs">
+      <DependentUpon>ResetForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ToolDatabase.cs" />
-    <Compile Include="Info.cs">
+    <Compile Include="InfoUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Info.Designer.cs">
-      <DependentUpon>Info.cs</DependentUpon>
+    <Compile Include="InfoUserControl.Designer.cs">
+      <DependentUpon>InfoUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\ToolHistory.cs" />
-    <EmbeddedResource Include="Change.resx">
-      <DependentUpon>Change.cs</DependentUpon>
+    <EmbeddedResource Include="ChangeUserControl.resx">
+      <DependentUpon>ChangeUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Delete.resx">
-      <DependentUpon>Delete.cs</DependentUpon>
+    <EmbeddedResource Include="EditUserControl.resx">
+      <DependentUpon>EditUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Edit.resx">
-      <DependentUpon>Edit.cs</DependentUpon>
+    <EmbeddedResource Include="HistoryForm.resx">
+      <DependentUpon>HistoryForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="History.resx">
-      <DependentUpon>History.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Info.resx">
-      <DependentUpon>Info.cs</DependentUpon>
+    <EmbeddedResource Include="InfoUserControl.resx">
+      <DependentUpon>InfoUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LoadingForm.resx">
       <DependentUpon>LoadingForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Main.resx">
-      <DependentUpon>Main.cs</DependentUpon>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NewTool.resx">
-      <DependentUpon>NewTool.cs</DependentUpon>
+    <EmbeddedResource Include="NewToolForm.resx">
+      <DependentUpon>NewToolForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Grid.resx">
-      <DependentUpon>Grid.cs</DependentUpon>
+    <EmbeddedResource Include="GridUserControl.resx">
+      <DependentUpon>GridUserControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Reset.resx">
-      <DependentUpon>Reset.cs</DependentUpon>
+    <EmbeddedResource Include="ResetForm.resx">
+      <DependentUpon>ResetForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Setting.resx">
-      <DependentUpon>Setting.cs</DependentUpon>
+    <EmbeddedResource Include="SettingForm.resx">
+      <DependentUpon>SettingForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SettingPage.resx">
-      <DependentUpon>SettingPage.cs</DependentUpon>
+    <EmbeddedResource Include="SettingPageUserControl.resx">
+      <DependentUpon>SettingPageUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -279,6 +270,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\gears.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

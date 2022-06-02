@@ -10,14 +10,14 @@ using System.Windows.Forms;
 
 namespace Shelf
 {
-    public partial class Edit : UserControl
+    public partial class EditUserControl : UserControl
     {
         public int id { get; set; }
         public string name { get; set; }
         Tool tool = new Tool();
         ToolDatabase tdb = new ToolDatabase();
 
-        public Edit()
+        public EditUserControl()
         {
             InitializeComponent();
         }
@@ -28,7 +28,7 @@ namespace Shelf
             txtName.Text = tool.name;
             txtLife.Value = tool.life;
             txtRemain.Value = tool.remain;
-            txtStatus.SelectedIndex = Convert.ToInt32(tool.alarm);
+            txtAlarm.Value = tool.warning;
             
         }
 
@@ -61,12 +61,12 @@ namespace Shelf
                 name = txtName.Text,
                 life = Convert.ToInt32(txtLife.Value),
                 remain = Convert.ToInt32(txtRemain.Value),
-                alarm = Convert.ToBoolean(txtStatus.SelectedIndex)
+                warning = Convert.ToInt32(txtAlarm.Value)
             };
 
             if (tdb.EditTool(tool))
             {
-                tdb.HistoryInsert(tool, '5');
+                //tdb.HistoryInsert(tool, '5');
                 MessageBox.Show("修改成功", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }

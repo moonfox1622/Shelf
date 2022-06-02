@@ -1,6 +1,6 @@
 ﻿namespace Shelf
 {
-    partial class Main
+    partial class MainForm
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -30,7 +30,6 @@
         {
             this.content = new System.Windows.Forms.Panel();
             this.btnRun = new System.Windows.Forms.Button();
-            this.btnReupload = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnSetting = new System.Windows.Forms.Button();
             this.btnHistory = new System.Windows.Forms.Button();
@@ -69,21 +68,6 @@
             this.btnRun.UseVisualStyleBackColor = false;
             this.btnRun.Click += new System.EventHandler(this.BtnRunClick);
             // 
-            // btnReupload
-            // 
-            this.btnReupload.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
-            this.btnReupload.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnReupload.Font = new System.Drawing.Font("微軟正黑體", 15.75F, System.Drawing.FontStyle.Bold);
-            this.btnReupload.ForeColor = System.Drawing.Color.White;
-            this.btnReupload.Location = new System.Drawing.Point(-5, 189);
-            this.btnReupload.Name = "btnReupload";
-            this.btnReupload.Size = new System.Drawing.Size(130, 47);
-            this.btnReupload.TabIndex = 2;
-            this.btnReupload.Text = "重新上傳";
-            this.btnReupload.UseVisualStyleBackColor = false;
-            this.btnReupload.Visible = false;
-            this.btnReupload.Click += new System.EventHandler(this.BtnReuploadClick);
-            // 
             // panel1
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -94,7 +78,6 @@
             this.panel1.Controls.Add(this.btnMain);
             this.panel1.Controls.Add(this.btnReset);
             this.panel1.Controls.Add(this.btnRun);
-            this.panel1.Controls.Add(this.btnReupload);
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(115, 1046);
@@ -183,7 +166,6 @@
 
         private System.Windows.Forms.Panel content;
         private System.Windows.Forms.Button btnRun;
-        private System.Windows.Forms.Button btnReupload;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnReset;
         private System.Windows.Forms.Button btnMain;

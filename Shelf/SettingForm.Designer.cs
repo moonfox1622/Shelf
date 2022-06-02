@@ -1,6 +1,6 @@
 ﻿namespace Shelf
 {
-    partial class Setting
+    partial class SettingForm
     {
         /// <summary>
         /// Required designer variable.

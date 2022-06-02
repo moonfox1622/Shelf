@@ -12,16 +12,14 @@ using System.Windows.Forms;
 
 namespace Shelf
 {
-    public partial class Main : Form
+    public partial class MainForm : Form
     {
         //資料庫連線設定
         private readonly string _connectStr = @"Data Source = 127.0.0.1; Initial Catalog = Shelf; User ID = MES2014; Password = PMCMES;"; //資料庫連線設定
 
         //List<int> lastDatas = new List<int>(); //預防更新失敗之暫存資料
-        List<Grid> tools = new List<Grid>(); //刀具UserController List
+        List<GridUserControl> tools = new List<GridUserControl>(); //刀具UserController List
         List<int> checkDatas; //觸發警報數值(隨機生成)
-        //int updateCount = 0; //更新次數
-        int interruptIndex = 0; //更新資料庫失敗中斷點
         bool keepUpdate = true; //持續更新刀具資料
         TableLayoutPanel table = new TableLayoutPanel();
         ToolDatabase tdb = new ToolDatabase();
@@ -32,7 +30,7 @@ namespace Shelf
         private delegate void deleInitialContent(bool save);
 
 
-        public Main()
+        public MainForm()
         {
             InitializeComponent();
         }
@@ -58,14 +56,9 @@ namespace Shelf
         private void initialContent(bool save)
         {
             content.Controls.Clear();
-            tools = new List<Grid>();
+            tools = new List<GridUserControl>();
             LoadData(ref tools);
             
-            if (save)
-            {
-                UpdateStatus('0', tools);
-            }
-
             table = initialTablePanel();
 
             Random randNum = new Random();
@@ -98,7 +91,7 @@ namespace Shelf
         /// <param name="tools"></param>
         /// <param name="lastDatas"></param>
         /// <returns></returns>
-        private void LoadData(ref List<Grid> tools)
+        private void LoadData(ref List<GridUserControl> tools)
         {
             List<Tool> toolsData = new List<Tool>();
             if (!tdb.GetAllTool(ref toolsData))
@@ -111,7 +104,7 @@ namespace Shelf
             {
                 Tool t = toolsData[i];
                 tdb.GetLastHistory(ref t);
-                Grid g = new Grid
+                GridUserControl g = new GridUserControl
                 {
                     tool = t
                 };
@@ -172,7 +165,7 @@ namespace Shelf
                     tools[i].tool.name = toolData[i].name;
                     tools[i].tool.life = toolData[i].life;
                     tools[i].tool.remain = toolData[i].remain;
-                    tools[i].tool.alarm = toolData[i].alarm;
+                    tools[i].tool.warning = toolData[i].warning;
                     Invoke(new updateGridUI(tools[i].CheckStatus));
                 }
                 Thread.Sleep(5000);
@@ -202,55 +195,6 @@ namespace Shelf
             }
         }
 
-        /// <summary>
-        /// 更新狀態
-        /// </summary>
-        /// <param name="start"></param>
-        /// <param name="tools"></param>
-        private void UpdateStatus(char start, List<Grid> tools)
-        {
-            
-            try {
-                while (interruptIndex < tools.Count) 
-                { 
-                    if (!tdb.UpdateTool(tools[interruptIndex].tool))
-                    {
-                        MessageBox.Show("儲存發生錯誤，請進行重新上傳");
-                        btnReupload.Visible = true;
-                        btnRun.Enabled = false;
-                        throw new Exception("儲存失敗");
-                    }
-                        
-                    if (!tdb.HistoryInsert(tools[interruptIndex].tool, start))
-                    {
-                        MessageBox.Show("儲存發生錯誤，請進行重新上傳");
-                        btnReupload.Visible = true;
-                        btnRun.Enabled = false;
-                        throw new Exception("儲存失敗");
-                    }
-                    interruptIndex++;
-                }
-                interruptIndex = 0;
-                btnReupload.Visible = false;
-                btnRun.Enabled = true;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("儲存發生錯誤，請進行重新上傳：" + ex.Message);
-                btnReupload.Visible = true;
-                btnRun.Enabled = false;
-            }
-        }
-
-        /// <summary>
-        /// 重新上傳
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void BtnReuploadClick(object sender, EventArgs e)
-        {
-            UpdateStatus('0', tools);
-        }
 
         /// <summary>
         /// 重新設定刀具庫
@@ -259,7 +203,7 @@ namespace Shelf
         /// <param name="e"></param>
         private void BtnResetClick(object sender, EventArgs e)
         {
-            Reset reset = new Reset();
+            ResetForm reset = new ResetForm();
             reset.ShowDialog();
             if (reset.resetCount != 0)
             {
@@ -270,12 +214,13 @@ namespace Shelf
                 for (int i = 0; i < reset.resetCount; i++)
                 {
                     int randLife = randNum.Next(80, 100);
+                    int randAlarm = randNum.Next(0, 50);
                     Tool data = new Tool
                     {
                         name = "I" + i,
                         life = randLife,
                         remain = randLife,
-                        alarm = true
+                        warning = randAlarm
                     };
                     newDatas.Add(data);
                 }
@@ -293,14 +238,14 @@ namespace Shelf
 
                         foreach (Tool data in newDatas)
                         {
-                            query = @"INSERT INTO tool(id, name, life, remain, alarm) VALUES (@id, @name, @life, @remain, @alarm)";
+                            query = @"INSERT INTO tool(id, name, life, remain, warning) VALUES (@id, @name, @life, @remain, @warning)";
                             using (SqlCommand comm = new SqlCommand(query, conn))
                             {
                                 comm.Parameters.AddWithValue("@id", insertCount);
                                 comm.Parameters.AddWithValue("@name", data.name);
                                 comm.Parameters.AddWithValue("@life", data.life);
                                 comm.Parameters.AddWithValue("@remain", data.remain);
-                                comm.Parameters.AddWithValue("@alarm", 0);
+                                comm.Parameters.AddWithValue("@warning", data.warning);
                                 insertCount += comm.ExecuteNonQuery();
                             }
                         }
@@ -349,35 +294,23 @@ namespace Shelf
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="c"></param>
-        public static void SetDoubleBuffered(Control c)
-        {
-            if (SystemInformation.TerminalServerSession)
-                return;
-            PropertyInfo aProp = typeof(Control).GetProperty("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance);
-            aProp.SetValue(c, true, null);
-        }
-
-        /// <summary>
         /// 模擬刀具使用
         /// </summary>
         private void simulate()
         {
             int count = 0;
-            int decrease = 0;
+            
             while (simulateRun)
             {
-                if (count % 3 == 0)
-                    decrease++;
                 Random rand = new Random();
+                int decrease = rand.Next(3, 6);
                 int randNum = rand.Next(0, tools.Count);
                 Tool randTool = tools[randNum].tool;
-                UseTool(randTool.name);
+                UseTool(randTool, DateTime.Now);
                 Thread.Sleep(3000);
-
-                ReturnTool(randTool.name, randTool.remain - decrease);
+                randTool.remain -= decrease;
+                ReturnTool(randTool, DateTime.Now);
+                
                 count++;
             }
         }
@@ -387,23 +320,25 @@ namespace Shelf
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        private Respond UseTool(string name)
+        private bool UseTool(Tool t, DateTime startTime)
         {
-            Tool t = new Tool();
-            Respond respond = new Respond();
-
-
-            if(!tdb.GetToolByName(name, ref t))
+            if (!tdb.checkExist(t.name))
             {
-                respond.statusCode = 1;
-                respond.message = "該刀具不存在";
-
-                return respond;
+                MessageBox.Show("該刀具不存在");
+                return false;
             }
-            tdb.HistoryInsert(t, '1');
-            respond.statusCode = 0;
-            respond.message = "成功";
-            return respond;
+
+            foreach(GridUserControl g in tools)
+            {
+                if (g.tool.name == t.name)
+                {
+                    Invoke(new updateGridUI(g.ToolUse));
+                    g.tool.startTime = startTime;
+                    break;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -412,29 +347,41 @@ namespace Shelf
         /// <param name="name"></param>
         /// <param name="remain"></param>
         /// <returns></returns>
-        private Respond ReturnTool(string name, int remain)
+        private bool ReturnTool(Tool t, DateTime endTime)
         {
-            Tool t = new Tool();
-            Respond respond = new Respond();
-            if (!tdb.GetToolByName(name, ref t))
+            Tool lastToolStatus = new Tool();
+            if (!tdb.GetToolByName(t.name, ref lastToolStatus))
             {
-                respond.statusCode = 1;
-                respond.message = "該刀具不存在";
-                return respond;
+                MessageBox.Show("該刀具不存在");
+                return false;
             }
-            t.remain = remain;
-
-            if (!tdb.UpdateTool(t))
+            
+            ToolHistory history = new ToolHistory();
+            foreach (GridUserControl g in tools)
             {
-                respond.statusCode = 2;
-                respond.message = "刀具狀態更新失敗";
-                return respond;
+                if (g.tool.name == t.name)
+                {
+                    if (!tdb.UpdateTool(t))
+                        return false;
+                    history = new ToolHistory
+                    {
+                        toolId = t.id,
+                        name = t.name,
+                        beforeUseLife = lastToolStatus.remain,
+                        afterUseLife = t.remain,
+                        startTime = g.tool.startTime,
+                        endTime = endTime,
+                        warning = t.warning,
+                        mark = '1'
+                    };
+                    Invoke(new updateGridUI(g.ToolUnuse));
+                    break;
+                }
             }
 
-            tdb.HistoryInsert(t, '2');
-            respond.statusCode = 0;
-            respond.message = "成功";
-            return respond;
+            bool result = tdb.HistoryUseTool(history);
+
+            return result;
         }
 
         /// <summary>
@@ -444,7 +391,7 @@ namespace Shelf
         /// <param name="e"></param>
         private void BtnHistoryClick(object sender, EventArgs e)
         {
-            History history = new History();
+            HistoryForm history = new HistoryForm();
             history.ShowDialog();
         }
 
@@ -457,18 +404,11 @@ namespace Shelf
         {
             keepUpdate = false;
             content.Controls.Clear();
-            SettingPage settingPage = new SettingPage();
+            SettingPageUserControl settingPage = new SettingPageUserControl();
             settingPage.Dock = DockStyle.Fill;
             content.Controls.Add(settingPage);
             btnRun.Visible = false;
             settingPage.GridViewStyle();
-        }
-
-        private void test_Click(object sender, EventArgs e)
-        {
-            Tool t = tools[0].tool;
-            TempSave tempSave = new TempSave();
-            tempSave.SaveTempHistory(t, '2');
         }
 
 
@@ -481,7 +421,7 @@ namespace Shelf
 
             }                
             TempSave tempSave = new TempSave();
-            tempSave.SaveToolTempInDatabase();
+            //tempSave.SaveToolTempInDatabase();
         }
     }
 }

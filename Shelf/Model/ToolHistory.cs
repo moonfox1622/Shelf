@@ -10,11 +10,11 @@ namespace Shelf
     {
         public int toolId { get; set; }
         public string name { get; set; }
-        public int life { get; set; }
-        public int remain { get; set; }
-        public bool alarm { get; set; }
-        public Nullable<DateTime> startTime { get; set; }
-        public Nullable<DateTime> endTime { get; set; }
+        public int beforeUseLife { get; set; }
+        public int afterUseLife { get; set; }
+        public int warning { get; set; }
+        public DateTime startTime { get; set; }
+        public DateTime endTime { get; set; }
         public char mark { get; set; }
         public DateTime dateTime { get; set; }
     }

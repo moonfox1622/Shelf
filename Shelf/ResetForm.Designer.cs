@@ -1,6 +1,6 @@
 ﻿namespace Shelf
 {
-    partial class Reset
+    partial class ResetForm
     {
         /// <summary>
         /// Required designer variable.

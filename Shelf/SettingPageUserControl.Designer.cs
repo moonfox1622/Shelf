@@ -1,6 +1,6 @@
 ﻿namespace Shelf
 {
-    partial class SettingPage
+    partial class SettingPageUserControl
     {
         /// <summary> 
         /// 設計工具所需的變數。

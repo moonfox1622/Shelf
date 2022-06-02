@@ -61,8 +61,9 @@ namespace Shelf
 
                     //row.CreateCell(0, CellType.Numeric).SetCellValue(Convert.ToInt32(dt.Rows[i][0].ToString())); //id
                     row.CreateCell(0, CellType.String).SetCellValue(dt.Rows[i][0].ToString()); //name
-                    row.CreateCell(1, CellType.Numeric).SetCellValue(Convert.ToInt32(dt.Rows[i][1].ToString())); //life
-                    row.CreateCell(2, CellType.Numeric).SetCellValue(Convert.ToInt32(dt.Rows[i][2].ToString())); //remain
+                    row.CreateCell(1, CellType.Numeric).SetCellValue(Convert.ToInt32(dt.Rows[i][1].ToString())); //beforeUseLife
+                    row.CreateCell(2, CellType.Numeric).SetCellValue(Convert.ToInt32(dt.Rows[i][2].ToString())); //afterUseLife
+                    row.CreateCell(3, CellType.Numeric).SetCellValue(Convert.ToInt32(dt.Rows[i][3].ToString())); //warning
                     row.CreateCell(4, CellType.String).SetCellValue(dt.Rows[i][4].ToString()); //startTime
                     row.CreateCell(5, CellType.String).SetCellValue(dt.Rows[i][5].ToString()); //endTime
                     row.CreateCell(6, CellType.String).SetCellValue(dt.Rows[i][6].ToString()); //mark
@@ -70,27 +71,8 @@ namespace Shelf
 
                     ICellStyle cellStyle = workbook.CreateCellStyle();
                     IFont font = workbook.CreateFont();
-                    font.FontName = "新細明體";
-                    if (dt.Rows[i][3].ToString() == "True")
-                    {
-                        row.CreateCell(3, CellType.String).SetCellValue("警告");//alarm
-                        font.Color = HSSFColor.Plum.Index;
-                        cellStyle.SetFont(font);
-                        cellStyle.FillForegroundColor = HSSFColor.Rose.Index;
-                        cellStyle.FillPattern = FillPattern.SolidForeground;
-                        for (int j = 0; j < dt.Columns.Count; j++)
-                            row.GetCell(j).CellStyle = cellStyle;
-                    }
-                    else
-                    {
-                        ICell cell = row.CreateCell(3, CellType.String);
-                        font.Color = HSSFColor.Green.Index;
-                        cellStyle.SetFont(font);
-                        cellStyle.FillForegroundColor = HSSFColor.LightGreen.Index;
-                        cellStyle.FillPattern = FillPattern.SolidForeground;
-                        row.CreateCell(3, CellType.String).SetCellValue("正常");//alarm
-                        row.GetCell(3).CellStyle = cellStyle;
-                    }
+                    font.FontName = "微軟正黑體";
+                    
                     double precentage = ((double)(i+1) / (double)dt.Rows.Count) * 100;
                     downloadProgressBar.Value = i+1;
                     txtPercentage.Text = string.Format("{0}% 已完成", ((int)precentage).ToString());

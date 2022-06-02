@@ -1,6 +1,6 @@
 ﻿namespace Shelf
 {
-    partial class NewTool
+    partial class NewToolForm
     {
         /// <summary>
         /// Required designer variable.

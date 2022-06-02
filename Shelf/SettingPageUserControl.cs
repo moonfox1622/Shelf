@@ -10,13 +10,13 @@ using System.Windows.Forms;
 
 namespace Shelf
 {
-    public partial class SettingPage : UserControl
+    public partial class SettingPageUserControl : UserControl
     {
         ToolDatabase tdb = new ToolDatabase();
         private DataTable toolData = new DataTable();
         private BindingSource bs = new BindingSource();
 
-        public SettingPage()
+        public SettingPageUserControl()
         {
             InitializeComponent();
         }
@@ -38,17 +38,17 @@ namespace Shelf
             dt.Columns.Add(dc);
 
             dc = new DataColumn();
-            dc.ColumnName = "life";
+            dc.ColumnName = "beforeUseLife";
             dc.DataType = dc.DataType = Type.GetType("System.Int32");
             dt.Columns.Add(dc);
 
             dc = new DataColumn();
-            dc.ColumnName = "remain";
+            dc.ColumnName = "afterUseLife";
             dc.DataType = dc.DataType = Type.GetType("System.Int32");
             dt.Columns.Add(dc);
 
             dc = new DataColumn();
-            dc.ColumnName = "alarm";
+            dc.ColumnName = "warning";
             dt.Columns.Add(dc);
 
             dc = new DataColumn();
@@ -65,7 +65,7 @@ namespace Shelf
 
             for(int i = 0; i < tools.Count; i++)
             {
-                dt.Rows.Add(tools[i].name, tools[i].life, tools[i].remain, tools[i].alarm, "設定");
+                dt.Rows.Add(tools[i].name, tools[i].life, tools[i].remain, tools[i].warning, "設定");
             }
             return dt;
         }
@@ -81,13 +81,13 @@ namespace Shelf
 
             //Set column header name
             toolGridView.Columns["name"].HeaderText = "刀具名稱";
-            toolGridView.Columns["life"].HeaderText = "最大損耗";
-            toolGridView.Columns["remain"].HeaderText = "剩餘損耗";
-            toolGridView.Columns["alarm"].HeaderText = "警報狀態";
+            toolGridView.Columns["beforeUseLife"].HeaderText = "最大損耗";
+            toolGridView.Columns["afterUseLife"].HeaderText = "剩餘損耗";
+            toolGridView.Columns["warning"].HeaderText = "警報狀態";
             toolGridView.Columns["setting"].HeaderText = "設定";
 
             int width = 110;
-            toolGridView.Columns["alarm"].Width = width;
+            toolGridView.Columns["warning"].Width = width;
             toolGridView.Columns["setting"].Width = width;
         }
 
@@ -96,12 +96,12 @@ namespace Shelf
         /// </summary>
         public void GridViewStyle()
         {
-            //Set Cell alarm, setting as buttonCell
+            //Set Cell warning, setting as buttonCell
             foreach (DataGridViewRow row in toolGridView.Rows)
             {
                 DataGridViewButtonCell alarmButtonCell = new DataGridViewButtonCell();
 
-                if (row.Cells["alarm"].Value.ToString() == "True")
+                if (row.Cells["warning"].Value.ToString() == "True")
                 {
                     alarmButtonCell.Style.BackColor = Color.FromArgb(216, 30, 91);
                     alarmButtonCell.Style.ForeColor = Color.FromArgb(216, 30, 91);
@@ -127,7 +127,7 @@ namespace Shelf
                     row.DefaultCellStyle.SelectionBackColor = SystemColors.GradientActiveCaption;
                     row.DefaultCellStyle.SelectionForeColor = Color.Black;
                 }
-                row.Cells["alarm"] = alarmButtonCell;
+                row.Cells["warning"] = alarmButtonCell;
                 DataGridViewButtonCell settingButtonCell = new DataGridViewButtonCell();
                 settingButtonCell.FlatStyle = FlatStyle.Popup;
                 settingButtonCell.Style.BackColor = Color.FromArgb(223, 224, 227);
@@ -156,7 +156,7 @@ namespace Shelf
             int row = e.RowIndex;
             if (col == 4 && row != -1)
             {
-                Setting setting = new Setting
+                SettingForm setting = new SettingForm
                 {
                     name = toolGridView[0, row].Value.ToString()
                 };
@@ -169,21 +169,21 @@ namespace Shelf
                 Tool t = new Tool();
                 tdb.GetToolByName(toolGridView[0, row].Value.ToString(), ref t);
                 toolGridView.Rows[row].Cells["name"].Value = t.name;
-                toolGridView.Rows[row].Cells["life"].Value = t.life;
-                toolGridView.Rows[row].Cells["remain"].Value = t.remain;
-                toolGridView.Rows[row].Cells["alarm"].Value = t.alarm;
+                toolGridView.Rows[row].Cells["beforeUseLife"].Value = t.life;
+                toolGridView.Rows[row].Cells["afterUseLife"].Value = t.remain;
+                toolGridView.Rows[row].Cells["warning"].Value = t.warning;
                 GridViewStyle();
             }
         }
 
         private void AddTool(object sender, EventArgs e)
         {
-            NewTool newTool = new NewTool();
+            NewToolForm newTool = new NewToolForm();
             newTool.ShowDialog();
             if (newTool.hasNew)
             {
                 Tool t = newTool.tool;
-                toolData.Rows.Add(t.name, t.life, t.remain, t.alarm, "設定");
+                toolData.Rows.Add(t.name, t.life, t.remain, t.warning, "設定");
                 GridViewStyle();
             }
         }

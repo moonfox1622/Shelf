@@ -11,35 +11,48 @@ using System.Windows.Forms;
 
 namespace Shelf
 {
-    public partial class History : Form
+    public partial class HistoryForm : Form
     {
         ToolDatabase tdb = new ToolDatabase();
         private DataTable table = new DataTable();
         private BindingSource bs = new BindingSource();
 
-        public History()
+        public HistoryForm()
         {
             InitializeComponent();
         }
 
         private void HistoryShown(object sender, EventArgs e)
         {
-            LoadData();
             DateTime dateTime = DateTime.Today;
             var thisWeekStart = dateTime.AddDays(-(int)dateTime.DayOfWeek);
             var thisWeekEnd = thisWeekStart.AddDays(7).AddSeconds(-1);
             startDateTimePicker.Value = thisWeekStart;
             endDateTimePicker.Value = thisWeekEnd;
-
-            QuickSearch(sender, e);
         }
 
-        private void LoadData()
+
+        private void BtnSearchClick(object sender, EventArgs e)
+        {
+            DateTime startTime = startDateTimePicker.Value.Date;
+            DateTime endTime = endDateTimePicker.Value.Date;
+            bool isWarning = errorSelect.Checked;
+            LoadData(startTime, endTime, isWarning);
+            btnDownload.Visible = true;
+        }
+
+        /// <summary>
+        /// 依照條件讀取資料
+        /// </summary>
+        /// <param name="startTime"></param>
+        /// <param name="endTime"></param>
+        /// <param name="isWarning"></param>
+        private void LoadData(DateTime startTime, DateTime endTime, bool isWarning)
         {
             table = HistoryDataTable();
             List<ToolHistory> histories = new List<ToolHistory>();
 
-            if (!tdb.GetAllHistory(ref histories))
+            if (!tdb.GetHistory(ref histories, startTime, endTime, isWarning))
             {
                 MessageBox.Show("讀取歷史資料失敗", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -72,42 +85,33 @@ namespace Shelf
                         break;
                 }
 
-                table.Rows.Add(th.name, th.life, th.remain, th.alarm, th.startTime, th.endTime, mark, th.dateTime);
+                table.Rows.Add(th.name, th.beforeUseLife, th.afterUseLife, th.warning, th.startTime.ToString("yyyy-MM-dd HH:mm:ss"), th.endTime.ToString("yyyy-MM-dd HH:mm:ss"), mark, th.dateTime.ToString("yyyy-MM-dd HH:mm:ss"));
             }
             bs.DataSource = table;
             TableViewStyle();
             TableMark();
         }
 
+        /// <summary>
+        /// 標註異常狀態
+        /// </summary>
         private void TableMark()
         {
             foreach(DataGridViewRow row in tableView.Rows)
             {
                 DataGridViewCellStyle cellStyle = new DataGridViewCellStyle();
                 DataGridViewButtonCell buttonCell = new DataGridViewButtonCell();
-
-                if (row.Cells["alarm"].Value.ToString() == "True")
+                if (Convert.ToInt32(row.Cells["afterUseLife"].Value) <= Convert.ToInt32(row.Cells["warning"].Value))
                 {
-                    buttonCell.Style.BackColor = Color.FromArgb(216, 30, 91);
-                    buttonCell.Style.ForeColor = Color.FromArgb(216, 30, 91);
-                    buttonCell.Style.SelectionBackColor = Color.FromArgb(216, 30, 91);
-                    buttonCell.Style.SelectionForeColor = Color.FromArgb(216, 30, 91);
-                    buttonCell.FlatStyle = FlatStyle.Popup;
-
                     row.DefaultCellStyle.BackColor = Color.FromArgb(216, 30, 91);
                     row.DefaultCellStyle.ForeColor = Color.White;
                     row.DefaultCellStyle.SelectionBackColor = SystemColors.GradientActiveCaption;
                     row.DefaultCellStyle.SelectionForeColor = Color.FromArgb(216, 30, 91);
+                    row.Cells[0].Style.BackColor = Color.FromArgb(235, 237, 237);
+                    row.Cells[0].Style.SelectionBackColor = Color.FromArgb(235, 237, 237);
+                    row.Cells[0].Style.ForeColor = Color.Black;
                 }
-                else
-                {
-                    buttonCell.Style.BackColor = Color.FromArgb(89, 201, 165);
-                    buttonCell.Style.ForeColor = Color.FromArgb(89, 201, 165);
-                    buttonCell.Style.SelectionBackColor = Color.FromArgb(89, 201, 165);
-                    buttonCell.Style.SelectionForeColor = Color.FromArgb(89, 201, 165);
-                    buttonCell.FlatStyle = FlatStyle.Popup;
-                }
-                row.Cells["alarm"] = buttonCell;
+                
             }
         }
 
@@ -117,10 +121,11 @@ namespace Shelf
         private void TableViewStyle()
         {
             tableView.DataSource = bs;
+
             tableView.Columns["name"].HeaderText = "刀具名稱";
-            tableView.Columns["life"].HeaderText = "最大損耗";
-            tableView.Columns["remain"].HeaderText = "剩餘損耗";
-            tableView.Columns["alarm"].HeaderText = "警報狀態";
+            tableView.Columns["beforeUseLife"].HeaderText = "使用前損耗";
+            tableView.Columns["afterUseLife"].HeaderText = "使用後損耗";
+            tableView.Columns["warning"].HeaderText = "警戒值";
             tableView.Columns["startTime"].HeaderText = "開始使用時間";
             tableView.Columns["endTime"].HeaderText = "結束使用時間";
             tableView.Columns["mark"].HeaderText = "類別";
@@ -128,20 +133,30 @@ namespace Shelf
 
             int width = 110;
             tableView.Columns["name"].Width = width;
-            tableView.Columns["life"].Width = width;
-            tableView.Columns["remain"].Width = width;
-            tableView.Columns["alarm"].Width = width;
+            tableView.Columns["beforeUseLife"].Width = width;
+            tableView.Columns["afterUseLife"].Width = width;
+            tableView.Columns["warning"].Width = width;
             tableView.Columns["mark"].Width = width;
             width = (tableView.Width - (width * 6)) / 3;
             tableView.Columns["startTime"].Width = width;
             tableView.Columns["endTime"].Width = width;
             tableView.Columns["dateTime"].Width = width;
+
+            tableView.Columns["name"].SortMode = DataGridViewColumnSortMode.NotSortable;
+            tableView.Columns["beforeUseLife"].SortMode = DataGridViewColumnSortMode.NotSortable;
+            tableView.Columns["afterUseLife"].SortMode = DataGridViewColumnSortMode.NotSortable;
+            tableView.Columns["warning"].SortMode = DataGridViewColumnSortMode.NotSortable;
+            tableView.Columns["startTime"].SortMode = DataGridViewColumnSortMode.NotSortable;
+            tableView.Columns["endTime"].SortMode = DataGridViewColumnSortMode.NotSortable;
+            tableView.Columns["mark"].SortMode = DataGridViewColumnSortMode.NotSortable;
+            tableView.Columns["dateTime"].SortMode = DataGridViewColumnSortMode.NotSortable;
+
+            tableView.Columns["name"].DefaultCellStyle.BackColor = Color.FromArgb(235, 237, 237);
+            tableView.Columns["name"].DefaultCellStyle.SelectionBackColor = Color.FromArgb(235, 237, 237);
+            //tableView.Columns["warning"].Visible = false;
+            tableView.Columns["mark"].Visible = false; ;
         }
 
-        private void TableViewColClick(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            TableMark();
-        }
 
         /// <summary>
         /// 建立DataTable Column
@@ -152,32 +167,30 @@ namespace Shelf
         {
             DataTable dt = new DataTable();
 
-            DataColumn dc = new DataColumn();
+            DataColumn dc;
             dc = new DataColumn();
             dc.ColumnName = "name";
             dt.Columns.Add(dc);
 
             dc = new DataColumn();
-            dc.ColumnName = "life";
+            dc.ColumnName = "beforeUseLife";
             dc.DataType = dc.DataType = Type.GetType("System.Int32");
             dt.Columns.Add(dc);
 
             dc = new DataColumn();
-            dc.ColumnName = "remain";
+            dc.ColumnName = "afterUseLife";
             dc.DataType = dc.DataType = Type.GetType("System.Int32");
             dt.Columns.Add(dc);
 
             dc = new DataColumn();
-            dc.ColumnName = "alarm";
+            dc.ColumnName = "warning";
             dt.Columns.Add(dc);
 
             dc = new DataColumn();
-            dc.DataType = Type.GetType("System.DateTime");
             dc.ColumnName = "startTime";            
             dt.Columns.Add(dc);
 
             dc = new DataColumn();
-            dc.DataType = Type.GetType("System.DateTime");
             dc.ColumnName = "endTime";
             dt.Columns.Add(dc);
 
@@ -186,7 +199,6 @@ namespace Shelf
             dt.Columns.Add(dc);
 
             dc = new DataColumn();
-            dc.DataType = Type.GetType("System.DateTime");
             dc.ColumnName = "dateTime";
             dt.Columns.Add(dc);
 
@@ -198,33 +210,11 @@ namespace Shelf
         /// </summary>
         private void QuickSearch(object sender, EventArgs e)
         {
-            bool useSearchBox = string.IsNullOrWhiteSpace(searchBox.Text);
-            bool useAnyTime = anyTimeSelect.Checked;
-            bool useError = errorSelect.Checked;
-            if (useAnyTime)
-            {
-                labelStartTime.Enabled = false;
-                labelEndTime.Enabled = false;
-                startDateTimePicker.Enabled = false;
-                endDateTimePicker.Enabled = false;
-            }
-            else
-            {
-                labelStartTime.Enabled = true;
-                labelEndTime.Enabled = true;
-                startDateTimePicker.Enabled = true;
-                endDateTimePicker.Enabled = true;
-            }
-
             try
             {
-                bs.Filter = string.Format("(convert(name, 'System.String') LIKE '%{0}%' OR convert(life, 'System.String')  LIKE '%{0}%' OR convert(remain, 'System.String') LIKE '%{0}%' OR" +
+                bs.Filter = string.Format("(convert(name, 'System.String') LIKE '%{0}%' OR convert(beforeUseLife, 'System.String')  LIKE '%{0}%' OR convert(afterUseLife, 'System.String') LIKE '%{0}%' OR" +
                        " convert(mark, 'System.String') LIKE '%{0}%')", searchBox.Text);
-                if (!useAnyTime)
-                    bs.Filter += string.Format("AND (dateTime >= '{0:yyyy-MM-dd} 00:00:00' AND dateTime <= '{1:yyyy-MM-dd} 23:59:59')", startDateTimePicker.Value, endDateTimePicker.Value);
-                //bs.Filter = string.Format("({0}) AND ({1})", SearchBoxFilter, dateFilter);
-                if (useError)
-                    bs.Filter += string.Format("AND (mark = '機台錯誤' OR alarm = 'true')");
+                
                 TableMark();
             }
             catch(Exception ex)
@@ -239,6 +229,7 @@ namespace Shelf
             string[] colName = new string[tableView.Columns.Count];
             for (int i = 0; i < colName.Length; i++)
             {
+
                 colName[i] = tableView.Columns[i].HeaderText;
             }
 
@@ -246,7 +237,7 @@ namespace Shelf
             {
                 DataGridViewCellCollection row = tableView.Rows[i].Cells;
                 selectedData.Rows.Add(
-                    row["name"].Value, row["life"].Value, row["remain"].Value, row["alarm"].Value, row["startTime"].Value, row["endTime"].Value, row["mark"].Value, row["dateTime"].Value
+                    row["name"].Value, row["beforeUseLife"].Value, row["afterUseLife"].Value, row["warning"].Value, row["startTime"].Value, row["endTime"].Value, row["mark"].Value, row["dateTime"].Value
                     );
             }
 
@@ -256,13 +247,65 @@ namespace Shelf
             fileDialog.InitialDirectory = "c:\\";
             if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
                 return;
-            LoadingForm loadingForm = new LoadingForm();
-            loadingForm.dt = selectedData;
-            loadingForm.colName = colName;
-            loadingForm.fileName = fileDialog.FileName;
+            LoadingForm loadingForm = new LoadingForm
+            {
+                dt = selectedData,
+                colName = colName,
+                fileName = fileDialog.FileName
+            };
             loadingForm.Show();
         }
 
-        
+        /// <summary>
+        /// 確認指定Cell與上方數值否相同
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="column"></param>
+        /// <param name="row"></param>
+        /// <returns></returns>
+        bool IsTheSameCellValue(DataGridView table, int column, int row)
+        {
+            DataGridViewCell cell1 = table[column, row];
+            DataGridViewCell cell2 = table[column, row-1];
+            if (cell1.Value == null || cell2.Value == null)
+            {
+                return false;
+            }
+            return cell1.Value.ToString() == cell2.Value.ToString();
+        }
+
+        /// <summary>
+        /// 合併相同刀具名稱的歷史紀錄
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tableViewCellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if(e.ColumnIndex == 0  && e.RowIndex != -1)
+                e.AdvancedBorderStyle.Bottom = DataGridViewAdvancedCellBorderStyle.None;
+            if (e.RowIndex <= 0 || e.ColumnIndex != 0 )
+                return;
+            if (IsTheSameCellValue(tableView, e.ColumnIndex, e.RowIndex))
+            {
+                e.AdvancedBorderStyle.Top = DataGridViewAdvancedCellBorderStyle.None;
+            }
+            else
+            {
+                e.AdvancedBorderStyle.Top = tableView.AdvancedCellBorderStyle.Top;
+            }
+        }
+
+
+        private void tableView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex <= 0 || e.ColumnIndex != 0)
+                return;
+            if (IsTheSameCellValue(tableView, e.ColumnIndex, e.RowIndex))
+            {
+                e.Value = "";
+                e.FormattingApplied = true;
+            }
+        }
+
     }
 }

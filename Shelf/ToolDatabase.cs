@@ -17,7 +17,7 @@ namespace Shelf
         /// <returns></returns>
         public bool GetAllTool(ref List<Tool> tools)
         {
-            var query = "SELECT id, name, life, remain, alarm FROM tool";
+            var query = "SELECT id, name, life, remain, warning FROM tool";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -37,7 +37,7 @@ namespace Shelf
                                         name = data["name"].ToString(),
                                         life = int.Parse(data["life"].ToString()),
                                         remain = int.Parse(data["remain"].ToString()),
-                                        alarm = bool.Parse(data["alarm"].ToString())
+                                        warning = int.Parse(data["warning"].ToString())
                                     };
                                     tools.Add(tool);
                                 }
@@ -94,10 +94,14 @@ namespace Shelf
             return false;
         }
 
-
+        /// <summary>
+        /// 取得所有歷史資料
+        /// </summary>
+        /// <param name="histories"></param>
+        /// <returns></returns>
         public bool GetAllHistory(ref List<ToolHistory> histories)
         {
-            var query = "SELECT id, toolId, name, life, remain, alarm, startTime, endTime, mark, dateTime FROM history WHERE mark != '0'";
+            var query = "SELECT id, toolId, name, beforeUseLife, afterUseLife, warning, startTime, endTime, mark, dateTime FROM history WHERE mark != '0'";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -117,9 +121,9 @@ namespace Shelf
                                 {
                                     toolId = Convert.ToInt32(data["toolId"].ToString()),
                                     name = data["name"].ToString(),
-                                    life = Convert.ToInt32(data["life"].ToString()),
-                                    remain = Convert.ToInt32(data["remain"].ToString()),
-                                    alarm = Convert.ToBoolean(data["alarm"].ToString()),
+                                    beforeUseLife = Convert.ToInt32(data["beforeUseLife"].ToString()),
+                                    afterUseLife = Convert.ToInt32(data["afterUseLife"].ToString()),
+                                    warning = Convert.ToInt32(data["warning"].ToString()),
                                     mark = Convert.ToChar(data["mark"].ToString()),
                                     dateTime = Convert.ToDateTime(data["dateTime"].ToString())
 
@@ -147,6 +151,73 @@ namespace Shelf
             return false;
         }
 
+        /// <summary>
+        /// 根據條件取得歷史資料
+        /// </summary>
+        /// <param name="startTime">搜尋起始日期</param>
+        /// <param name="endTime">搜尋結束日期</param>
+        /// <param name="warning">只選出異常狀態</param>
+        /// <returns></returns>
+        public bool GetHistory(ref List<ToolHistory> histories, DateTime startTime, DateTime endTime, bool isWarning)
+        {
+            string query = "SELECT * FROM history WHERE dateTime >= @startTime AND dateTime <= @endTime";
+            if (isWarning)
+                query += " AND afterUseLife <= warning";
+            query += " ORDER BY toolId asc, dateTime desc";
+
+
+            try
+            {
+                using(SqlConnection conn = new SqlConnection(_connectStr))
+                {
+                    using (SqlCommand comm = new SqlCommand(query, conn))
+                    {
+                        if (conn.State != ConnectionState.Open)
+                            conn.Open();
+                        comm.Parameters.AddWithValue("@startTime", startTime.ToString("yyyy-MM-dd 00:00:00"));
+                        comm.Parameters.AddWithValue("@endTime", endTime.ToString("yyyy-MM-dd 23:59:59"));
+                        using(SqlDataReader data = comm.ExecuteReader())
+                        {
+                            if (!data.HasRows)
+                                return false;
+
+                            while (data.Read())
+                            {
+                                ToolHistory h = new ToolHistory
+                                {
+                                    toolId = Convert.ToInt32(data["toolId"].ToString()),
+                                    name = data["name"].ToString(),
+                                    beforeUseLife = Convert.ToInt32(data["beforeUseLife"].ToString()),
+                                    afterUseLife = Convert.ToInt32(data["afterUseLife"].ToString()),
+                                    warning = Convert.ToInt32(data["warning"].ToString()),
+                                    mark = Convert.ToChar(data["mark"].ToString()),
+                                    startTime = Convert.ToDateTime(data["startTime"].ToString()),
+                                    endTime = Convert.ToDateTime(data["endTime"].ToString()),
+                                    dateTime = Convert.ToDateTime(data["dateTime"].ToString())
+                                };
+                                histories.Add(h);
+                            }
+                            return true;
+                        }
+                    }
+                }
+            }catch (SqlException ex)
+            {
+                MessageBox.Show("資料庫發生問題" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("發生錯誤" + ex.Message);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 檢查重複名稱
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public bool CheckRepeatName(int id, string name)
         {
             string query = "SELECT * FROM tool WHERE name = @name AND id != @id";
@@ -212,7 +283,7 @@ namespace Shelf
                                         name = data["name"].ToString(),
                                         life = int.Parse(data["life"].ToString()),
                                         remain = int.Parse(data["remain"].ToString()),
-                                        alarm = bool.Parse(data["alarm"].ToString())
+                                        warning = int.Parse(data["warning"].ToString())
                                     };
                                 }
                                 return true;
@@ -263,7 +334,7 @@ namespace Shelf
                                         name = data["name"].ToString(),
                                         life = int.Parse(data["life"].ToString()),
                                         remain = int.Parse(data["remain"].ToString()),
-                                        alarm = bool.Parse(data["alarm"].ToString())
+                                        warning = int.Parse(data["warning"].ToString())
                                     };
                                 }
                                 return true;
@@ -291,7 +362,7 @@ namespace Shelf
         /// <returns></returns>
         public bool EditTool(Tool t)
         {
-            var queryData = @"UPDATE tool SET life = @life, remain = @remain, alarm = @alarm WHERE name = @name";
+            var queryData = @"UPDATE tool SET life = @life, remain = @remain, warning = @warning WHERE name = @name";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -304,7 +375,7 @@ namespace Shelf
 
                         comm.Parameters.AddWithValue("@life", t.life);
                         comm.Parameters.AddWithValue("@remain", t.remain);
-                        comm.Parameters.AddWithValue("@alarm", t.alarm);
+                        comm.Parameters.AddWithValue("@warning", t.warning);
                         comm.Parameters.AddWithValue("@name", t.name);
                         int affectRows = comm.ExecuteNonQuery();
                         if (affectRows > 0)
@@ -333,7 +404,7 @@ namespace Shelf
         /// <returns></returns>
         public bool UpdateTool(Tool t)
         {
-            var queryData = @"UPDATE tool SET remain = @remain, alarm = @alarm WHERE name = @name";
+            var queryData = @"UPDATE tool SET remain = @remain, warning = @warning WHERE name = @name";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -345,7 +416,7 @@ namespace Shelf
                             conn.Open();
 
                         comm.Parameters.AddWithValue("@remain", t.remain);
-                        comm.Parameters.AddWithValue("@alarm", t.alarm);
+                        comm.Parameters.AddWithValue("@warning", t.warning);
                         comm.Parameters.AddWithValue("@name", t.name);
                         int affectRows = comm.ExecuteNonQuery();
                         if (affectRows > 0)
@@ -374,7 +445,7 @@ namespace Shelf
         /// <returns></returns>
         public bool ChangeTool(Tool t)
         {
-            string query = "UPDATE tool SET life = @life, remain = @remain, alarm = 0 WHERE name = @name";
+            string query = "UPDATE tool SET life = @life, remain = @remain, warning = 0 WHERE name = @name";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -415,7 +486,7 @@ namespace Shelf
         public bool InsertTool(Tool t)
         {
             string maxId = "(SELECT MAX(id) FROM tool)";
-            string query = @"INSERT INTO tool(id, name, life, remain, alarm) VALUES(" + maxId + "+1, @name, @life, @remain, 0)";
+            string query = @"INSERT INTO tool(id, name, life, remain, warning) VALUES(" + maxId + "+1, @name, @life, @remain, 0)";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -498,23 +569,28 @@ namespace Shelf
         /// <returns></returns>
         public bool HistoryInsert(Tool t, char mark)
         {
-            bool result;
-            
-            switch (mark)
+            Tool lastToolStatus = new Tool();
+            if(!GetToolById(t.id, ref lastToolStatus))
             {
-                case '1':
-                    t.startTime = DateTime.Now;
-                    result = HistoryUseTool(t);
-                    break;
-                case '2':
-                    t.endTime = DateTime.Now;
-                    result = HistoryReturnTool(t);
-                    break;
-                default:
-                    result = OtherTypeHistory(t, mark);
-                    break;
+                MessageBox.Show("該刀具不存在");
+                return false;
             }
-            return result;
+
+            ToolHistory history = new ToolHistory
+            {
+                toolId = t.id,
+                name = t.name,
+                beforeUseLife = lastToolStatus.life,
+                afterUseLife = t.life,
+                startTime = t.startTime,
+                endTime = t.endTime,
+                mark = mark
+            };
+
+            if (!HistoryUseTool(history))
+                return false;
+
+            return true;
         }
 
         /// <summary>
@@ -522,9 +598,9 @@ namespace Shelf
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        public bool HistoryUseTool(Tool t)
+        public bool HistoryUseTool(ToolHistory h)
         {
-            var query = @"INSERT INTO history(toolId, name, life, remain, alarm, startTime, mark) VALUES(@toolId, @name, @life, @remain, @alarm, @startTime, @mark)";
+            var query = @"INSERT INTO history(toolId, name, beforeUseLife, afterUseLife, warning, startTime, endTime, mark) VALUES(@toolId, @name, @beforeUseLife, @afterUseLife, @warning, @startTime, @endTime, @mark)";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -533,13 +609,14 @@ namespace Shelf
                     {
                         if (conn.State != ConnectionState.Open)
                             conn.Open();
-                        comm.Parameters.AddWithValue("@toolId", t.id);
-                        comm.Parameters.AddWithValue("@name", t.name);
-                        comm.Parameters.AddWithValue("@life", t.life);
-                        comm.Parameters.AddWithValue("@remain", t.remain);
-                        comm.Parameters.AddWithValue("@alarm", t.alarm);
-                        comm.Parameters.AddWithValue("@startTime",t.startTime);
-                        comm.Parameters.AddWithValue("@mark", '1');
+                        comm.Parameters.AddWithValue("@toolId", h.toolId);
+                        comm.Parameters.AddWithValue("@name", h.name);
+                        comm.Parameters.AddWithValue("@beforeUseLife", h.beforeUseLife);
+                        comm.Parameters.AddWithValue("@afterUseLife", h.afterUseLife);
+                        comm.Parameters.AddWithValue("@warning", h.warning);
+                        comm.Parameters.AddWithValue("@startTime",h.startTime);
+                        comm.Parameters.AddWithValue("@endTime", h.endTime);
+                        comm.Parameters.AddWithValue("@mark", h.mark);
 
                         int affectRows = comm.ExecuteNonQuery();
                         if (affectRows > 0)
@@ -557,7 +634,7 @@ namespace Shelf
             {
                 MessageBox.Show("發生錯誤" + ex.Message);
             }
-            SaveHistoryToLocal(t, '1');
+            //SaveHistoryToLocal(, '1');
             return false;
         }
 
@@ -568,8 +645,8 @@ namespace Shelf
         /// <returns></returns>
         public bool HistoryReturnTool(Tool t)
         {
-            var query = @"INSERT INTO history(toolId, name, life, remain, alarm, startTime, endTime, mark) VALUES(@toolId, @name, @life, @remain, @alarm, @startTime, @endTime, @mark)";
-            DateTime? endTime = t.endTime;
+            var query = @"INSERT INTO history(toolId, name, beforeUseLife, afterUseLife, warning, startTime, endTime, mark) VALUES(@toolId, @name, @beforeUseLife, @afterUseLife, @warning, @startTime, @endTime, @mark)";
+            DateTime endTime = t.endTime;
             try
             {
                 if (!GetLastHistory(ref t))
@@ -582,9 +659,9 @@ namespace Shelf
                             conn.Open();
                         comm.Parameters.AddWithValue("@toolId", t.id);
                         comm.Parameters.AddWithValue("@name", t.name);
-                        comm.Parameters.AddWithValue("@life", t.life);
-                        comm.Parameters.AddWithValue("@remain", t.remain);
-                        comm.Parameters.AddWithValue("@alarm", t.alarm);
+                        comm.Parameters.AddWithValue("@beforeUseLife", t.life);
+                        comm.Parameters.AddWithValue("@afterUseLife", t.remain);
+                        comm.Parameters.AddWithValue("@warning", t.warning);
                         comm.Parameters.AddWithValue("@startTime", t.startTime);
                         comm.Parameters.AddWithValue("@endTime", endTime);
                         comm.Parameters.AddWithValue("@mark", '2');
@@ -605,16 +682,22 @@ namespace Shelf
             {
                 MessageBox.Show("發生錯誤" + ex.Message);
             }
-            t.startTime = null;
+            t.startTime = t.startTime;
             t.endTime = endTime;
             SaveHistoryToLocal(t, '2');
             return false;
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="mark"></param>
         private void SaveHistoryToLocal(Tool t, char mark)
         {
             TempSave tempSave = new TempSave();
-            tempSave.SaveTempHistory(t, mark);
+            //tempSave.SaveTempHistory(t, mark);
         }
 
 
@@ -627,9 +710,9 @@ namespace Shelf
         //{
         //    if (!GetLastHistory(ref t))
         //        return false;
-        //    var query = @"INSERT INTO history(name, life, remain, alarm, mark) VALUES( @name, @life, @remain, @alarm,  @mark)";
+        //    var query = @"INSERT INTO history(name, beforeUseLife, afterUseLife, warning, mark) VALUES( @name, @beforeUseLife, @afterUseLife, @warning,  @mark)";
         //    if (t.startTime != null)
-        //        query = @"INSERT INTO history(name, life, remain, alarm, startTime, mark) VALUES( @name, @life, @remain, @alarm, @startTime, @mark)";
+        //        query = @"INSERT INTO history(name, beforeUseLife, afterUseLife, warning, startTime, mark) VALUES( @name, @beforeUseLife, @afterUseLife, @warning, @startTime, @mark)";
 
         //    try
         //    {
@@ -640,9 +723,9 @@ namespace Shelf
         //                if (conn.State != ConnectionState.Open)
         //                    conn.Open();
         //                comm.Parameters.AddWithValue("@name", t.name);
-        //                comm.Parameters.AddWithValue("@life", t.life);
-        //                comm.Parameters.AddWithValue("@remain", t.remain);
-        //                comm.Parameters.AddWithValue("@alarm", t.alarm);
+        //                comm.Parameters.AddWithValue("@beforeUseLife", t.beforeUseLife);
+        //                comm.Parameters.AddWithValue("@afterUseLife", t.afterUseLife);
+        //                comm.Parameters.AddWithValue("@warning", t.warning);
         //                if (t.startTime != null)
         //                    comm.Parameters.AddWithValue("@startTime", t.startTime);
         //                comm.Parameters.AddWithValue("@mark", '3');
@@ -670,7 +753,7 @@ namespace Shelf
         //{
         //    if (!GetLastHistory(ref t))
         //        return false;
-        //    var query = @"INSERT INTO history(name, life, remain, alarm, mark) VALUES( @name, @life, @remain, @alarm,  @mark)";
+        //    var query = @"INSERT INTO history(name, beforeUseLife, afterUseLife, warning, mark) VALUES( @name, @beforeUseLife, @afterUseLife, @warning,  @mark)";
         //    if (t.startTime == null)
         //        return false;
         //    try
@@ -682,9 +765,9 @@ namespace Shelf
         //                if (conn.State != ConnectionState.Open)
         //                    conn.Open();
         //                comm.Parameters.AddWithValue("@name", t.name);
-        //                comm.Parameters.AddWithValue("@life", t.life);
-        //                comm.Parameters.AddWithValue("@remain", t.remain);
-        //                comm.Parameters.AddWithValue("@alarm", t.alarm);
+        //                comm.Parameters.AddWithValue("@beforeUseLife", t.beforeUseLife);
+        //                comm.Parameters.AddWithValue("@afterUseLife", t.afterUseLife);
+        //                comm.Parameters.AddWithValue("@warning", t.warning);
         //                if (t.startTime != null)
         //                    comm.Parameters.AddWithValue("@startTime", t.startTime);
         //                comm.Parameters.AddWithValue("@mark", '2');
@@ -717,11 +800,11 @@ namespace Shelf
         private bool OtherTypeHistory(Tool t, char mark)
         {
             GetLastHistory(ref t);
-            var query = @"INSERT INTO history(toolId, name, life, remain, alarm, mark) VALUES(@toolId, @name, @life, @remain, @alarm,  @mark)";
+            var query = @"INSERT INTO history(toolId, name, beforeUseLife, afterUseLife, warning, mark) VALUES(@toolId, @name, @beforeUseLife, @afterUseLife, @warning,  @mark)";
             if (t.startTime != null)
-                query = @"INSERT INTO history(toolId, name, life, remain, alarm, startTime, mark) VALUES( @toolId, @name, @life, @remain, @alarm, @startTime, @mark)";
+                query = @"INSERT INTO history(toolId, name, beforeUseLife, afterUseLife, warning, startTime, mark) VALUES( @toolId, @name, @beforeUseLife, @afterUseLife, @warning, @startTime, @mark)";
             if(t.endTime != null)
-                query = @"INSERT INTO history(toolId, name, life, remain, alarm, startTime, endTime, mark) VALUES( @toolId, @name, @life, @remain, @alarm, @startTime, @endTime, @mark)";
+                query = @"INSERT INTO history(toolId, name, beforeUseLife, afterUseLife, warning, startTime, endTime, mark) VALUES( @toolId, @name, @beforeUseLife, @afterUseLife, @warning, @startTime, @endTime, @mark)";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -732,9 +815,9 @@ namespace Shelf
                             conn.Open();
                         comm.Parameters.AddWithValue("@toolId", t.id);
                         comm.Parameters.AddWithValue("@name", t.name);
-                        comm.Parameters.AddWithValue("@life", t.life);
-                        comm.Parameters.AddWithValue("@remain", t.remain);
-                        comm.Parameters.AddWithValue("@alarm", t.alarm);
+                        comm.Parameters.AddWithValue("@beforeUseLife", t.life);
+                        comm.Parameters.AddWithValue("@afterUseLife", t.remain);
+                        comm.Parameters.AddWithValue("@warning", t.warning);
                         if (t.startTime != null)
                             comm.Parameters.AddWithValue("@startTime", t.startTime);
                         if(t.endTime != null)
@@ -759,6 +842,7 @@ namespace Shelf
             }
             return false;
         }
+
         /// <summary>
         /// 刪除刀具
         /// </summary>
@@ -796,6 +880,10 @@ namespace Shelf
             return false;
         }
 
+        /// <summary>
+        /// 確認資料庫連線
+        /// </summary>
+        /// <returns></returns>
         public bool IsDatabaseConnected()
         {
             try

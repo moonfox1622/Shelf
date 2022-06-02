@@ -30,9 +30,9 @@ namespace Shelf
             {
                 toolId = t.id,
                 name = t.name,
-                life = t.life,
-                remain = t.remain,
-                alarm = t.alarm,
+                beforeUseLife = t.life,
+                afterUseLife = t.remain,
+                warning = t.warning,
                 startTime = t.startTime,
                 endTime = t.endTime,
                 mark = mark,
@@ -71,8 +71,8 @@ namespace Shelf
                     {
                         id = h.toolId,
                         name = h.name,
-                        life = h.life,
-                        remain = h.remain,
+                        life = h.beforeUseLife,
+                        remain = h.afterUseLife,
                         startTime = h.startTime,
                         endTime = h.endTime
                     };
@@ -80,7 +80,7 @@ namespace Shelf
                     switch (h.mark)
                     {
                         case '1':
-                            tdb.HistoryUseTool(t);
+                            //tdb.HistoryUseTool(t);
                             break;
                         case '2':
                             tdb.HistoryReturnTool(t);
