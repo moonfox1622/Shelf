@@ -30,23 +30,19 @@
         {
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnComfirm = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.txtAlarm = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.txtLife = new System.Windows.Forms.NumericUpDown();
-            this.txtRemain = new System.Windows.Forms.NumericUpDown();
             this.txtName = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.panel1.SuspendLayout();
+            this.txtWarning = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.txtLife)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtRemain)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtWarning)).BeginInit();
             this.SuspendLayout();
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(143, 348);
+            this.btnCancel.Location = new System.Drawing.Point(136, 240);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 5;
@@ -56,7 +52,7 @@
             // 
             // btnComfirm
             // 
-            this.btnComfirm.Location = new System.Drawing.Point(62, 348);
+            this.btnComfirm.Location = new System.Drawing.Point(55, 240);
             this.btnComfirm.Name = "btnComfirm";
             this.btnComfirm.Size = new System.Drawing.Size(75, 23);
             this.btnComfirm.TabIndex = 4;
@@ -64,117 +60,84 @@
             this.btnComfirm.UseVisualStyleBackColor = true;
             this.btnComfirm.Click += new System.EventHandler(this.Comfirm);
             // 
-            // panel1
+            // label4
             // 
-            this.panel1.AutoScroll = true;
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.txtAlarm);
-            this.panel1.Controls.Add(this.txtLife);
-            this.panel1.Controls.Add(this.txtRemain);
-            this.panel1.Controls.Add(this.txtName);
-            this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Location = new System.Drawing.Point(13, 14);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(205, 318);
-            this.panel1.TabIndex = 3;
-            // 
-            // txtAlarm
-            // 
-            this.txtAlarm.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.txtAlarm.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold);
-            this.txtAlarm.FormattingEnabled = true;
-            this.txtAlarm.Location = new System.Drawing.Point(33, 244);
-            this.txtAlarm.Name = "txtAlarm";
-            this.txtAlarm.Size = new System.Drawing.Size(121, 29);
-            this.txtAlarm.TabIndex = 8;
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold);
+            this.label4.Location = new System.Drawing.Point(15, 159);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(86, 24);
+            this.label4.TabIndex = 16;
+            this.label4.Text = "警戒值：";
             // 
             // txtLife
             // 
             this.txtLife.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold);
-            this.txtLife.Location = new System.Drawing.Point(34, 110);
+            this.txtLife.Location = new System.Drawing.Point(35, 108);
             this.txtLife.Name = "txtLife";
             this.txtLife.Size = new System.Drawing.Size(120, 29);
-            this.txtLife.TabIndex = 6;
-            // 
-            // txtRemain
-            // 
-            this.txtRemain.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold);
-            this.txtRemain.Location = new System.Drawing.Point(34, 179);
-            this.txtRemain.Name = "txtRemain";
-            this.txtRemain.Size = new System.Drawing.Size(120, 29);
-            this.txtRemain.TabIndex = 7;
+            this.txtLife.TabIndex = 14;
             // 
             // txtName
             // 
             this.txtName.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold);
-            this.txtName.Location = new System.Drawing.Point(34, 40);
+            this.txtName.Location = new System.Drawing.Point(35, 38);
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(120, 29);
-            this.txtName.TabIndex = 3;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold);
-            this.label3.Location = new System.Drawing.Point(13, 152);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(143, 24);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "剩餘使用次數：";
+            this.txtName.TabIndex = 13;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold);
-            this.label2.Location = new System.Drawing.Point(13, 83);
+            this.label2.Location = new System.Drawing.Point(14, 81);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(124, 24);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "可使用次數：";
+            this.label2.TabIndex = 12;
+            this.label2.Text = "最大損耗值：";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold);
-            this.label1.Location = new System.Drawing.Point(13, 15);
+            this.label1.Location = new System.Drawing.Point(14, 13);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(67, 24);
-            this.label1.TabIndex = 0;
+            this.label1.TabIndex = 11;
             this.label1.Text = "名稱：";
             // 
-            // label4
+            // txtWarning
             // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold);
-            this.label4.Location = new System.Drawing.Point(13, 217);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(105, 24);
-            this.label4.TabIndex = 10;
-            this.label4.Text = "警報狀態：";
+            this.txtWarning.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold);
+            this.txtWarning.Location = new System.Drawing.Point(35, 186);
+            this.txtWarning.Name = "txtWarning";
+            this.txtWarning.Size = new System.Drawing.Size(120, 29);
+            this.txtWarning.TabIndex = 17;
             // 
-            // NewTool
+            // NewToolForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(230, 385);
+            this.ClientSize = new System.Drawing.Size(230, 274);
+            this.Controls.Add(this.txtWarning);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.txtLife);
+            this.Controls.Add(this.txtName);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnComfirm);
-            this.Controls.Add(this.panel1);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(246, 424);
+            this.MaximumSize = new System.Drawing.Size(246, 313);
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(246, 424);
-            this.Name = "NewTool";
+            this.MinimumSize = new System.Drawing.Size(246, 313);
+            this.Name = "NewToolForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "新增刀具";
-            this.Load += new System.EventHandler(this.NewTool_Load);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtLife)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtRemain)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtWarning)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -182,14 +145,11 @@
 
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnComfirm;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.ComboBox txtAlarm;
+        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.NumericUpDown txtLife;
-        private System.Windows.Forms.NumericUpDown txtRemain;
         private System.Windows.Forms.TextBox txtName;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.NumericUpDown txtWarning;
     }
 }

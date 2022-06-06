@@ -51,6 +51,7 @@
             this.label4.Size = new System.Drawing.Size(86, 24);
             this.label4.TabIndex = 11;
             this.label4.Text = "警戒值：";
+            this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
             // label3
             // 
@@ -61,6 +62,7 @@
             this.label3.Size = new System.Drawing.Size(105, 24);
             this.label3.TabIndex = 10;
             this.label3.Text = "剩餘壽命：";
+            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // label2
             // 
@@ -71,6 +73,7 @@
             this.label2.Size = new System.Drawing.Size(67, 24);
             this.label2.TabIndex = 9;
             this.label2.Text = "壽命：";
+            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // label1
             // 
@@ -81,6 +84,7 @@
             this.label1.Size = new System.Drawing.Size(67, 24);
             this.label1.TabIndex = 8;
             this.label1.Text = "名稱：";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // txtLife
             // 
@@ -89,6 +93,7 @@
             this.txtLife.Name = "txtLife";
             this.txtLife.Size = new System.Drawing.Size(100, 33);
             this.txtLife.TabIndex = 17;
+            this.txtLife.ValueChanged += new System.EventHandler(this.txtLife_ValueChanged);
             // 
             // txtRemain
             // 
@@ -97,6 +102,7 @@
             this.txtRemain.Name = "txtRemain";
             this.txtRemain.Size = new System.Drawing.Size(100, 33);
             this.txtRemain.TabIndex = 18;
+            this.txtRemain.ValueChanged += new System.EventHandler(this.txtRemain_ValueChanged);
             // 
             // btnEdit
             // 
@@ -118,6 +124,7 @@
             this.txtName.Size = new System.Drawing.Size(66, 24);
             this.txtName.TabIndex = 21;
             this.txtName.Text = "Name";
+            this.txtName.Click += new System.EventHandler(this.txtName_Click);
             // 
             // txtAlarm
             // 
@@ -126,8 +133,9 @@
             this.txtAlarm.Name = "txtAlarm";
             this.txtAlarm.Size = new System.Drawing.Size(100, 33);
             this.txtAlarm.TabIndex = 22;
+            this.txtAlarm.ValueChanged += new System.EventHandler(this.txtAlarm_ValueChanged);
             // 
-            // Edit
+            // EditUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -140,7 +148,7 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Name = "Edit";
+            this.Name = "EditUserControl";
             this.Size = new System.Drawing.Size(265, 361);
             this.Load += new System.EventHandler(this.EditLoad);
             ((System.ComponentModel.ISupportInitialize)(this.txtLife)).EndInit();

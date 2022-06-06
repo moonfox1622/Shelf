@@ -98,6 +98,12 @@
     <Compile Include="CProgressBar.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="EditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditForm.Designer.cs">
+      <DependentUpon>EditForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="EditUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -116,6 +122,7 @@
     <Compile Include="LoadingForm.Designer.cs">
       <DependentUpon>LoadingForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\Machine.cs" />
     <Compile Include="Model\Respond.cs" />
     <Compile Include="NewToolForm.cs">
       <SubType>Form</SubType>
@@ -133,6 +140,12 @@
     </Compile>
     <Compile Include="SettingForm.Designer.cs">
       <DependentUpon>SettingForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SettingPageForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SettingPageForm.Designer.cs">
+      <DependentUpon>SettingPageForm.cs</DependentUpon>
     </Compile>
     <Compile Include="SettingPageUserControl.cs">
       <SubType>UserControl</SubType>
@@ -173,6 +186,9 @@
     <EmbeddedResource Include="ChangeUserControl.resx">
       <DependentUpon>ChangeUserControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="EditForm.resx">
+      <DependentUpon>EditForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="EditUserControl.resx">
       <DependentUpon>EditUserControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -205,6 +221,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SettingForm.resx">
       <DependentUpon>SettingForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SettingPageForm.resx">
+      <DependentUpon>SettingPageForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SettingPageUserControl.resx">
       <DependentUpon>SettingPageUserControl.cs</DependentUpon>

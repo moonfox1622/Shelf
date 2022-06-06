@@ -31,9 +31,7 @@ namespace Shelf
             BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
             null, remainLifeBar, new object[] { true });
 
-            txtWarning.Text = "Warn: " + tool.warning.ToString();
-            remainLifeBar.Maximum = tool.life;
-
+            
             CheckStatus();
         }
         
@@ -58,6 +56,8 @@ namespace Shelf
         /// </summary>
         public void CheckStatus()
         {
+            txtWarning.Text = "警戒值: " + tool.warning.ToString();
+            remainLifeBar.Maximum = tool.life;
             txtName.Text = tool.name;
             txtCount.Text = tool.remain.ToString();
             double percent = ((double)tool.remain / (double)tool.life) * 100;
@@ -69,16 +69,20 @@ namespace Shelf
             {
                 remainLifeBar.SliderColor = Color.FromArgb(89, 201, 165);
                 txtPercet.BackColor = Color.FromArgb(89, 201, 165);
+                txtPercet.ForeColor = Color.White;
+                
             }
             else if(percent < 80 && percent >= 50)
             {
                 remainLifeBar.SliderColor = Color.FromArgb(242, 236, 0);
                 txtPercet.BackColor = Color.FromArgb(242, 236, 0);
+                txtPercet.ForeColor = Color.Black;
             }
             else
             {
                 remainLifeBar.SliderColor = Color.FromArgb(216, 30, 91);
                 txtPercet.BackColor = Color.FromArgb(216, 30, 91);
+                txtPercet.ForeColor = Color.White;
             }
 
             //warning == true show picAlarm
@@ -94,6 +98,7 @@ namespace Shelf
         public void ToolUse()
         {
             picRunning.Visible = true;
+            this.BorderStyle = BorderStyle.FixedSingle;
             this.BorderStyle = BorderStyle.FixedSingle;
         }
 

@@ -24,10 +24,10 @@ namespace Shelf
         TableLayoutPanel table = new TableLayoutPanel();
         ToolDatabase tdb = new ToolDatabase();
         bool simulateRun = true;
-
+        int machineId = 1;
         //Delegate function
         private delegate void updateGridUI();
-        private delegate void deleInitialContent(bool save);
+        private delegate void deleInitialContent();
 
 
         public MainForm()
@@ -37,12 +37,21 @@ namespace Shelf
 
         private void MainShown(object sender, EventArgs e)
         {
+            LoadMachine();
+            if (machineList.Items.Count == 0)
+                return;
+
             //回傳本地資料指資料庫
             Thread restoreThread = new Thread(SendLocalData);
             restoreThread.Start();
 
-            //SetDoubleBuffered(content);
-            initialContent(true);
+            initialContent();
+            if (tools.Count == 0)
+            {
+                keepUpdate = false;
+                return;
+            }
+            keepUpdate = true;
             Thread thread = new Thread(ToolUpdate);
             thread.IsBackground = true;
             thread.Start();
@@ -53,11 +62,12 @@ namespace Shelf
         /// </summary>
         /// <param name="save">紀錄歷史</param>
         /// <param name="edit">設定模式</param>
-        private void initialContent(bool save)
+        private void initialContent()
         {
             content.Controls.Clear();
             tools = new List<GridUserControl>();
-            LoadData(ref tools);
+            if (!LoadData(ref tools, (machineList.SelectedItem as Machine).id))
+                return;
             
             table = initialTablePanel();
 
@@ -84,6 +94,33 @@ namespace Shelf
             content.Controls.Add(table);
         }
 
+        private void LoadMachine()
+        {
+            List<Machine> machines = new List<Machine>();
+            if (!tdb.GetAllMachine(ref machines))
+            {
+                MessageBox.Show("未讀取到機台", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            foreach (Machine m in machines)
+            {
+                machineList.Items.Add(m);
+            }
+
+            machineList.SelectedIndex = 0;
+        }
+
+        private void MachineChange(object sender, EventArgs e)
+        {
+            initialContent();
+            if (tools.Count == 0)
+            {
+                keepUpdate = false;
+                return;
+            }
+            machineId = (machineList.SelectedItem as Machine).id;
+        }
 
         /// <summary>
         /// 取得刀具資料
@@ -91,13 +128,13 @@ namespace Shelf
         /// <param name="tools"></param>
         /// <param name="lastDatas"></param>
         /// <returns></returns>
-        private void LoadData(ref List<GridUserControl> tools)
+        private bool LoadData(ref List<GridUserControl> tools, int machineId)
         {
             List<Tool> toolsData = new List<Tool>();
-            if (!tdb.GetAllTool(ref toolsData))
+            if (!tdb.GetAllTool(ref toolsData, machineId))
             {
-                MessageBox.Show("無法取得資料");
-                return;
+                MessageBox.Show("查無刀具資料", "訊息", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return false;
             }
 
             for(int i=0 ; i<toolsData.Count ; i++)
@@ -111,6 +148,7 @@ namespace Shelf
 
                 tools.Add(g);
             }
+            return true;
         }
 
         /// <summary>
@@ -120,7 +158,7 @@ namespace Shelf
         /// <param name="e"></param>
         private void TableControlRemoved(object sender, ControlEventArgs e)
         {
-            initialContent(false);
+            initialContent();
         }
 
         /// <summary>
@@ -151,13 +189,21 @@ namespace Shelf
             while (keepUpdate)
             {
                 List<Tool> toolData = new List<Tool>();
-                if(!tdb.GetAllTool(ref toolData))
+                if(!tdb.GetAllTool(ref toolData, machineId))
                 {
-                    return;
+                    keepUpdate = false;
+                    continue;
                 }
+
+                if(tools.Count == 0)
+                {
+                    keepUpdate = false;
+                    continue;
+                }
+
                 if(toolData.Count != tools.Count)
                 {
-                    Invoke(new deleInitialContent(initialContent), false);
+                    Invoke(new deleInitialContent(initialContent));
                     continue;
                 }
                 for(int i = 0; i < tools.Count; i++)
@@ -168,7 +214,7 @@ namespace Shelf
                     tools[i].tool.warning = toolData[i].warning;
                     Invoke(new updateGridUI(tools[i].CheckStatus));
                 }
-                Thread.Sleep(5000);
+                Thread.Sleep(2000);
             }
         }
 
@@ -265,7 +311,7 @@ namespace Shelf
                 else
                 {
                     MessageBox.Show("新增成功");
-                    initialContent(true);
+                    initialContent();
                 }
             }
             else
@@ -282,7 +328,7 @@ namespace Shelf
         /// <param name="e"></param>
         private void btnMainClick(object sender, EventArgs e)
         {
-            initialContent(false);
+            initialContent();
             btnRun.Visible = true;
             if (!keepUpdate)
             {
@@ -402,13 +448,15 @@ namespace Shelf
         /// <param name="e"></param>
         private void BtnSettingClick(object sender, EventArgs e)
         {
-            keepUpdate = false;
-            content.Controls.Clear();
-            SettingPageUserControl settingPage = new SettingPageUserControl();
-            settingPage.Dock = DockStyle.Fill;
-            content.Controls.Add(settingPage);
-            btnRun.Visible = false;
-            settingPage.GridViewStyle();
+            //keepUpdate = false;
+            //content.Controls.Clear();
+            //SettingPageUserControl settingPage = new SettingPageUserControl();
+            //settingPage.Dock = DockStyle.Fill;
+            //content.Controls.Add(settingPage);
+            //btnRun.Visible = false;
+            //settingPage.GridViewStyle();
+            SettingPageForm setting = new SettingPageForm();
+            setting.ShowDialog();
         }
 
 
@@ -423,5 +471,7 @@ namespace Shelf
             TempSave tempSave = new TempSave();
             //tempSave.SaveToolTempInDatabase();
         }
+
+        
     }
 }

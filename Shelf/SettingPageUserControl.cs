@@ -38,12 +38,12 @@ namespace Shelf
             dt.Columns.Add(dc);
 
             dc = new DataColumn();
-            dc.ColumnName = "beforeUseLife";
+            dc.ColumnName = "life";
             dc.DataType = dc.DataType = Type.GetType("System.Int32");
             dt.Columns.Add(dc);
 
             dc = new DataColumn();
-            dc.ColumnName = "afterUseLife";
+            dc.ColumnName = "remain";
             dc.DataType = dc.DataType = Type.GetType("System.Int32");
             dt.Columns.Add(dc);
 
@@ -61,7 +61,7 @@ namespace Shelf
         private DataTable LoadToolData(DataTable dt)
         {
             List<Tool> tools = new List<Tool>();
-            tdb.GetAllTool(ref tools);
+            tdb.GetAllTool(ref tools, 1);
 
             for(int i = 0; i < tools.Count; i++)
             {

@@ -84,8 +84,6 @@
             this.tableView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.tableView.Size = new System.Drawing.Size(1240, 554);
             this.tableView.TabIndex = 0;
-            this.tableView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.tableView_CellFormatting);
-            this.tableView.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.tableViewCellPainting);
             // 
             // searchBox
             // 
@@ -195,7 +193,7 @@
             this.btnSearch.UseVisualStyleBackColor = true;
             this.btnSearch.Click += new System.EventHandler(this.BtnSearchClick);
             // 
-            // History
+            // HistoryForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -216,7 +214,7 @@
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(1280, 720);
             this.MinimumSize = new System.Drawing.Size(1280, 720);
-            this.Name = "History";
+            this.Name = "HistoryForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "歷史紀錄";
             this.Shown += new System.EventHandler(this.HistoryShown);

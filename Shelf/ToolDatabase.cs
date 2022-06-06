@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
+using Shelf.Model;
 
 namespace Shelf
 {
@@ -10,14 +11,9 @@ namespace Shelf
     {
         private readonly string _connectStr = @"Data Source = 127.0.0.1; Initial Catalog = Shelf; User ID = MES2014; Password = PMCMES;"; //資料庫連線設定
 
-        /// <summary>
-        /// 取得所有刀具
-        /// </summary>
-        /// <param name="tools"></param>
-        /// <returns></returns>
-        public bool GetAllTool(ref List<Tool> tools)
+        public bool GetAllMachine(ref List<Machine> machines)
         {
-            var query = "SELECT id, name, life, remain, warning FROM tool";
+            string query = "SELECT * FROM machine";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -25,6 +21,55 @@ namespace Shelf
                     using (SqlCommand comm = new SqlCommand(query, conn))
                     {
                         conn.Open();
+                        using (SqlDataReader data = comm.ExecuteReader())
+                        {
+                            if (data.HasRows)
+                            {
+                                while (data.Read())
+                                {
+                                    Machine machine = new Machine
+                                    {
+                                        id = int.Parse(data["id"].ToString()),
+                                        name = data["name"].ToString()
+                                    };
+                                    machines.Add(machine);
+                                }
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("資料庫發生問題" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("發生錯誤" + ex.Message);
+            }
+
+            return false;
+
+        }
+
+
+        /// <summary>
+        /// 取得所有刀具
+        /// </summary>
+        /// <param name="tools"></param>
+        /// <returns></returns>
+        public bool GetAllTool(ref List<Tool> tools, int machineId)
+        {
+            var query = "SELECT id, name, life, remain, warning FROM tool WHERE machineId = @machineId";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectStr))
+                {
+                    using (SqlCommand comm = new SqlCommand(query, conn))
+                    {
+                        conn.Open();
+                        comm.Parameters.AddWithValue("@machineId", machineId);
                         using (SqlDataReader data = comm.ExecuteReader())
                         {
                             if (data.HasRows)
@@ -163,7 +208,7 @@ namespace Shelf
             string query = "SELECT * FROM history WHERE dateTime >= @startTime AND dateTime <= @endTime";
             if (isWarning)
                 query += " AND afterUseLife <= warning";
-            query += " ORDER BY toolId asc, dateTime desc";
+            query += " ORDER BY dateTime desc";
 
 
             try
@@ -483,10 +528,10 @@ namespace Shelf
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        public bool InsertTool(Tool t)
+        public bool InsertTool(Tool t, int machineId)
         {
             string maxId = "(SELECT MAX(id) FROM tool)";
-            string query = @"INSERT INTO tool(id, name, life, remain, warning) VALUES(" + maxId + "+1, @name, @life, @remain, 0)";
+            string query = @"INSERT INTO tool(id, name, machineId, life, remain, warning) VALUES(" + maxId + "+1, @name, @machineId, @life, @remain, @warning)";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -496,8 +541,10 @@ namespace Shelf
                         if (conn.State != ConnectionState.Open)
                             conn.Open();
                         comm.Parameters.AddWithValue("@name", t.name);
+                        comm.Parameters.AddWithValue("@machineId", machineId);
                         comm.Parameters.AddWithValue("@life", t.life);
                         comm.Parameters.AddWithValue("@remain", t.remain);
+                        comm.Parameters.AddWithValue("@warning", t.warning);
 
                         int affectRows = comm.ExecuteNonQuery();
                         if (affectRows > 0)

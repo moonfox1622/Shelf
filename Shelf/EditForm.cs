@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,30 +10,28 @@ using System.Windows.Forms;
 
 namespace Shelf
 {
-    public partial class EditUserControl : UserControl
+    public partial class EditForm : Form
     {
-        public int id { get; set; }
         public string name { get; set; }
         Tool tool = new Tool();
         ToolDatabase tdb = new ToolDatabase();
 
-        public EditUserControl()
+        public EditForm()
         {
             InitializeComponent();
         }
 
-        private void EditLoad(object sender, EventArgs e)
+        private void EditFormShown(object sender, EventArgs e)
         {
             tdb.GetToolByName(this.name, ref tool);
             txtName.Text = tool.name;
             txtLife.Value = tool.life;
             txtRemain.Value = tool.remain;
             txtAlarm.Value = tool.warning;
-            
         }
 
         /// <summary>
-        /// 
+        /// 進行修改
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -44,9 +42,9 @@ namespace Shelf
                 MessageBox.Show("名稱不可為空白", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            if(txtLife.Value < txtRemain.Value)
+            if (txtLife.Value < txtRemain.Value)
             {
-                MessageBox.Show("壽命不可小於剩餘壽命","警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("壽命不可小於剩餘壽命", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -76,44 +74,5 @@ namespace Shelf
             }
         }
 
-        private void txtName_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtAlarm_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtRemain_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtLife_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

@@ -54,7 +54,7 @@ namespace Shelf
 
             if (!tdb.GetHistory(ref histories, startTime, endTime, isWarning))
             {
-                MessageBox.Show("讀取歷史資料失敗", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("查無歷史資料", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             foreach (ToolHistory th in histories)
@@ -85,7 +85,7 @@ namespace Shelf
                         break;
                 }
 
-                table.Rows.Add(th.name, th.beforeUseLife, th.afterUseLife, th.warning, th.startTime.ToString("yyyy-MM-dd HH:mm:ss"), th.endTime.ToString("yyyy-MM-dd HH:mm:ss"), mark, th.dateTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                table.Rows.Add(th.name, (th.beforeUseLife - th.afterUseLife),th.beforeUseLife, th.afterUseLife, th.warning, th.startTime.ToString("yyyy-MM-dd HH:mm:ss"), th.endTime.ToString("yyyy-MM-dd HH:mm:ss"), mark, th.dateTime.ToString("yyyy-MM-dd HH:mm:ss"));
             }
             bs.DataSource = table;
             TableViewStyle();
@@ -123,6 +123,7 @@ namespace Shelf
             tableView.DataSource = bs;
 
             tableView.Columns["name"].HeaderText = "刀具名稱";
+            tableView.Columns["decreaseLife"].HeaderText = "使用損耗";
             tableView.Columns["beforeUseLife"].HeaderText = "使用前損耗";
             tableView.Columns["afterUseLife"].HeaderText = "使用後損耗";
             tableView.Columns["warning"].HeaderText = "警戒值";
@@ -133,6 +134,7 @@ namespace Shelf
 
             int width = 110;
             tableView.Columns["name"].Width = width;
+            tableView.Columns["decreaseLife"].Width = width;
             tableView.Columns["beforeUseLife"].Width = width;
             tableView.Columns["afterUseLife"].Width = width;
             tableView.Columns["warning"].Width = width;
@@ -143,6 +145,7 @@ namespace Shelf
             tableView.Columns["dateTime"].Width = width;
 
             tableView.Columns["name"].SortMode = DataGridViewColumnSortMode.NotSortable;
+            tableView.Columns["decreaseLife"].SortMode = DataGridViewColumnSortMode.NotSortable;
             tableView.Columns["beforeUseLife"].SortMode = DataGridViewColumnSortMode.NotSortable;
             tableView.Columns["afterUseLife"].SortMode = DataGridViewColumnSortMode.NotSortable;
             tableView.Columns["warning"].SortMode = DataGridViewColumnSortMode.NotSortable;
@@ -173,13 +176,18 @@ namespace Shelf
             dt.Columns.Add(dc);
 
             dc = new DataColumn();
+            dc.ColumnName = "decreaseLife";
+            dc.DataType = Type.GetType("System.Int32");
+            dt.Columns.Add(dc);
+
+            dc = new DataColumn();
             dc.ColumnName = "beforeUseLife";
-            dc.DataType = dc.DataType = Type.GetType("System.Int32");
+            dc.DataType = Type.GetType("System.Int32");
             dt.Columns.Add(dc);
 
             dc = new DataColumn();
             dc.ColumnName = "afterUseLife";
-            dc.DataType = dc.DataType = Type.GetType("System.Int32");
+            dc.DataType = Type.GetType("System.Int32");
             dt.Columns.Add(dc);
 
             dc = new DataColumn();
@@ -237,7 +245,15 @@ namespace Shelf
             {
                 DataGridViewCellCollection row = tableView.Rows[i].Cells;
                 selectedData.Rows.Add(
-                    row["name"].Value, row["beforeUseLife"].Value, row["afterUseLife"].Value, row["warning"].Value, row["startTime"].Value, row["endTime"].Value, row["mark"].Value, row["dateTime"].Value
+                    row["name"].Value, 
+                    row["decreaseLife"].Value,
+                    row["beforeUseLife"].Value, 
+                    row["afterUseLife"].Value, 
+                    row["warning"].Value, 
+                    row["startTime"].Value, 
+                    row["endTime"].Value, 
+                    row["mark"].Value, 
+                    row["dateTime"].Value
                     );
             }
 

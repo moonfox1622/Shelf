@@ -46,7 +46,7 @@
             this.panelStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panelStatus.Controls.Add(this.txtCount);
             this.panelStatus.Cursor = System.Windows.Forms.Cursors.Default;
-            this.panelStatus.Location = new System.Drawing.Point(123, 3);
+            this.panelStatus.Location = new System.Drawing.Point(180, 3);
             this.panelStatus.Name = "panelStatus";
             this.panelStatus.Size = new System.Drawing.Size(85, 45);
             this.panelStatus.TabIndex = 10;
@@ -54,7 +54,7 @@
             // txtCount
             // 
             this.txtCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtCount.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.txtCount.Cursor = System.Windows.Forms.Cursors.Default;
             this.txtCount.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtCount.ForeColor = System.Drawing.Color.Black;
             this.txtCount.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -82,10 +82,10 @@
             // txtPercet
             // 
             this.txtPercet.AutoSize = true;
-            this.txtPercet.BackColor = System.Drawing.Color.LightGray;
+            this.txtPercet.BackColor = System.Drawing.Color.LightSteelBlue;
             this.txtPercet.Font = new System.Drawing.Font("微軟正黑體", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.txtPercet.ForeColor = System.Drawing.Color.White;
-            this.txtPercet.Location = new System.Drawing.Point(91, 84);
+            this.txtPercet.Location = new System.Drawing.Point(124, 84);
             this.txtPercet.Name = "txtPercet";
             this.txtPercet.Size = new System.Drawing.Size(33, 16);
             this.txtPercet.TabIndex = 11;
@@ -96,13 +96,13 @@
             this.txtWarning.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWarning.BackColor = System.Drawing.Color.Transparent;
             this.txtWarning.Cursor = System.Windows.Forms.Cursors.Default;
-            this.txtWarning.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtWarning.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.txtWarning.ForeColor = System.Drawing.Color.Black;
-            this.txtWarning.Location = new System.Drawing.Point(147, 51);
+            this.txtWarning.Location = new System.Drawing.Point(173, 51);
             this.txtWarning.Name = "txtWarning";
-            this.txtWarning.Size = new System.Drawing.Size(64, 16);
+            this.txtWarning.Size = new System.Drawing.Size(95, 16);
             this.txtWarning.TabIndex = 12;
-            this.txtWarning.Text = "Warn: 100";
+            this.txtWarning.Text = "警戒值: 100";
             this.txtWarning.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // picRunning
@@ -121,18 +121,18 @@
             this.remainLifeBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.remainLifeBar.ChannelColor = System.Drawing.Color.LightSteelBlue;
-            this.remainLifeBar.ChannelHeight = 12;
+            this.remainLifeBar.ChannelHeight = 16;
             this.remainLifeBar.Cursor = System.Windows.Forms.Cursors.Default;
             this.remainLifeBar.Font = new System.Drawing.Font("微軟正黑體", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.remainLifeBar.ForeBackColor = System.Drawing.Color.RoyalBlue;
             this.remainLifeBar.ForeColor = System.Drawing.Color.White;
-            this.remainLifeBar.Location = new System.Drawing.Point(7, 80);
+            this.remainLifeBar.Location = new System.Drawing.Point(9, 72);
             this.remainLifeBar.Maximum = 200;
             this.remainLifeBar.Name = "remainLifeBar";
             this.remainLifeBar.PaintedBack = false;
             this.remainLifeBar.ShowMaximun = false;
             this.remainLifeBar.ShowValue = CustomControls.TextPosition.None;
-            this.remainLifeBar.Size = new System.Drawing.Size(192, 22);
+            this.remainLifeBar.Size = new System.Drawing.Size(250, 30);
             this.remainLifeBar.SliderColor = System.Drawing.Color.RoyalBlue;
             this.remainLifeBar.SliderHeight = 20;
             this.remainLifeBar.StopPainting = false;
@@ -155,7 +155,7 @@
             this.Controls.Add(this.remainLifeBar);
             this.Cursor = System.Windows.Forms.Cursors.Default;
             this.Name = "GridUserControl";
-            this.Size = new System.Drawing.Size(211, 109);
+            this.Size = new System.Drawing.Size(268, 109);
             this.Load += new System.EventHandler(this.Grid_Load);
             this.panelStatus.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picRunning)).EndInit();

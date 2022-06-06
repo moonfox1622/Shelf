@@ -14,6 +14,7 @@ namespace Shelf
     {
         public bool hasNew = false;
         public Tool tool { get; set; }
+        public int machineId { get; set; }
 
 
         public NewToolForm()
@@ -33,11 +34,6 @@ namespace Shelf
                 MessageBox.Show("名稱不可以為空");
                 return;
             }
-            if (txtLife.Value < txtRemain.Value)
-            {
-                MessageBox.Show("可使用次數不能小於剩餘使用次數");
-                return;
-            }
             ToolDatabase tdb = new ToolDatabase();
 
             if (tdb.checkExist(txtName.Text))
@@ -54,10 +50,11 @@ namespace Shelf
                 {
                     name = txtName.Text,
                     life = Convert.ToInt32(txtLife.Value),
-                    remain = Convert.ToInt32(txtRemain.Value),
-                    warning = Convert.ToInt32(txtAlarm.SelectedIndex)
+                    remain = Convert.ToInt32(txtLife.Value),
+                    warning = Convert.ToInt32(txtWarning.Value)
                 };
-                tdb.InsertTool(tool);
+                if (!tdb.InsertTool(tool, machineId))
+                    return;
                 //tdb.HistoryInsert(tool, '4');
                 hasNew = true;
 
@@ -76,11 +73,5 @@ namespace Shelf
             this.Close();
         }
 
-        private void NewTool_Load(object sender, EventArgs e)
-        {
-            txtAlarm.Items.Add("正常");
-            txtAlarm.Items.Add("警報");
-            txtAlarm.SelectedIndex = 0;
-        }
     }
 }
