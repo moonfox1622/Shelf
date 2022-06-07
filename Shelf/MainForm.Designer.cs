@@ -31,11 +31,11 @@
             this.content = new System.Windows.Forms.Panel();
             this.btnRun = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnDashBoard = new System.Windows.Forms.Button();
             this.btnSetting = new System.Windows.Forms.Button();
             this.btnHistory = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
-            this.machineList = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.txtMachineName = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -74,6 +74,7 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
+            this.panel1.Controls.Add(this.btnDashBoard);
             this.panel1.Controls.Add(this.btnSetting);
             this.panel1.Controls.Add(this.btnHistory);
             this.panel1.Controls.Add(this.btnReset);
@@ -82,6 +83,21 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(115, 1046);
             this.panel1.TabIndex = 0;
+            // 
+            // btnDashBoard
+            // 
+            this.btnDashBoard.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
+            this.btnDashBoard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDashBoard.Font = new System.Drawing.Font("微軟正黑體", 13F, System.Drawing.FontStyle.Bold);
+            this.btnDashBoard.ForeColor = System.Drawing.Color.White;
+            this.btnDashBoard.Location = new System.Drawing.Point(-12, 851);
+            this.btnDashBoard.Name = "btnDashBoard";
+            this.btnDashBoard.Size = new System.Drawing.Size(142, 47);
+            this.btnDashBoard.TabIndex = 9;
+            this.btnDashBoard.Tag = "start";
+            this.btnDashBoard.Text = "主頁播放設定";
+            this.btnDashBoard.UseVisualStyleBackColor = false;
+            this.btnDashBoard.Click += new System.EventHandler(this.BtnDashBoardClick);
             // 
             // btnSetting
             // 
@@ -95,7 +111,7 @@
             this.btnSetting.Name = "btnSetting";
             this.btnSetting.Size = new System.Drawing.Size(130, 47);
             this.btnSetting.TabIndex = 8;
-            this.btnSetting.Text = "設定";
+            this.btnSetting.Text = "刀具設定";
             this.btnSetting.UseVisualStyleBackColor = false;
             this.btnSetting.Click += new System.EventHandler(this.BtnSettingClick);
             // 
@@ -129,34 +145,22 @@
             this.btnReset.UseVisualStyleBackColor = false;
             this.btnReset.Click += new System.EventHandler(this.BtnResetClick);
             // 
-            // machineList
+            // txtMachineName
             // 
-            this.machineList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.machineList.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.machineList.FormattingEnabled = true;
-            this.machineList.Location = new System.Drawing.Point(232, 36);
-            this.machineList.Name = "machineList";
-            this.machineList.Size = new System.Drawing.Size(132, 32);
-            this.machineList.TabIndex = 1;
-            this.machineList.SelectedIndexChanged += new System.EventHandler(this.MachineChange);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label1.Location = new System.Drawing.Point(121, 39);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(105, 24);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "機台選擇：";
+            this.txtMachineName.AutoSize = true;
+            this.txtMachineName.Font = new System.Drawing.Font("微軟正黑體", 27.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.txtMachineName.Location = new System.Drawing.Point(121, 24);
+            this.txtMachineName.Name = "txtMachineName";
+            this.txtMachineName.Size = new System.Drawing.Size(279, 47);
+            this.txtMachineName.TabIndex = 1;
+            this.txtMachineName.Text = "machineName";
             // 
             // MainForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(224)))), ((int)(((byte)(227)))));
             this.ClientSize = new System.Drawing.Size(1904, 1041);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.machineList);
+            this.Controls.Add(this.txtMachineName);
             this.Controls.Add(this.content);
             this.Controls.Add(this.panel1);
             this.Cursor = System.Windows.Forms.Cursors.Default;
@@ -180,8 +184,8 @@
         private System.Windows.Forms.Button btnReset;
         private System.Windows.Forms.Button btnHistory;
         private System.Windows.Forms.Button btnSetting;
-        private System.Windows.Forms.ComboBox machineList;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnDashBoard;
+        private System.Windows.Forms.Label txtMachineName;
     }
 }
 

@@ -44,6 +44,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.btnSearch = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.machineList = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.tableView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -96,24 +98,28 @@
             // 
             // startDateTimePicker
             // 
+            this.startDateTimePicker.CalendarFont = new System.Drawing.Font("微軟正黑體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.startDateTimePicker.CustomFormat = "YYYY-mm-dd";
-            this.startDateTimePicker.Location = new System.Drawing.Point(108, 8);
+            this.startDateTimePicker.Font = new System.Drawing.Font("微軟正黑體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.startDateTimePicker.Location = new System.Drawing.Point(108, 34);
             this.startDateTimePicker.Name = "startDateTimePicker";
-            this.startDateTimePicker.Size = new System.Drawing.Size(121, 22);
+            this.startDateTimePicker.Size = new System.Drawing.Size(121, 23);
             this.startDateTimePicker.TabIndex = 2;
             // 
             // endDateTimePicker
             // 
-            this.endDateTimePicker.Location = new System.Drawing.Point(108, 35);
+            this.endDateTimePicker.CalendarFont = new System.Drawing.Font("微軟正黑體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.endDateTimePicker.Font = new System.Drawing.Font("微軟正黑體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.endDateTimePicker.Location = new System.Drawing.Point(108, 61);
             this.endDateTimePicker.Name = "endDateTimePicker";
-            this.endDateTimePicker.Size = new System.Drawing.Size(121, 22);
+            this.endDateTimePicker.Size = new System.Drawing.Size(121, 23);
             this.endDateTimePicker.TabIndex = 3;
             // 
             // labelStartTime
             // 
             this.labelStartTime.AutoSize = true;
             this.labelStartTime.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.labelStartTime.Location = new System.Drawing.Point(12, 9);
+            this.labelStartTime.Location = new System.Drawing.Point(12, 35);
             this.labelStartTime.Name = "labelStartTime";
             this.labelStartTime.Size = new System.Drawing.Size(90, 21);
             this.labelStartTime.TabIndex = 4;
@@ -123,7 +129,7 @@
             // 
             this.labelEndTime.AutoSize = true;
             this.labelEndTime.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.labelEndTime.Location = new System.Drawing.Point(12, 35);
+            this.labelEndTime.Location = new System.Drawing.Point(12, 61);
             this.labelEndTime.Name = "labelEndTime";
             this.labelEndTime.Size = new System.Drawing.Size(90, 21);
             this.labelEndTime.TabIndex = 5;
@@ -143,7 +149,7 @@
             // 
             this.errorSelect.AutoSize = true;
             this.errorSelect.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.errorSelect.Location = new System.Drawing.Point(16, 63);
+            this.errorSelect.Location = new System.Drawing.Point(235, 59);
             this.errorSelect.Name = "errorSelect";
             this.errorSelect.Size = new System.Drawing.Size(93, 25);
             this.errorSelect.TabIndex = 8;
@@ -154,7 +160,7 @@
             // 
             this.btnDownload.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnDownload.Font = new System.Drawing.Font("微軟正黑體", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnDownload.Location = new System.Drawing.Point(369, 25);
+            this.btnDownload.Location = new System.Drawing.Point(461, 24);
             this.btnDownload.Name = "btnDownload";
             this.btnDownload.Size = new System.Drawing.Size(110, 46);
             this.btnDownload.TabIndex = 9;
@@ -185,7 +191,7 @@
             // 
             this.btnSearch.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnSearch.Font = new System.Drawing.Font("微軟正黑體", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnSearch.Location = new System.Drawing.Point(253, 25);
+            this.btnSearch.Location = new System.Drawing.Point(345, 24);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(110, 46);
             this.btnSearch.TabIndex = 14;
@@ -193,12 +199,34 @@
             this.btnSearch.UseVisualStyleBackColor = true;
             this.btnSearch.Click += new System.EventHandler(this.BtnSearchClick);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label1.Location = new System.Drawing.Point(12, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(90, 21);
+            this.label1.TabIndex = 16;
+            this.label1.Text = "機台選擇：";
+            // 
+            // machineList
+            // 
+            this.machineList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.machineList.Font = new System.Drawing.Font("微軟正黑體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.machineList.FormattingEnabled = true;
+            this.machineList.Location = new System.Drawing.Point(108, 6);
+            this.machineList.Name = "machineList";
+            this.machineList.Size = new System.Drawing.Size(121, 24);
+            this.machineList.TabIndex = 15;
+            // 
             // HistoryForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(224)))), ((int)(((byte)(227)))));
             this.ClientSize = new System.Drawing.Size(1264, 681);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.machineList);
             this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label2);
@@ -239,5 +267,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button btnSearch;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ComboBox machineList;
     }
 }

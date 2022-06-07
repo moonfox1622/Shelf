@@ -53,6 +53,46 @@ namespace Shelf
 
         }
 
+        public bool GetTopMachine(ref Machine machine)
+        {
+            string query = "SELECT TOP(1) * FROM machine";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectStr))
+                {
+                    using (SqlCommand comm = new SqlCommand(query, conn))
+                    {
+                        conn.Open();
+                        using (SqlDataReader data = comm.ExecuteReader())
+                        {
+                            if (data.HasRows)
+                            {
+                                while (data.Read())
+                                {
+                                    machine = new Machine
+                                    {
+                                        id = int.Parse(data["id"].ToString()),
+                                        name = data["name"].ToString()
+                                    };
+                                }
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("資料庫發生問題" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("發生錯誤" + ex.Message);
+            }
+
+            return false;
+
+        }
 
         /// <summary>
         /// 取得所有刀具
@@ -86,8 +126,8 @@ namespace Shelf
                                     };
                                     tools.Add(tool);
                                 }
-                                return true;
                             }
+                            return true;
                         }
                     }
                 }
@@ -203,12 +243,12 @@ namespace Shelf
         /// <param name="endTime">搜尋結束日期</param>
         /// <param name="warning">只選出異常狀態</param>
         /// <returns></returns>
-        public bool GetHistory(ref List<ToolHistory> histories, DateTime startTime, DateTime endTime, bool isWarning)
+        public bool GetHistory(ref List<ToolHistory> histories, DateTime startTime, DateTime endTime, int machineId, bool isWarning)
         {
-            string query = "SELECT * FROM history WHERE dateTime >= @startTime AND dateTime <= @endTime";
+            string query = "SELECT * FROM history h LEFT JOIN tool t ON t.id = h.toolId WHERE h.dateTime >= @startTime AND h.dateTime <= @endTime AND t.machineId = @machineId";
             if (isWarning)
-                query += " AND afterUseLife <= warning";
-            query += " ORDER BY dateTime desc";
+                query += " AND h.afterUseLife <= h.warning";
+            query += " ORDER BY h.dateTime asc";
 
 
             try
@@ -221,7 +261,8 @@ namespace Shelf
                             conn.Open();
                         comm.Parameters.AddWithValue("@startTime", startTime.ToString("yyyy-MM-dd 00:00:00"));
                         comm.Parameters.AddWithValue("@endTime", endTime.ToString("yyyy-MM-dd 23:59:59"));
-                        using(SqlDataReader data = comm.ExecuteReader())
+                        comm.Parameters.AddWithValue("@machineId", machineId);
+                        using (SqlDataReader data = comm.ExecuteReader())
                         {
                             if (!data.HasRows)
                                 return false;
@@ -647,7 +688,7 @@ namespace Shelf
         /// <returns></returns>
         public bool HistoryUseTool(ToolHistory h)
         {
-            var query = @"INSERT INTO history(toolId, name, beforeUseLife, afterUseLife, warning, startTime, endTime, mark) VALUES(@toolId, @name, @beforeUseLife, @afterUseLife, @warning, @startTime, @endTime, @mark)";
+            var query = @"INSERT INTO history(toolId, name, beforeUseLife, afterUseLife, warning, startTime, mark) VALUES(@toolId, @name, @beforeUseLife, @afterUseLife, @warning, @startTime, @mark)";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -662,7 +703,6 @@ namespace Shelf
                         comm.Parameters.AddWithValue("@afterUseLife", h.afterUseLife);
                         comm.Parameters.AddWithValue("@warning", h.warning);
                         comm.Parameters.AddWithValue("@startTime",h.startTime);
-                        comm.Parameters.AddWithValue("@endTime", h.endTime);
                         comm.Parameters.AddWithValue("@mark", h.mark);
 
                         int affectRows = comm.ExecuteNonQuery();
@@ -690,10 +730,10 @@ namespace Shelf
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        public bool HistoryReturnTool(Tool t)
+        public bool HistoryReturnTool(ToolHistory t, )
         {
-            var query = @"INSERT INTO history(toolId, name, beforeUseLife, afterUseLife, warning, startTime, endTime, mark) VALUES(@toolId, @name, @beforeUseLife, @afterUseLife, @warning, @startTime, @endTime, @mark)";
-            DateTime endTime = t.endTime;
+            var query = @"UPDATE history SET endTime = @endTime, dateTime = getdate() WHERE id = @historyId";
+            
             try
             {
                 if (!GetLastHistory(ref t))
@@ -704,14 +744,8 @@ namespace Shelf
                     {
                         if (conn.State != ConnectionState.Open)
                             conn.Open();
-                        comm.Parameters.AddWithValue("@toolId", t.id);
-                        comm.Parameters.AddWithValue("@name", t.name);
-                        comm.Parameters.AddWithValue("@beforeUseLife", t.life);
-                        comm.Parameters.AddWithValue("@afterUseLife", t.remain);
-                        comm.Parameters.AddWithValue("@warning", t.warning);
-                        comm.Parameters.AddWithValue("@startTime", t.startTime);
-                        comm.Parameters.AddWithValue("@endTime", endTime);
-                        comm.Parameters.AddWithValue("@mark", '2');
+                        comm.Parameters.AddWithValue("@endTime", t.endTime);
+                        comm.Parameters.AddWithValue("@historyId", t.id);
 
                         int affectRows = comm.ExecuteNonQuery();
                         if (affectRows > 0)

@@ -14,11 +14,7 @@ namespace Shelf
     public partial class GridUserControl : UserControl
     {
         public Tool tool { get; set; }
-        public int check { get; set; }
         
-        ToolDatabase tdb = new ToolDatabase();
-        
-
         public GridUserControl()
         {
             InitializeComponent();
@@ -88,9 +84,13 @@ namespace Shelf
             //warning == true show picAlarm
             if (tool.remain <= tool.warning)
             {
-                //picWarning.Visible = true;
                 txtCount.ForeColor = Color.White;
                 panelStatus.BackColor = Color.FromArgb(216, 30, 91);
+            }
+            else
+            {
+                txtCount.ForeColor = Color.Black;
+                panelStatus.BackColor = Color.FromArgb(241, 241, 241);
             }
 
         }

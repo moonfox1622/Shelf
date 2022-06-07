@@ -1,16 +1,14 @@
 ﻿using NPOI.HSSF.Util;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using CsvHelper;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Shelf.Model;
+using System.Globalization;
 
 namespace Shelf
 {
@@ -26,14 +24,14 @@ namespace Shelf
 
         private void DownloadFormShown(object sender, EventArgs e)
         {
-            if(!ExportExcel(dt, colName, fileName))
+            if(!ExportCSV(dt, colName, fileName))
             {
-                MessageBox.Show("下載失敗", "失敗", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.Close();
+                MessageBox.Show("下載失敗", "失敗", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
-            } 
-            MessageBox.Show("下載完成", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
             this.Close();
+            MessageBox.Show("下載完成", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         /// <summary>
@@ -99,6 +97,42 @@ namespace Shelf
             return false;
         }
 
-        
+        private bool ExportCSV(DataTable dt, string[] colName, string fileName)
+        {
+            try
+            {
+                using (var writer = new StreamWriter(fileName, false, System.Text.Encoding.UTF8))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                {
+                    csv.WriteHeader<CSVHistoryFormat>();
+                    csv.NextRecord();
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        CSVHistoryFormat h = new CSVHistoryFormat
+                        {
+                            name = dt.Rows[i][0].ToString(),
+                            decreaseLife = Convert.ToInt32(dt.Rows[i][1].ToString()),
+                            beforeUseLife = Convert.ToInt32(dt.Rows[i][2].ToString()),
+                            afterUseLife = Convert.ToInt32(dt.Rows[i][3].ToString()),
+                            warning = Convert.ToInt32(dt.Rows[i][4].ToString()),
+                            startTime = dt.Rows[i][5].ToString(),
+                            endTime = dt.Rows[i][6].ToString(),
+                            dateTime = dt.Rows[i][8].ToString()
+                        };
+                        csv.WriteRecord(h);
+                        csv.NextRecord();
+
+                        double precentage = ((double)(i + 1) / (double)dt.Rows.Count) * 100;
+                        downloadProgressBar.Value = i + 1;
+                        txtPercentage.Text = string.Format("{0}% 已完成", ((int)precentage).ToString());
+                    }
+                    return true;
+                }
+            }catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            return false;
+        }
     }
 }

@@ -8,6 +8,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using Shelf.Model;
 
 namespace Shelf
 {
@@ -29,16 +30,24 @@ namespace Shelf
             var thisWeekEnd = thisWeekStart.AddDays(7).AddSeconds(-1);
             startDateTimePicker.Value = thisWeekStart;
             endDateTimePicker.Value = thisWeekEnd;
+
+            LoadMachine();
         }
 
-
-        private void BtnSearchClick(object sender, EventArgs e)
+        /// <summary>
+        /// 讀取機台
+        /// </summary>
+        private void LoadMachine()
         {
-            DateTime startTime = startDateTimePicker.Value.Date;
-            DateTime endTime = endDateTimePicker.Value.Date;
-            bool isWarning = errorSelect.Checked;
-            LoadData(startTime, endTime, isWarning);
-            btnDownload.Visible = true;
+            List<Machine> machines = new List<Machine>();
+            if(!tdb.GetAllMachine(ref machines))
+            {
+                SetUIEnabled(false);
+                MessageBox.Show("未讀取到機台", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            SetUIEnabled(true);
+            machineList.DataSource = machines;
         }
 
         /// <summary>
@@ -47,15 +56,15 @@ namespace Shelf
         /// <param name="startTime"></param>
         /// <param name="endTime"></param>
         /// <param name="isWarning"></param>
-        private void LoadData(DateTime startTime, DateTime endTime, bool isWarning)
+        private void LoadData(DateTime startTime, DateTime endTime, int machineId, bool isWarning)
         {
             table = HistoryDataTable();
             List<ToolHistory> histories = new List<ToolHistory>();
 
-            if (!tdb.GetHistory(ref histories, startTime, endTime, isWarning))
+            if (!tdb.GetHistory(ref histories, startTime, endTime, machineId, isWarning))
             {
+                //table.Rows.Clear();
                 MessageBox.Show("查無歷史資料", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
             }
             foreach (ToolHistory th in histories)
             {
@@ -90,6 +99,20 @@ namespace Shelf
             bs.DataSource = table;
             TableViewStyle();
             TableMark();
+        }
+
+        /// <summary>
+        /// 條件搜尋按鈕
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnSearchClick(object sender, EventArgs e)
+        {
+            DateTime startTime = startDateTimePicker.Value.Date;
+            DateTime endTime = endDateTimePicker.Value.Date;
+            bool isWarning = errorSelect.Checked;
+            LoadData(startTime, endTime, (machineList.SelectedItem as Machine).id, isWarning);
+            btnDownload.Visible = true;
         }
 
         /// <summary>
@@ -257,7 +280,7 @@ namespace Shelf
                     );
             }
 
-            fileDialog.Filter = "Excel(*.xlsx)|*.xlsx|Excel(*.xls)|*.xls";
+            fileDialog.Filter = "CSV(*.csv)|*.csv";
             fileDialog.FileName = "刀具歷史紀錄" + string.Format("{0:yy-MM-dd-H-mm-ss}", DateTime.Now);
             fileDialog.CheckPathExists = true;
             fileDialog.InitialDirectory = "c:\\";
@@ -311,7 +334,6 @@ namespace Shelf
             }
         }
 
-
         private void tableView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             if (e.RowIndex <= 0 || e.ColumnIndex != 0)
@@ -323,5 +345,14 @@ namespace Shelf
             }
         }
 
+        private void SetUIEnabled(bool status)
+        {
+            btnSearch.Enabled = status;
+            btnDownload.Enabled = status;
+            startDateTimePicker.Enabled = status;
+            endDateTimePicker.Enabled = status;
+            errorSelect.Enabled = status;
+            machineList.Enabled = status;
+        }
     }
 }

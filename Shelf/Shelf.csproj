@@ -89,26 +89,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChangeUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ChangeUserControl.Designer.cs">
-      <DependentUpon>ChangeUserControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="CProgressBar.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DashboardSettingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DashboardSettingForm.Designer.cs">
+      <DependentUpon>DashboardSettingForm.cs</DependentUpon>
     </Compile>
     <Compile Include="EditForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="EditForm.Designer.cs">
       <DependentUpon>EditForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="EditUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="EditUserControl.Designer.cs">
-      <DependentUpon>EditUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="HistoryForm.cs">
       <SubType>Form</SubType>
@@ -122,6 +116,7 @@
     <Compile Include="LoadingForm.Designer.cs">
       <DependentUpon>LoadingForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\CSVHistoryFormat.cs" />
     <Compile Include="Model\Machine.cs" />
     <Compile Include="Model\Respond.cs" />
     <Compile Include="NewToolForm.cs">
@@ -135,23 +130,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SettingForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SettingForm.Designer.cs">
-      <DependentUpon>SettingForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="SettingPageForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="SettingPageForm.Designer.cs">
       <DependentUpon>SettingPageForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SettingPageUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SettingPageUserControl.Designer.cs">
-      <DependentUpon>SettingPageUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="TempSave.cs" />
     <Compile Include="Model\Tool.cs" />
@@ -176,27 +159,15 @@
       <DependentUpon>ResetForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ToolDatabase.cs" />
-    <Compile Include="InfoUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="InfoUserControl.Designer.cs">
-      <DependentUpon>InfoUserControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Model\ToolHistory.cs" />
-    <EmbeddedResource Include="ChangeUserControl.resx">
-      <DependentUpon>ChangeUserControl.cs</DependentUpon>
+    <EmbeddedResource Include="DashboardSettingForm.resx">
+      <DependentUpon>DashboardSettingForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="EditForm.resx">
       <DependentUpon>EditForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="EditUserControl.resx">
-      <DependentUpon>EditUserControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="HistoryForm.resx">
       <DependentUpon>HistoryForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="InfoUserControl.resx">
-      <DependentUpon>InfoUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LoadingForm.resx">
       <DependentUpon>LoadingForm.cs</DependentUpon>
@@ -219,14 +190,8 @@
     <EmbeddedResource Include="ResetForm.resx">
       <DependentUpon>ResetForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SettingForm.resx">
-      <DependentUpon>SettingForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="SettingPageForm.resx">
       <DependentUpon>SettingPageForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SettingPageUserControl.resx">
-      <DependentUpon>SettingPageUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

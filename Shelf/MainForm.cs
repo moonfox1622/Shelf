@@ -19,17 +19,19 @@ namespace Shelf
 
         //List<int> lastDatas = new List<int>(); //預防更新失敗之暫存資料
         List<GridUserControl> tools = new List<GridUserControl>(); //刀具UserController List
-        List<int> checkDatas; //觸發警報數值(隨機生成)
         bool keepUpdate = true; //持續更新刀具資料
+        int carouselSpeed = 10;
         TableLayoutPanel table = new TableLayoutPanel();
         ToolDatabase tdb = new ToolDatabase();
         bool simulateRun = true;
-        int machineId = 1;
+        Machine machine = new Machine();
+        //int machineId = 1;
+
+
         //Delegate function
         private delegate void updateGridUI();
-        private delegate void deleInitialContent();
 
-
+        
         public MainForm()
         {
             InitializeComponent();
@@ -37,24 +39,31 @@ namespace Shelf
 
         private void MainShown(object sender, EventArgs e)
         {
-            LoadMachine();
-            if (machineList.Items.Count == 0)
-                return;
 
             //回傳本地資料指資料庫
-            Thread restoreThread = new Thread(SendLocalData);
-            restoreThread.Start();
+            //Thread restoreThread = new Thread(SendLocalData);
+            //restoreThread.Start();
+            if (!tdb.GetTopMachine(ref machine))
+            {
+                MessageBox.Show("未讀取到機台", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+                
 
             initialContent();
             if (tools.Count == 0)
-            {
-                keepUpdate = false;
                 return;
-            }
             keepUpdate = true;
+
             Thread thread = new Thread(ToolUpdate);
             thread.IsBackground = true;
             thread.Start();
+
+            Thread carouselThread = new Thread(CarouselMachine);
+            carouselThread.IsBackground = true;
+            carouselThread.Start();
+
+
         }
 
         /// <summary>
@@ -66,20 +75,14 @@ namespace Shelf
         {
             content.Controls.Clear();
             tools = new List<GridUserControl>();
-            if (!LoadData(ref tools, (machineList.SelectedItem as Machine).id))
+            if (!LoadData(ref tools, machine.id))
                 return;
             
             table = initialTablePanel();
-
-            Random randNum = new Random();
-            checkDatas = Enumerable
-                .Repeat(0, tools.Count)
-                .Select(i => randNum.Next(0, 49))
-                .ToList();
+            txtMachineName.Text = machine.name;
             //Point loc = new Point(0, 23);
             for (int i = 0; i < tools.Count; i++)
             {
-                tools[i].check = checkDatas[i];
                 //tools[i].Location = loc;
                 
                 table.Controls.Add(tools[i], i % 6, table.RowCount);
@@ -94,34 +97,6 @@ namespace Shelf
             content.Controls.Add(table);
         }
 
-        private void LoadMachine()
-        {
-            List<Machine> machines = new List<Machine>();
-            if (!tdb.GetAllMachine(ref machines))
-            {
-                MessageBox.Show("未讀取到機台", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-
-            foreach (Machine m in machines)
-            {
-                machineList.Items.Add(m);
-            }
-
-            machineList.SelectedIndex = 0;
-        }
-
-        private void MachineChange(object sender, EventArgs e)
-        {
-            initialContent();
-            if (tools.Count == 0)
-            {
-                keepUpdate = false;
-                return;
-            }
-            machineId = (machineList.SelectedItem as Machine).id;
-        }
-
         /// <summary>
         /// 取得刀具資料
         /// </summary>
@@ -133,7 +108,6 @@ namespace Shelf
             List<Tool> toolsData = new List<Tool>();
             if (!tdb.GetAllTool(ref toolsData, machineId))
             {
-                MessageBox.Show("查無刀具資料", "訊息", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return false;
             }
 
@@ -186,35 +160,66 @@ namespace Shelf
         /// </summary>
         private void ToolUpdate()
         {
+            try
+            {
+                while (keepUpdate)
+                {
+                    List<Tool> toolData = new List<Tool>();
+                    if (!tdb.GetAllTool(ref toolData, machine.id))
+                    {
+                        continue;
+                    }
+
+                    if (toolData.Count != tools.Count)
+                    {
+                        Invoke(new updateGridUI(initialContent));
+                        continue;
+                    }
+                    for (int i = 0; i < tools.Count; i++)
+                    {
+                        tools[i].tool.name = toolData[i].name;
+                        tools[i].tool.life = toolData[i].life;
+                        tools[i].tool.remain = toolData[i].remain;
+                        tools[i].tool.warning = toolData[i].warning;
+                        Invoke(new updateGridUI(tools[i].CheckStatus));
+                    }
+                    Thread.Sleep(2000);
+                }
+            }catch (Exception e)
+            {
+
+            }
+            
+        }
+
+        /// <summary>
+        /// 定時變換觀看機台ID
+        /// </summary>
+        private void CarouselMachine()
+        {
+            List<Machine> machines = new List<Machine>();
+            if (!tdb.GetAllMachine(ref machines))
+            {
+                MessageBox.Show("未讀取到機台", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
             while (keepUpdate)
             {
-                List<Tool> toolData = new List<Tool>();
-                if(!tdb.GetAllTool(ref toolData, machineId))
+                
+                foreach(Machine m in machines)
                 {
-                    keepUpdate = false;
-                    continue;
+                    if (carouselSpeed != 0)
+                    {
+                        machine = m;
+                        Thread.Sleep(carouselSpeed * 1000);
+                    }
+                    else
+                    {
+                        Thread.Sleep(3000);
+                    }
+                        
+                    
                 }
-
-                if(tools.Count == 0)
-                {
-                    keepUpdate = false;
-                    continue;
-                }
-
-                if(toolData.Count != tools.Count)
-                {
-                    Invoke(new deleInitialContent(initialContent));
-                    continue;
-                }
-                for(int i = 0; i < tools.Count; i++)
-                {
-                    tools[i].tool.name = toolData[i].name;
-                    tools[i].tool.life = toolData[i].life;
-                    tools[i].tool.remain = toolData[i].remain;
-                    tools[i].tool.warning = toolData[i].warning;
-                    Invoke(new updateGridUI(tools[i].CheckStatus));
-                }
-                Thread.Sleep(2000);
             }
         }
 
@@ -321,23 +326,6 @@ namespace Shelf
 
         }
 
-        /// <summary>
-        /// 主頁
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnMainClick(object sender, EventArgs e)
-        {
-            initialContent();
-            btnRun.Visible = true;
-            if (!keepUpdate)
-            {
-                keepUpdate = true;
-                Thread thread = new Thread(ToolUpdate);
-                thread.IsBackground = true;
-                thread.Start();
-            }
-        }
 
         /// <summary>
         /// 模擬刀具使用
@@ -354,7 +342,14 @@ namespace Shelf
                 Tool randTool = tools[randNum].tool;
                 UseTool(randTool, DateTime.Now);
                 Thread.Sleep(3000);
-                randTool.remain -= decrease;
+                if(randTool.remain - decrease <= 0)
+                {
+                    randTool.remain = 0;
+                }
+                else
+                {
+                    randTool.remain -= decrease;
+                }
                 ReturnTool(randTool, DateTime.Now);
                 
                 count++;
@@ -448,17 +443,34 @@ namespace Shelf
         /// <param name="e"></param>
         private void BtnSettingClick(object sender, EventArgs e)
         {
-            //keepUpdate = false;
-            //content.Controls.Clear();
-            //SettingPageUserControl settingPage = new SettingPageUserControl();
-            //settingPage.Dock = DockStyle.Fill;
-            //content.Controls.Add(settingPage);
-            //btnRun.Visible = false;
-            //settingPage.GridViewStyle();
             SettingPageForm setting = new SettingPageForm();
             setting.ShowDialog();
         }
 
+        /// <summary>
+        /// 開啟輪播設定頁面
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnDashBoardClick(object sender, EventArgs e)
+        {
+            DashboardSettingForm dashboard = new DashboardSettingForm();
+            dashboard.carouselSpeed = carouselSpeed;
+            dashboard.machineId = machine.id;
+            dashboard.machineName = machine.name;
+
+            dashboard.ShowDialog();
+            carouselSpeed = dashboard.carouselSpeed;
+            if(carouselSpeed == 0)
+            {
+                machine = new Machine
+                {
+                    id = dashboard.machineId,
+                    name = dashboard.machineName
+                };
+            }
+            
+        }
 
         private void SendLocalData()
         {
