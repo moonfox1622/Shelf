@@ -93,6 +93,11 @@ namespace Shelf
                 panelStatus.BackColor = Color.FromArgb(241, 241, 241);
             }
 
+            if (tool.taken)
+                ToolUse();
+            else
+                ToolUnuse();
+
         }
 
         public void ToolUse()

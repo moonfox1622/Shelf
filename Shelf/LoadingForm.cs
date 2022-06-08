@@ -106,12 +106,13 @@ namespace Shelf
                 {
                     csv.WriteHeader<CSVHistoryFormat>();
                     csv.NextRecord();
+                    downloadProgressBar.Maximum = dt.Rows.Count;
                     for (int i = 0; i < dt.Rows.Count; i++)
                     {
                         CSVHistoryFormat h = new CSVHistoryFormat
                         {
                             name = dt.Rows[i][0].ToString(),
-                            decreaseLife = Convert.ToInt32(dt.Rows[i][1].ToString()),
+                            decreaseLife = dt.Rows[i][1].ToString(),
                             beforeUseLife = Convert.ToInt32(dt.Rows[i][2].ToString()),
                             afterUseLife = Convert.ToInt32(dt.Rows[i][3].ToString()),
                             warning = Convert.ToInt32(dt.Rows[i][4].ToString()),

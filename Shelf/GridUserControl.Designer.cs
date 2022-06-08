@@ -83,11 +83,11 @@
             // 
             this.txtPercet.AutoSize = true;
             this.txtPercet.BackColor = System.Drawing.Color.LightSteelBlue;
-            this.txtPercet.Font = new System.Drawing.Font("微軟正黑體", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.txtPercet.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.txtPercet.ForeColor = System.Drawing.Color.White;
-            this.txtPercet.Location = new System.Drawing.Point(124, 84);
+            this.txtPercet.Location = new System.Drawing.Point(9, 61);
             this.txtPercet.Name = "txtPercet";
-            this.txtPercet.Size = new System.Drawing.Size(33, 16);
+            this.txtPercet.Size = new System.Drawing.Size(44, 21);
             this.txtPercet.TabIndex = 11;
             this.txtPercet.Text = "99%";
             // 

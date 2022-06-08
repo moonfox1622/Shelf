@@ -12,7 +12,7 @@ namespace Shelf.Model
         public string name { get; set; }
 
         [CsvHelper.Configuration.Attributes.Name("使用耗損")]
-        public int decreaseLife { get; set; }
+        public string decreaseLife { get; set; }
 
         [CsvHelper.Configuration.Attributes.Name("使用前耗損")]
         public int beforeUseLife { get; set; }

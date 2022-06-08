@@ -61,7 +61,7 @@ namespace Shelf
             
             for (int i = 0; i < tools.Count; i++)
             {
-                toolsData.Rows.Add(tools[i].name, tools[i].life, tools[i].remain, tools[i].warning, "設定", "刪除");
+                toolsData.Rows.Add(tools[i].name, tools[i].life, tools[i].remain, tools[i].warning, "設定", "換刀", "刪除");
             }
         }
 
@@ -98,6 +98,10 @@ namespace Shelf
             dt.Columns.Add(dc);
 
             dc = new DataColumn();
+            dc.ColumnName = "change";
+            dt.Columns.Add(dc);
+
+            dc = new DataColumn();
             dc.ColumnName = "delete";
             dt.Columns.Add(dc);
 
@@ -115,11 +119,13 @@ namespace Shelf
             toolGridView.Columns["remain"].HeaderText = "剩餘損耗";
             toolGridView.Columns["warning"].HeaderText = "警戒值";
             toolGridView.Columns["setting"].HeaderText = "設定";
+            toolGridView.Columns["change"].HeaderText = "換刀";
             toolGridView.Columns["delete"].HeaderText = "刪除";
 
             int width = 80;
             
             toolGridView.Columns["setting"].Width = width;
+            toolGridView.Columns["change"].Width = width;
             toolGridView.Columns["delete"].Width = width;
 
             toolGridView.Columns["name"].SortMode = DataGridViewColumnSortMode.NotSortable;
@@ -127,6 +133,8 @@ namespace Shelf
             toolGridView.Columns["remain"].SortMode = DataGridViewColumnSortMode.NotSortable;
             toolGridView.Columns["warning"].SortMode = DataGridViewColumnSortMode.NotSortable;
             toolGridView.Columns["setting"].SortMode = DataGridViewColumnSortMode.NotSortable;
+            toolGridView.Columns["change"].SortMode = DataGridViewColumnSortMode.NotSortable;
+            toolGridView.Columns["delete"].SortMode = DataGridViewColumnSortMode.NotSortable;
         }
 
         
@@ -172,8 +180,15 @@ namespace Shelf
                     Style = btnStyle
 
                 };
+                DataGridViewButtonCell changeButtonCell = new DataGridViewButtonCell
+                {
+                    FlatStyle = FlatStyle.Popup,
+                    Style = btnStyle
+
+                };
                 row.Cells["setting"] = settingButtonCell;
                 row.Cells["delete"] = deleteButtonCell;
+                row.Cells["change"] = changeButtonCell;
             }
 
             DataGridViewCellStyle cellStyle = new DataGridViewCellStyle();
@@ -205,29 +220,85 @@ namespace Shelf
             int row = e.RowIndex;
             if (col == 4 && row != -1)
             {
-                EditForm editPadge = new EditForm
-                {
-                    name = toolGridView[0, row].Value.ToString()
-                };
-                editPadge.ShowDialog();
-                Tool t = new Tool();
-                tdb.GetToolByName(toolGridView[0, row].Value.ToString(), ref t);
-                toolGridView.Rows[row].Cells["name"].Value = t.name;
-                toolGridView.Rows[row].Cells["life"].Value = t.life;
-                toolGridView.Rows[row].Cells["remain"].Value = t.remain;
-                toolGridView.Rows[row].Cells["warning"].Value = t.warning;
-                GridViewStyle();
+                Edit(row);
             }else if(col == 5 && row != -1)
             {
-                if(MessageBox.Show("確定要刪除「" + toolGridView.Rows[row].Cells["name"].Value + "」嗎？", "刪除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-                {
-                    if (!tdb.DeleteTool(toolGridView.Rows[row].Cells["name"].Value.ToString()))
-                        return;
-                    toolGridView.Rows.Remove(toolGridView.Rows[row]);
-                    MessageBox.Show("刪除成功", "訊息", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
+                Change(row);
+            }
+            else if(col == 6 && row != -1)
+            {
+                Delete(row);
             }
             
+        }
+
+        private void Edit(int row)
+        {
+            EditForm editPadge = new EditForm
+            {
+                name = toolGridView[0, row].Value.ToString()
+            };
+            editPadge.ShowDialog();
+            Tool t = new Tool();
+            tdb.GetToolByName(toolGridView[0, row].Value.ToString(), ref t);
+            toolGridView.Rows[row].Cells["name"].Value = t.name;
+            toolGridView.Rows[row].Cells["life"].Value = t.life;
+            toolGridView.Rows[row].Cells["remain"].Value = t.remain;
+            toolGridView.Rows[row].Cells["warning"].Value = t.warning;
+            GridViewStyle();
+        }
+
+        private void Change(int row)
+        {
+            if (MessageBox.Show("確定要對「" + toolGridView.Rows[row].Cells["name"].Value + "」進行更換嗎？", "換刀", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+            {
+                int beforeChangeLife = Convert.ToInt32(toolGridView.Rows[row].Cells["remain"].Value.ToString());
+                Tool t = new Tool();
+                if (!tdb.GetToolByName(toolGridView.Rows[row].Cells["name"].Value.ToString(), ref t))
+                    return;
+                t.remain = t.life;
+                t.startTime = DateTime.Now;
+                t.endTime = DateTime.Now;
+                //Tool t = new Tool
+                //{
+                //    name = toolGridView.Rows[row].Cells["name"].Value.ToString(),
+                //    life = Convert.ToInt32(toolGridView.Rows[row].Cells["life"].Value.ToString()),
+                //    remain = Convert.ToInt32(toolGridView.Rows[row].Cells["life"].Value.ToString()),
+                //    startTime = DateTime.Now,
+                //    endTime = DateTime.Now,
+                //    warning = Convert.ToInt32(toolGridView.Rows[row].Cells["warning"].Value.ToString())
+                //};
+                    
+                if (!tdb.ChangeTool(t))
+                {
+                    MessageBox.Show("更換失敗", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                if(!tdb.HistoryChangeTool(t, beforeChangeLife))
+                {
+                    MessageBox.Show("紀錄更換歷史失敗", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                toolGridView.Rows[row].Cells["remain"].Value = t.life;
+                GridViewStyle();
+                MessageBox.Show("更換成功", "訊息", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void Delete(int row)
+        {
+            if (MessageBox.Show("確定要刪除「" + toolGridView.Rows[row].Cells["name"].Value + "」嗎？", "刪除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                if (!tdb.DeleteTool(toolGridView.Rows[row].Cells["name"].Value.ToString()))
+                {
+                    MessageBox.Show("刪除失敗", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                toolGridView.Rows.Remove(toolGridView.Rows[row]);
+                MessageBox.Show("刪除成功", "訊息", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private void BtnNewToolClick(object sender, EventArgs e)
@@ -238,7 +309,7 @@ namespace Shelf
             if (!newTool.hasNew)
                 return;
             Tool t = newTool.tool;
-            toolsData.Rows.Add(t.name, t.life, t.remain, t.warning, "設定", "刪除");
+            toolsData.Rows.Add(t.name, t.life, t.remain, t.warning, "設定", "換刀", "刪除");
             GridViewStyle();
         }
     }

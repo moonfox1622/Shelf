@@ -93,8 +93,10 @@ namespace Shelf
                         mark = "機台錯誤";
                         break;
                 }
-
-                table.Rows.Add(th.name, (th.beforeUseLife - th.afterUseLife),th.beforeUseLife, th.afterUseLife, th.warning, th.startTime.ToString("yyyy-MM-dd HH:mm:ss"), th.endTime.ToString("yyyy-MM-dd HH:mm:ss"), mark, th.dateTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                string decreaseLife = (th.beforeUseLife - th.afterUseLife).ToString();
+                if (Convert.ToInt32(decreaseLife) <= 0)
+                    decreaseLife = "";
+                table.Rows.Add(th.name, decreaseLife, th.beforeUseLife, th.afterUseLife, th.warning, th.startTime.ToString("yyyy-MM-dd HH:mm:ss"), th.endTime.ToString("yyyy-MM-dd HH:mm:ss"), mark, th.dateTime.ToString("yyyy-MM-dd HH:mm:ss"));
             }
             bs.DataSource = table;
             TableViewStyle();
@@ -124,16 +126,27 @@ namespace Shelf
             {
                 DataGridViewCellStyle cellStyle = new DataGridViewCellStyle();
                 DataGridViewButtonCell buttonCell = new DataGridViewButtonCell();
-                if (Convert.ToInt32(row.Cells["afterUseLife"].Value) <= Convert.ToInt32(row.Cells["warning"].Value))
+                if(Convert.ToInt32(row.Cells["afterUseLife"].Value) >= Convert.ToInt32(row.Cells["beforeUseLife"].Value))
                 {
-                    row.DefaultCellStyle.BackColor = Color.FromArgb(216, 30, 91);
-                    row.DefaultCellStyle.ForeColor = Color.White;
-                    row.DefaultCellStyle.SelectionBackColor = SystemColors.GradientActiveCaption;
-                    row.DefaultCellStyle.SelectionForeColor = Color.FromArgb(216, 30, 91);
+                    row.DefaultCellStyle.BackColor = Color.FromArgb(243, 202, 41);
+                    row.DefaultCellStyle.ForeColor = Color.Black;
+                    row.DefaultCellStyle.SelectionBackColor = Color.FromArgb(243, 202, 41);
+                    row.DefaultCellStyle.SelectionForeColor = Color.Black;
                     row.Cells[0].Style.BackColor = Color.FromArgb(235, 237, 237);
                     row.Cells[0].Style.SelectionBackColor = Color.FromArgb(235, 237, 237);
                     row.Cells[0].Style.ForeColor = Color.Black;
                 }
+                if (Convert.ToInt32(row.Cells["afterUseLife"].Value) <= Convert.ToInt32(row.Cells["warning"].Value))
+                {
+                    row.DefaultCellStyle.BackColor = Color.FromArgb(216, 30, 91);
+                    row.DefaultCellStyle.ForeColor = Color.White;
+                    row.DefaultCellStyle.SelectionBackColor = Color.FromArgb(216, 30, 91);
+                    row.DefaultCellStyle.SelectionForeColor = Color.White;
+                    row.Cells[0].Style.BackColor = Color.FromArgb(235, 237, 237);
+                    row.Cells[0].Style.SelectionBackColor = Color.FromArgb(235, 237, 237);
+                    row.Cells[0].Style.ForeColor = Color.Black;
+                }
+
                 
             }
         }
@@ -200,7 +213,6 @@ namespace Shelf
 
             dc = new DataColumn();
             dc.ColumnName = "decreaseLife";
-            dc.DataType = Type.GetType("System.Int32");
             dt.Columns.Add(dc);
 
             dc = new DataColumn();

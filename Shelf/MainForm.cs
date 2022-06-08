@@ -113,8 +113,13 @@ namespace Shelf
 
             for(int i=0 ; i<toolsData.Count ; i++)
             {
+                //讀取中斷資料
                 Tool t = toolsData[i];
-                tdb.GetLastHistory(ref t);
+                ToolHistory h = new ToolHistory { name = t.name };
+                tdb.GetLastHistory(ref h);
+                t.startTime = h.startTime;
+                t.endTime = h.endTime;
+
                 GridUserControl g = new GridUserControl
                 {
                     tool = t
@@ -181,6 +186,7 @@ namespace Shelf
                         tools[i].tool.life = toolData[i].life;
                         tools[i].tool.remain = toolData[i].remain;
                         tools[i].tool.warning = toolData[i].warning;
+                        tools[i].tool.taken = toolData[i].taken;
                         Invoke(new updateGridUI(tools[i].CheckStatus));
                     }
                     Thread.Sleep(2000);
@@ -333,9 +339,11 @@ namespace Shelf
         private void simulate()
         {
             int count = 0;
-            
             while (simulateRun)
             {
+                Thread.Sleep(3000);
+                if (tools.Count == 0)
+                    continue;
                 Random rand = new Random();
                 int decrease = rand.Next(3, 6);
                 int randNum = rand.Next(0, tools.Count);
@@ -353,6 +361,7 @@ namespace Shelf
                 ReturnTool(randTool, DateTime.Now);
                 
                 count++;
+
             }
         }
 
@@ -368,16 +377,12 @@ namespace Shelf
                 MessageBox.Show("該刀具不存在");
                 return false;
             }
+            t.startTime = startTime;
+            if (!tdb.UpdateTool(t, true))
+                return false;
 
-            foreach(GridUserControl g in tools)
-            {
-                if (g.tool.name == t.name)
-                {
-                    Invoke(new updateGridUI(g.ToolUse));
-                    g.tool.startTime = startTime;
-                    break;
-                }
-            }
+            if (!tdb.HistoryUseTool(t))
+                return false;
 
             return true;
         }
@@ -390,39 +395,18 @@ namespace Shelf
         /// <returns></returns>
         private bool ReturnTool(Tool t, DateTime endTime)
         {
-            Tool lastToolStatus = new Tool();
-            if (!tdb.GetToolByName(t.name, ref lastToolStatus))
+            if (!tdb.checkExist(t.name))
             {
                 MessageBox.Show("該刀具不存在");
                 return false;
             }
-            
-            ToolHistory history = new ToolHistory();
-            foreach (GridUserControl g in tools)
-            {
-                if (g.tool.name == t.name)
-                {
-                    if (!tdb.UpdateTool(t))
-                        return false;
-                    history = new ToolHistory
-                    {
-                        toolId = t.id,
-                        name = t.name,
-                        beforeUseLife = lastToolStatus.remain,
-                        afterUseLife = t.remain,
-                        startTime = g.tool.startTime,
-                        endTime = endTime,
-                        warning = t.warning,
-                        mark = '1'
-                    };
-                    Invoke(new updateGridUI(g.ToolUnuse));
-                    break;
-                }
-            }
+            t.endTime = endTime;
+            if (!tdb.UpdateTool(t, false))
+                return false;
+            if (!tdb.HistoryReturnTool(t, endTime))
+                return false;
 
-            bool result = tdb.HistoryUseTool(history);
-
-            return result;
+            return true;
         }
 
         /// <summary>
