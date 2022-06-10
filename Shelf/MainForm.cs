@@ -106,7 +106,7 @@ namespace Shelf
         private bool LoadData(ref List<GridUserControl> tools, int machineId)
         {
             List<Tool> toolsData = new List<Tool>();
-            if (!tdb.GetAllTool(ref toolsData, machineId))
+            if (!tdb.GetToolByMachineId(ref toolsData, machineId))
             {
                 return false;
             }
@@ -170,7 +170,7 @@ namespace Shelf
                 while (keepUpdate)
                 {
                     List<Tool> toolData = new List<Tool>();
-                    if (!tdb.GetAllTool(ref toolData, machine.id))
+                    if (!tdb.GetToolByMachineId(ref toolData, machine.id))
                     {
                         continue;
                     }
@@ -187,6 +187,7 @@ namespace Shelf
                         tools[i].tool.remain = toolData[i].remain;
                         tools[i].tool.warning = toolData[i].warning;
                         tools[i].tool.taken = toolData[i].taken;
+                        tools[i].tool.lastUpdate = toolData[i].lastUpdate;
                         Invoke(new updateGridUI(tools[i].CheckStatus));
                     }
                     Thread.Sleep(2000);
@@ -338,30 +339,47 @@ namespace Shelf
         /// </summary>
         private void simulate()
         {
-            int count = 0;
+            Random rand = new Random();
+            List<Machine> mList = new List<Machine>();
+            if (!tdb.GetAllMachine(ref mList))
+                return;
             while (simulateRun)
             {
-                Thread.Sleep(3000);
-                if (tools.Count == 0)
+                int machineId = rand.Next(0, mList.Count);
+                List<Tool> allToolList = new List<Tool>();
+                DateTime startTime = DateTime.Now;
+                if (!tdb.GetToolByMachineId(ref allToolList, machineId))
                     continue;
-                Random rand = new Random();
-                int decrease = rand.Next(3, 6);
-                int randNum = rand.Next(0, tools.Count);
-                Tool randTool = tools[randNum].tool;
-                UseTool(randTool, DateTime.Now);
-                Thread.Sleep(3000);
-                if(randTool.remain - decrease <= 0)
-                {
-                    randTool.remain = 0;
-                }
-                else
-                {
-                    randTool.remain -= decrease;
-                }
-                ReturnTool(randTool, DateTime.Now);
-                
-                count++;
+                if (allToolList.Count == 0)
+                    continue;
+                List<Tool> tools = new List<Tool>();
 
+                for(int i = 0; i < 5; i++)
+                {
+                    int randNum = rand.Next(0, allToolList.Count);
+                    bool add = true;
+                    for (int j = 0; j < tools.Count; j++)
+                    {
+                        if (tools[j].id == allToolList[randNum].id)
+                        {
+                            add = false;
+                            break;
+                        }
+                        
+                    }
+                    if (add)
+                        tools.Add(allToolList[randNum]);
+                    UseTool(allToolList[randNum].name, machineId);
+                    Thread.Sleep(5000);
+                }
+                
+                foreach(Tool t in tools)
+                {
+                    DateTime endTime = DateTime.Now;
+                    int decrease = rand.Next(3, 6);
+                    int remain = t.remain - decrease;
+                    WriteHistory(t.name, machineId, remain, startTime, endTime);
+                }
             }
         }
 
@@ -370,18 +388,18 @@ namespace Shelf
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        private bool UseTool(Tool t, DateTime startTime)
+        private bool UseTool(string name, int machineId)
         {
-            if (!tdb.checkExist(t.name))
+            Tool t = new Tool ();
+            
+            if (!tdb.GetToolByName(name, machineId, ref t))
             {
                 MessageBox.Show("該刀具不存在");
                 return false;
             }
-            t.startTime = startTime;
+            tdb.UnuseTool();
+            t.lastUpdate = DateTime.Now;
             if (!tdb.UpdateTool(t, true))
-                return false;
-
-            if (!tdb.HistoryUseTool(t))
                 return false;
 
             return true;
@@ -393,17 +411,32 @@ namespace Shelf
         /// <param name="name"></param>
         /// <param name="remain"></param>
         /// <returns></returns>
-        private bool ReturnTool(Tool t, DateTime endTime)
+        private bool WriteHistory(string name, int machineId, int remain, DateTime startTime, DateTime endTime)
         {
-            if (!tdb.checkExist(t.name))
+            Tool t = new Tool();
+            if (!tdb.GetToolByName(name, machineId, ref t))
             {
                 MessageBox.Show("該刀具不存在");
                 return false;
             }
-            t.endTime = endTime;
+            int beforeUseLife = t.remain;
+            t.remain = remain;
+
+            ToolHistory h = new ToolHistory
+            {
+                toolId = t.id,
+                name = t.name,
+                beforeUseLife = beforeUseLife,
+                afterUseLife = t.remain,
+                warning = t.warning,
+                startTime = startTime,
+                endTime = endTime,
+                mark = '1',
+                dateTime = DateTime.Now
+            };
             if (!tdb.UpdateTool(t, false))
                 return false;
-            if (!tdb.HistoryReturnTool(t, endTime))
+            if (!tdb.HistoryTool(h))
                 return false;
 
             return true;

@@ -53,7 +53,7 @@ namespace Shelf
             List<Tool> tools = new List<Tool>();
             toolsData.Clear();
             toolsData = ToolsDataTable();
-            if (!tdb.GetAllTool(ref tools, machineId))
+            if (!tdb.GetToolByMachineId(ref tools, machineId))
             {
                 MessageBox.Show("查無刀具資料", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
@@ -240,7 +240,7 @@ namespace Shelf
             };
             editPadge.ShowDialog();
             Tool t = new Tool();
-            tdb.GetToolByName(toolGridView[0, row].Value.ToString(), ref t);
+            tdb.GetToolByName(toolGridView[0, row].Value.ToString(), (machineList.SelectedItem as Machine).id, ref t);
             toolGridView.Rows[row].Cells["name"].Value = t.name;
             toolGridView.Rows[row].Cells["life"].Value = t.life;
             toolGridView.Rows[row].Cells["remain"].Value = t.remain;
@@ -254,7 +254,7 @@ namespace Shelf
             {
                 int beforeChangeLife = Convert.ToInt32(toolGridView.Rows[row].Cells["remain"].Value.ToString());
                 Tool t = new Tool();
-                if (!tdb.GetToolByName(toolGridView.Rows[row].Cells["name"].Value.ToString(), ref t))
+                if (!tdb.GetToolByName(toolGridView.Rows[row].Cells["name"].Value.ToString(), (machineList.SelectedItem as Machine).id, ref t))
                     return;
                 t.remain = t.life;
                 t.startTime = DateTime.Now;

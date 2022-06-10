@@ -17,6 +17,11 @@ namespace Shelf
             InitializeComponent();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DashboardSettingFormShown(object sender, EventArgs e)
         {
             LoadMachine();
@@ -25,8 +30,11 @@ namespace Shelf
                 checkCarousel.Checked = true;
                 numSpeed.Value = carouselSpeed;
             }
-                
-            
+            else
+            {
+                numSpeed.Enabled = false;
+            }
+
             foreach(Machine m in machineList.Items)
             {
                 if (m.id == machineId)
@@ -38,8 +46,7 @@ namespace Shelf
         {
             if (!checkCarousel.Checked)
                 carouselSpeed = 0;
-            
-            
+
             this.Close();
         }
 

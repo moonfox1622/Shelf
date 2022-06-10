@@ -95,13 +95,14 @@ namespace Shelf
         }
 
         /// <summary>
-        /// 取得所有刀具
+        /// 取得指定機台的所有刀具
         /// </summary>
         /// <param name="tools"></param>
+        /// <param name="machineId"></param>
         /// <returns></returns>
-        public bool GetAllTool(ref List<Tool> tools, int machineId)
+        public bool GetToolByMachineId(ref List<Tool> tools, int machineId)
         {
-            var query = "SELECT id, name, life, remain, warning, taken FROM tool WHERE machineId = @machineId";
+            var query = "SELECT id, name, life, remain, warning, taken, lastUpdate FROM tool WHERE machineId = @machineId";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -123,7 +124,8 @@ namespace Shelf
                                         life = Convert.ToInt32(data["life"].ToString()),
                                         remain = Convert.ToInt32(data["remain"].ToString()),
                                         warning = Convert.ToInt32(data["warning"].ToString()),
-                                        taken = Convert.ToBoolean(data["taken"].ToString())
+                                        taken = Convert.ToBoolean(data["taken"].ToString()),
+                                        lastUpdate = Convert.ToDateTime(data["lastUpdate"].ToString())
                                     };
                                     tools.Add(tool);
                                 }
@@ -145,6 +147,11 @@ namespace Shelf
             return false;
         }
 
+        /// <summary>
+        /// 檢查刀具是否存在
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public bool checkExist(string name)
         {
             string query = "SELECT * FROM tool WHERE name = @name";
@@ -375,7 +382,8 @@ namespace Shelf
                                         life = Convert.ToInt32(data["life"].ToString()),
                                         remain = Convert.ToInt32(data["remain"].ToString()),
                                         warning = Convert.ToInt32(data["warning"].ToString()),
-                                        taken = Convert.ToBoolean(data["taken"].ToString())
+                                        taken = Convert.ToBoolean(data["taken"].ToString()),
+                                        lastUpdate = Convert.ToDateTime(data["lastUpdate"].ToString())
                                     };
                                 }
                                 return true;
@@ -402,7 +410,7 @@ namespace Shelf
         /// <param name="name"></param>
         /// <param name="t"></param>
         /// <returns></returns>
-        public bool GetToolByName(string name, ref Tool t)
+        public bool GetToolByName(string name, int machineId, ref Tool t)
         {
             string query = @"SELECT * FROM tool WHERE name = @name";
             try
@@ -427,7 +435,8 @@ namespace Shelf
                                         life = Convert.ToInt32(data["life"].ToString()),
                                         remain = Convert.ToInt32(data["remain"].ToString()),
                                         warning = Convert.ToInt32(data["warning"].ToString()),
-                                        taken = Convert.ToBoolean(data["taken"].ToString())
+                                        taken = Convert.ToBoolean(data["taken"].ToString()),
+                                        lastUpdate = Convert.ToDateTime(data["lastUpdate"].ToString())
                                     };
                                 }
                                 return true;
@@ -497,7 +506,7 @@ namespace Shelf
         /// <returns></returns>
         public bool UpdateTool(Tool t, bool taken)
         {
-            var queryData = @"UPDATE tool SET remain = @remain, warning = @warning, taken = @taken WHERE name = @name";
+            var queryData = @"UPDATE tool SET remain = @remain, warning = @warning, taken = @taken, lastUpdate = @lastUpdate WHERE name = @name";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -512,6 +521,39 @@ namespace Shelf
                         comm.Parameters.AddWithValue("@warning", t.warning);
                         comm.Parameters.AddWithValue("@name", t.name);
                         comm.Parameters.AddWithValue("@taken", taken);
+                        comm.Parameters.AddWithValue("@lastUpdate", t.lastUpdate.ToString("yyyy-MM-dd HH:mm:ss"));
+                        int affectRows = comm.ExecuteNonQuery();
+                        if (affectRows > 0)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("資料庫發生問題" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("發生錯誤" + ex.Message);
+            }
+
+            return false;
+        }
+
+        public bool UnuseTool()
+        {
+            var queryData = @"UPDATE tool SET taken = 0 WHERE taken = 1";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectStr))
+                {
+                    //更新 tool data
+                    using (SqlCommand comm = new SqlCommand(queryData, conn))
+                    {
+                        if (conn.State != ConnectionState.Open)
+                            conn.Open();
                         int affectRows = comm.ExecuteNonQuery();
                         if (affectRows > 0)
                         {
@@ -660,6 +702,48 @@ namespace Shelf
             
             return false;
         }
+
+        public bool HistoryTool(ToolHistory h)
+        {
+            string query = "INSERT INTO  history (toolId, name, beforeUseLife, afterUseLife, warning, startTime, endTime, mark, dateTime) VALUES (@toolId, @name, @beforeUseLife, @afterUseLife, @warning, @startTime, @endTime, @mark, @dateTime)";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectStr))
+                {
+                    using (SqlCommand comm = new SqlCommand(query, conn))
+                    {
+                        if (conn.State != ConnectionState.Open)
+                            conn.Open();
+                        comm.Parameters.AddWithValue("@toolId", h.toolId);
+                        comm.Parameters.AddWithValue("@name", h.name);
+                        comm.Parameters.AddWithValue("@beforeUseLife", h.beforeUseLife);
+                        comm.Parameters.AddWithValue("@afterUseLife", h.afterUseLife);
+                        comm.Parameters.AddWithValue("@warning", h.warning);
+                        comm.Parameters.AddWithValue("@startTime", h.startTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                        comm.Parameters.AddWithValue("@endTime", h.endTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                        comm.Parameters.AddWithValue("@mark", h.mark);
+                        comm.Parameters.AddWithValue("@dateTime", h.dateTime.ToString("yyyy-MM-dd HH:mm:ss"));
+
+                        int affectRows = comm.ExecuteNonQuery();
+                        if (affectRows > 0)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("新增歷史紀錄時資料庫處理發生錯誤" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("發生錯誤" + ex.Message);
+            }
+            //SaveHistoryToLocal(, '1');
+            return false;
+        }
+
 
         /// <summary>
         /// 新增使用刀具歷史

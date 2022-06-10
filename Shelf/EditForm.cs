@@ -13,6 +13,7 @@ namespace Shelf
     public partial class EditForm : Form
     {
         public string name { get; set; }
+        public int machineId { get; set; }
         Tool tool = new Tool();
         ToolDatabase tdb = new ToolDatabase();
 
@@ -23,7 +24,7 @@ namespace Shelf
 
         private void EditFormShown(object sender, EventArgs e)
         {
-            tdb.GetToolByName(this.name, ref tool);
+            tdb.GetToolByName(this.name, this.machineId, ref tool);
             txtName.Text = tool.name;
             txtLife.Value = tool.life;
             txtRemain.Value = tool.remain;
