@@ -102,7 +102,7 @@ namespace Shelf
         /// <returns></returns>
         public bool GetToolByMachineId(ref List<Tool> tools, int machineId)
         {
-            var query = "SELECT id, name, life, remain, warning, taken, lastUpdate FROM tool WHERE machineId = @machineId";
+            var query = "SELECT id, machineId, name, life, remain, warning, taken, lastUpdate FROM tool WHERE machineId = @machineId ORDER BY lastUpdate DESC";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -117,9 +117,11 @@ namespace Shelf
                             {
                                 while (data.Read())
                                 {
+                                    
                                     Tool tool = new Tool
                                     {
                                         id = Convert.ToInt32(data["id"].ToString()),
+                                        machineId = Convert.ToInt32(data["machineId"].ToString()),
                                         name = data["name"].ToString(),
                                         life = Convert.ToInt32(data["life"].ToString()),
                                         remain = Convert.ToInt32(data["remain"].ToString()),
@@ -146,15 +148,15 @@ namespace Shelf
             
             return false;
         }
-
+        
         /// <summary>
         /// 檢查刀具是否存在
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public bool checkExist(string name)
+        public bool checkRepeat(string name, int machineId)
         {
-            string query = "SELECT * FROM tool WHERE name = @name";
+            string query = "SELECT * FROM tool WHERE name = @name AND machineId = @machineId";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -164,6 +166,7 @@ namespace Shelf
                         if (conn.State != ConnectionState.Open)
                             conn.Open();
                         comm.Parameters.AddWithValue("@name", name);
+                        comm.Parameters.AddWithValue("@machineId", machineId);
                         using (SqlDataReader data = comm.ExecuteReader())
                         {
                             if (data.HasRows)
@@ -351,58 +354,6 @@ namespace Shelf
             return false;
         }
 
-        /// <summary>
-        /// 給予ID取得完整的Tool資料
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="t"></param>
-        /// <returns></returns>
-        public bool GetToolById(int id, ref Tool t)
-        {
-            string query = @"SELECT * FROM tool WHERE id = @id";
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(_connectStr))
-                {
-                    using (SqlCommand comm = new SqlCommand(query, conn))
-                    {
-                        if (conn.State != ConnectionState.Open)
-                            conn.Open();
-                        comm.Parameters.AddWithValue("@id", id);
-                        using (SqlDataReader data = comm.ExecuteReader())
-                        {
-                            if (data.HasRows)
-                            {
-                                while (data.Read())
-                                {
-                                    t = new Tool
-                                    {
-                                        id = Convert.ToInt32(data["id"].ToString()),
-                                        name = data["name"].ToString(),
-                                        life = Convert.ToInt32(data["life"].ToString()),
-                                        remain = Convert.ToInt32(data["remain"].ToString()),
-                                        warning = Convert.ToInt32(data["warning"].ToString()),
-                                        taken = Convert.ToBoolean(data["taken"].ToString()),
-                                        lastUpdate = Convert.ToDateTime(data["lastUpdate"].ToString())
-                                    };
-                                }
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-            catch (SqlException ex)
-            {
-                MessageBox.Show("資料庫發生問題" + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("發生錯誤" + ex.Message);
-            }
-
-            return false;
-        }
 
         /// <summary>
         /// 給予名稱取得完整的Tool資料
@@ -412,7 +363,7 @@ namespace Shelf
         /// <returns></returns>
         public bool GetToolByName(string name, int machineId, ref Tool t)
         {
-            string query = @"SELECT * FROM tool WHERE name = @name";
+            string query = @"SELECT * FROM tool WHERE name = @name AND machineId = @machineId";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -422,6 +373,7 @@ namespace Shelf
                         if (conn.State != ConnectionState.Open)
                             conn.Open();
                         comm.Parameters.AddWithValue("@name", name);
+                        comm.Parameters.AddWithValue("@machineId", machineId);
                         using (SqlDataReader data = comm.ExecuteReader())
                         {
                             if (data.HasRows)
@@ -431,6 +383,7 @@ namespace Shelf
                                     t = new Tool
                                     {
                                         id = Convert.ToInt32(data["id"].ToString()),
+                                        machineId = Convert.ToInt32(data["machineId"].ToString()),
                                         name = data["name"].ToString(),
                                         life = Convert.ToInt32(data["life"].ToString()),
                                         remain = Convert.ToInt32(data["remain"].ToString()),
@@ -464,7 +417,7 @@ namespace Shelf
         /// <returns></returns>
         public bool EditTool(Tool t)
         {
-            var queryData = @"UPDATE tool SET life = @life, remain = @remain, warning = @warning WHERE name = @name";
+            var queryData = @"UPDATE tool SET life = @life, remain = @remain, warning = @warning WHERE name = @name AND @machineId = machineId";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -479,6 +432,7 @@ namespace Shelf
                         comm.Parameters.AddWithValue("@remain", t.remain);
                         comm.Parameters.AddWithValue("@warning", t.warning);
                         comm.Parameters.AddWithValue("@name", t.name);
+                        comm.Parameters.AddWithValue("@machineId", t.machineId);
                         int affectRows = comm.ExecuteNonQuery();
                         if (affectRows > 0)
                         {
@@ -506,7 +460,7 @@ namespace Shelf
         /// <returns></returns>
         public bool UpdateTool(Tool t, bool taken)
         {
-            var queryData = @"UPDATE tool SET remain = @remain, warning = @warning, taken = @taken, lastUpdate = @lastUpdate WHERE name = @name";
+            var queryData = @"UPDATE tool SET remain = @remain, warning = @warning, taken = @taken, lastUpdate = @lastUpdate WHERE name = @name AND machineId = @machineId";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -519,9 +473,10 @@ namespace Shelf
 
                         comm.Parameters.AddWithValue("@remain", t.remain);
                         comm.Parameters.AddWithValue("@warning", t.warning);
-                        comm.Parameters.AddWithValue("@name", t.name);
                         comm.Parameters.AddWithValue("@taken", taken);
                         comm.Parameters.AddWithValue("@lastUpdate", t.lastUpdate.ToString("yyyy-MM-dd HH:mm:ss"));
+                        comm.Parameters.AddWithValue("@name", t.name);
+                        comm.Parameters.AddWithValue("@machineId", t.machineId);
                         int affectRows = comm.ExecuteNonQuery();
                         if (affectRows > 0)
                         {
@@ -542,9 +497,9 @@ namespace Shelf
             return false;
         }
 
-        public bool UnuseTool()
+        public bool UnuseTool(int machineId)
         {
-            var queryData = @"UPDATE tool SET taken = 0 WHERE taken = 1";
+            var queryData = @"UPDATE tool SET taken = 0 WHERE taken = 1 AND machineId = @machineId";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -554,6 +509,7 @@ namespace Shelf
                     {
                         if (conn.State != ConnectionState.Open)
                             conn.Open();
+                        comm.Parameters.AddWithValue("@machineId", machineId);
                         int affectRows = comm.ExecuteNonQuery();
                         if (affectRows > 0)
                         {
@@ -581,7 +537,7 @@ namespace Shelf
         /// <returns></returns>
         public bool ChangeTool(Tool t)
         {
-            string query = "UPDATE tool SET remain = @remain WHERE name = @name";
+            string query = "UPDATE tool SET remain = @remain WHERE name = @name AND machineId = @machineId";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -592,6 +548,7 @@ namespace Shelf
                             conn.Open();
                         comm.Parameters.AddWithValue("@remain", t.life);
                         comm.Parameters.AddWithValue("@name", t.name);
+                        comm.Parameters.AddWithValue("@machineId", t.machineId);
                         int affectRows = comm.ExecuteNonQuery();
                         if (affectRows > 0)
                         {

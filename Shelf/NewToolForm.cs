@@ -36,7 +36,7 @@ namespace Shelf
             }
             ToolDatabase tdb = new ToolDatabase();
 
-            if (tdb.checkExist(txtName.Text))
+            if (tdb.checkRepeat(txtName.Text, machineId))
             {
                 MessageBox.Show("名稱重複，請重新命名");
                 return;

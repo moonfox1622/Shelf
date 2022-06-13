@@ -98,11 +98,16 @@
             // 
             this.numSpeed.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.numSpeed.Location = new System.Drawing.Point(44, 200);
+            this.numSpeed.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
             this.numSpeed.Name = "numSpeed";
             this.numSpeed.Size = new System.Drawing.Size(120, 33);
             this.numSpeed.TabIndex = 8;
             this.numSpeed.Value = new decimal(new int[] {
-            1,
+            5,
             0,
             0,
             0});

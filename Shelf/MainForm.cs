@@ -21,7 +21,7 @@ namespace Shelf
         List<GridUserControl> tools = new List<GridUserControl>(); //刀具UserController List
         bool keepUpdate = true; //持續更新刀具資料
         int carouselSpeed = 10;
-        TableLayoutPanel table = new TableLayoutPanel();
+        //TableLayoutPanel table = new TableLayoutPanel();
         ToolDatabase tdb = new ToolDatabase();
         bool simulateRun = true;
         Machine machine = new Machine();
@@ -39,7 +39,6 @@ namespace Shelf
 
         private void MainShown(object sender, EventArgs e)
         {
-
             //回傳本地資料指資料庫
             //Thread restoreThread = new Thread(SendLocalData);
             //restoreThread.Start();
@@ -48,8 +47,6 @@ namespace Shelf
                 MessageBox.Show("未讀取到機台", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-                
-
             initialContent();
             if (tools.Count == 0)
                 return;
@@ -63,38 +60,29 @@ namespace Shelf
             carouselThread.IsBackground = true;
             carouselThread.Start();
 
-
         }
 
         /// <summary>
         /// 初始化界面
         /// </summary>
-        /// <param name="save">紀錄歷史</param>
-        /// <param name="edit">設定模式</param>
         private void initialContent()
         {
             content.Controls.Clear();
             tools = new List<GridUserControl>();
             if (!LoadData(ref tools, machine.id))
                 return;
-            
-            table = initialTablePanel();
+
             txtMachineName.Text = machine.name;
-            //Point loc = new Point(0, 23);
             for (int i = 0; i < tools.Count; i++)
             {
-                //tools[i].Location = loc;
-                
-                table.Controls.Add(tools[i], i % 6, table.RowCount);
-
+                tools[i].Margin = new Padding(8, 0, 8, 50);
                 //設定方框位置，每六個換一行
-                if ((i + 1) % 6 == 0)
-                {
-                    table.RowCount += 1;
-                    table.RowStyles.Add(new RowStyle(SizeType.Absolute, 130));
-                }
+                //if ((i + 1) % 6 == 0)
+                //{
+                //    content.SetFlowBreak(tools[i], true);
+                //}
+                content.Controls.Add(tools[i]);
             }
-            content.Controls.Add(table);
         }
 
         /// <summary>
@@ -144,9 +132,9 @@ namespace Shelf
         /// 刀具方框排版設定
         /// </summary>
         /// <returns></returns>
-        private TableLayoutPanel initialTablePanel()
+        private TableLayoutPanel InitialTablePanel()
         {
-            table = new TableLayoutPanel();
+            TableLayoutPanel table = new TableLayoutPanel();
             table.ColumnCount = 6;
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
@@ -160,6 +148,17 @@ namespace Shelf
             return table;
         }
 
+        private FlowLayoutPanel InitialFlowPanel()
+        {
+            FlowLayoutPanel flow = new FlowLayoutPanel();
+            flow.FlowDirection = FlowDirection.LeftToRight;
+            flow.WrapContents = true;
+            flow.AutoScroll = true;
+            
+
+            return flow;
+        }
+
         /// <summary>
         /// 持續更新刀具資料
         /// </summary>
@@ -170,27 +169,23 @@ namespace Shelf
                 while (keepUpdate)
                 {
                     List<Tool> toolData = new List<Tool>();
+                    
                     if (!tdb.GetToolByMachineId(ref toolData, machine.id))
                     {
                         continue;
                     }
 
-                    if (toolData.Count != tools.Count)
+                    if (toolData.Count != tools.Count || toolData[0].machineId != tools[0].tool.machineId)
                     {
                         Invoke(new updateGridUI(initialContent));
                         continue;
                     }
                     for (int i = 0; i < tools.Count; i++)
                     {
-                        tools[i].tool.name = toolData[i].name;
-                        tools[i].tool.life = toolData[i].life;
-                        tools[i].tool.remain = toolData[i].remain;
-                        tools[i].tool.warning = toolData[i].warning;
-                        tools[i].tool.taken = toolData[i].taken;
-                        tools[i].tool.lastUpdate = toolData[i].lastUpdate;
+                        tools[i].tool = toolData[i];
                         Invoke(new updateGridUI(tools[i].CheckStatus));
                     }
-                    Thread.Sleep(2000);
+                    Thread.Sleep(1000);
                 }
             }catch (Exception e)
             {
@@ -215,8 +210,13 @@ namespace Shelf
                 
                 foreach(Machine m in machines)
                 {
+                    List<Tool> tList = new List<Tool>();
+                    tdb.GetToolByMachineId(ref tList, m.id);
+
                     if (carouselSpeed != 0)
                     {
+                        if (tList.Count == 0)
+                            continue;
                         machine = m;
                         Thread.Sleep(carouselSpeed * 1000);
                     }
@@ -269,41 +269,65 @@ namespace Shelf
                 int insertCount = 0;
                 List<Tool> newDatas = new List<Tool>();
                 Random randNum = new Random();
-                for (int i = 0; i < reset.resetCount; i++)
-                {
-                    int randLife = randNum.Next(80, 100);
-                    int randAlarm = randNum.Next(0, 50);
-                    Tool data = new Tool
-                    {
-                        name = "I" + i,
-                        life = randLife,
-                        remain = randLife,
-                        warning = randAlarm
-                    };
-                    newDatas.Add(data);
-                }
-                var query = @"DELETE FROM tool";
+                
+                
                 try
                 {
                     using (SqlConnection conn = new SqlConnection(_connectStr))
                     {
                         if (conn.State != ConnectionState.Open)
                             conn.Open();
+
+                        
+
+                        var query = @"DELETE FROM tool WHERE machineId = @machineId";
                         using (SqlCommand comm = new SqlCommand(query, conn))
                         {
+                            comm.Parameters.AddWithValue("@machineId", machine.id);
                             comm.ExecuteNonQuery();
+                        }
+
+                        query = @"SELECT MAX(id) as id FROM tool";
+                        int maxId = 0;
+                        using (SqlCommand comm = new SqlCommand(query, conn))
+                        {
+                            comm.Parameters.AddWithValue("@machineId", machine.id);
+                            using (SqlDataReader data = comm.ExecuteReader())
+                            {
+                                if(data.HasRows)
+                                    while (data.Read())
+                                    {
+                                        maxId = Convert.ToInt32(data["id"].ToString());
+                                    }
+                            }
+                        }
+
+                        for (int i = 1; i <= reset.resetCount; i++)
+                        {
+                            int randLife = randNum.Next(80, 100);
+                            int randAlarm = randNum.Next(0, 50);
+                            Tool data = new Tool
+                            {
+                                id = maxId + i,
+                                name = "T" + i,
+                                life = randLife,
+                                remain = randLife,
+                                warning = randAlarm
+                            };
+                            newDatas.Add(data);
                         }
 
                         foreach (Tool data in newDatas)
                         {
-                            query = @"INSERT INTO tool(id, name, life, remain, warning) VALUES (@id, @name, @life, @remain, @warning)";
+                            query = @"INSERT INTO tool(id, name, life, remain, warning, machineId) VALUES (@id, @name, @life, @remain, @warning, @machineId)";
                             using (SqlCommand comm = new SqlCommand(query, conn))
                             {
-                                comm.Parameters.AddWithValue("@id", insertCount);
+                                comm.Parameters.AddWithValue("@id", data.id);
                                 comm.Parameters.AddWithValue("@name", data.name);
                                 comm.Parameters.AddWithValue("@life", data.life);
-                                comm.Parameters.AddWithValue("@remain", data.remain);
+                                comm.Parameters.AddWithValue("@remain", data.life);
                                 comm.Parameters.AddWithValue("@warning", data.warning);
+                                comm.Parameters.AddWithValue("@machineId", machine.id);
                                 insertCount += comm.ExecuteNonQuery();
                             }
                         }
@@ -330,7 +354,6 @@ namespace Shelf
             {
                 MessageBox.Show("未進行任何改變");
             }
-
         }
 
 
@@ -345,7 +368,8 @@ namespace Shelf
                 return;
             while (simulateRun)
             {
-                int machineId = rand.Next(0, mList.Count);
+                int machineId = rand.Next(mList[0].id, mList.Count);
+                //machineId = 1;
                 List<Tool> allToolList = new List<Tool>();
                 DateTime startTime = DateTime.Now;
                 if (!tdb.GetToolByMachineId(ref allToolList, machineId))
@@ -365,11 +389,10 @@ namespace Shelf
                             add = false;
                             break;
                         }
-                        
                     }
                     if (add)
                         tools.Add(allToolList[randNum]);
-                    UseTool(allToolList[randNum].name, machineId);
+                    UseTool(allToolList[randNum].name, allToolList[randNum].machineId);
                     Thread.Sleep(5000);
                 }
                 
@@ -397,12 +420,21 @@ namespace Shelf
                 MessageBox.Show("該刀具不存在");
                 return false;
             }
-            tdb.UnuseTool();
+
+            if (tdb.UnuseTool(machineId))
+            {
+                //MessageBox.Show("test");
+            }
             t.lastUpdate = DateTime.Now;
             if (!tdb.UpdateTool(t, true))
                 return false;
 
             return true;
+        }
+
+        private void Finished(int machineId)
+        {
+            tdb.UnuseTool(machineId);
         }
 
         /// <summary>

@@ -46,7 +46,7 @@
             this.panelStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panelStatus.Controls.Add(this.txtCount);
             this.panelStatus.Cursor = System.Windows.Forms.Cursors.Default;
-            this.panelStatus.Location = new System.Drawing.Point(180, 3);
+            this.panelStatus.Location = new System.Drawing.Point(172, 3);
             this.panelStatus.Name = "panelStatus";
             this.panelStatus.Size = new System.Drawing.Size(85, 45);
             this.panelStatus.TabIndex = 10;
@@ -98,7 +98,7 @@
             this.txtWarning.Cursor = System.Windows.Forms.Cursors.Default;
             this.txtWarning.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.txtWarning.ForeColor = System.Drawing.Color.Black;
-            this.txtWarning.Location = new System.Drawing.Point(173, 51);
+            this.txtWarning.Location = new System.Drawing.Point(165, 51);
             this.txtWarning.Name = "txtWarning";
             this.txtWarning.Size = new System.Drawing.Size(95, 16);
             this.txtWarning.TabIndex = 12;
@@ -132,7 +132,7 @@
             this.remainLifeBar.PaintedBack = false;
             this.remainLifeBar.ShowMaximun = false;
             this.remainLifeBar.ShowValue = CustomControls.TextPosition.None;
-            this.remainLifeBar.Size = new System.Drawing.Size(250, 30);
+            this.remainLifeBar.Size = new System.Drawing.Size(242, 30);
             this.remainLifeBar.SliderColor = System.Drawing.Color.RoyalBlue;
             this.remainLifeBar.SliderHeight = 20;
             this.remainLifeBar.StopPainting = false;
@@ -155,7 +155,7 @@
             this.Controls.Add(this.remainLifeBar);
             this.Cursor = System.Windows.Forms.Cursors.Default;
             this.Name = "GridUserControl";
-            this.Size = new System.Drawing.Size(268, 109);
+            this.Size = new System.Drawing.Size(260, 109);
             this.Load += new System.EventHandler(this.Grid_Load);
             this.panelStatus.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picRunning)).EndInit();
