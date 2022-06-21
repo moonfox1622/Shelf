@@ -55,6 +55,20 @@ namespace Shelf
             }
         }
 
+        private void QuickSearch(object sender, EventArgs e)
+        {
+            try
+            {
+                bs.Filter = string.Format("(convert(name, 'System.String') LIKE '%{0}%' OR convert(mark, 'System.String') LIKE '%{0}%')", searchBox.Text);
+
+                //TableMark();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
         /// <summary>
         /// DataGridView Style Setting
         /// </summary>
