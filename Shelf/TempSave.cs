@@ -1,63 +1,120 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CsvHelper;
-using CsvHelper.Configuration;
+using Shelf.Model;
 
 namespace Shelf
 {
     class TempSave
     {
-
-        public void SaveTempToolData(List<Tool> t)
+        public void SaveTempToolData(Tool t)
         {
             Directory.CreateDirectory("Temp");
-            using(var writer = new StreamWriter("Temp\\TempToolData.csv"))
-            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-            {
-                csv.WriteRecords(t);
-            }
-        }
-
-
-        public void SaveTempHistory(Tool t, char mark)
-        {
-            ToolHistory history = new ToolHistory
-            {
-                toolId = t.id,
-                name = t.name,
-                beforeUseLife = t.life,
-                afterUseLife = t.remain,
-                warning = t.warning,
-                startTime = t.startTime,
-                endTime = t.endTime,
-                mark = mark,
-                dateTime = DateTime.Now
-            };
-            List<ToolHistory> histories = new List<ToolHistory>();
-            histories.Add(history);
-            Directory.CreateDirectory("Temp");
-            string path = "Temp\\TempHistoryData.csv";
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                HasHeaderRecord = false
-            };
+            string path = "Temp\\TempToolData.csv";
+            bool writeHeader = false;
             if (!File.Exists(path))
-                config.HasHeaderRecord = true;
+                writeHeader = true;
 
             using (var stream = File.Open(path, FileMode.Append))
             using (var writer = new StreamWriter(stream))
-            using (var csv = new CsvWriter(writer, config))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
             {
-                csv.WriteRecords(histories);
+                if (writeHeader)
+                {
+                    csv.WriteHeader<Tool>();
+                    csv.NextRecord();
+                }
+                csv.WriteRecord(t);
+                csv.NextRecord();
             }
         }
 
-        public void SaveToolTempInDatabase()
+
+        public void SaveTempHistory(ToolHistory h)
+        {
+            Directory.CreateDirectory("Temp");
+            string path = "Temp\\TempHistoryData.csv";
+            bool writeHeader = false;
+            if (!File.Exists(path))
+                writeHeader = true;
+            try
+            {
+                using (var stream = File.Open(path, FileMode.Append))
+                using (var writer = new StreamWriter(stream))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                {
+                    if (writeHeader)
+                    {
+                        csv.WriteHeader<ToolHistory>();
+                        csv.NextRecord();
+                    }
+                    csv.WriteRecord(h);
+                    csv.NextRecord();
+                }
+            }
+            catch
+            {
+                return;
+            }
+            
+        }
+
+
+        public void SaveTempSystemLog(Log l)
+        {
+            Directory.CreateDirectory("Temp");
+            string path = "Temp\\TempLogData.csv";
+            bool writeHeader = false;
+            if (!File.Exists(path))
+                writeHeader = true;
+            try
+            {
+                using (var stream = File.Open(path, FileMode.Append))
+                using (var writer = new StreamWriter(stream, System.Text.Encoding.UTF8))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                {
+                    if (writeHeader)
+                    {
+                        csv.WriteField("machineId");
+                        csv.WriteField("name");
+                        csv.WriteField("life");
+                        csv.WriteField("remain");
+                        csv.WriteField("warning");
+                        csv.WriteField("mark");
+                        csv.WriteField("dateTime");
+                        csv.NextRecord();
+                    }
+                    csv.WriteRecord(l);
+                    csv.NextRecord();
+                }
+            }
+            catch
+            {
+                return;
+            }
+            
+        }
+
+
+        public void RestoreToolTemp()
+        {
+            string path = "Temp\\TempToolData.csv";
+            using (var reader = new StreamReader(path))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+                var records = csv.GetRecords<Tool>().ToList();
+                ToolDatabase tdb = new ToolDatabase();
+                
+                foreach(Tool t in records)
+                {
+                    tdb.UpdateTool(t);
+                }
+            }
+            File.Delete(path);
+        }
+
+        public void RestoreHistoryTemp()
         {
             string path = "Temp\\TempHistoryData.csv";
             using (var reader = new StreamReader(path))
@@ -65,32 +122,32 @@ namespace Shelf
             {
                 var records = csv.GetRecords<ToolHistory>().ToList();
                 ToolDatabase tdb = new ToolDatabase();
-                foreach(ToolHistory h in records)
-                {
-                    Tool t = new Tool
-                    {
-                        id = h.toolId,
-                        name = h.name,
-                        life = h.beforeUseLife,
-                        remain = h.afterUseLife,
-                        startTime = h.startTime,
-                        endTime = h.endTime
-                    };
 
-                    switch (h.mark)
-                    {
-                        case '1':
-                            //tdb.HistoryUseTool(t);
-                            break;
-                        case '2':
-                            //tdb.HistoryReturnTool(t);
-                            break;
-                    }
+                foreach (ToolHistory h in records)
+                {
+                    if (!tdb.HistoryTool(h))
+                        return;
                 }
             }
             File.Delete(path);
         }
 
+        public void RestoreSystemLogTemp()
+        {
+            string path = "Temp\\TempLogData.csv";
+            using (var reader = new StreamReader(path))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+                var records = csv.GetRecords<Log>().ToList();
+                ToolDatabase tdb = new ToolDatabase();
 
+                foreach (Log l in records)
+                {
+                    if (!tdb.InsertSystemLog(l))
+                        return;
+                }
+            }
+            File.Delete(path);
+        }
     }
 }

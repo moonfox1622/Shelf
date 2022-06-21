@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Shelf.Model;
 
 namespace Shelf
 {
@@ -14,6 +8,7 @@ namespace Shelf
     {
         public string name { get; set; }
         public int machineId { get; set; }
+
         Tool tool = new Tool();
         ToolDatabase tdb = new ToolDatabase();
 
@@ -49,7 +44,7 @@ namespace Shelf
                 return;
             }
 
-            if (tdb.CheckRepeatName(tool.id, txtName.Text))
+            if (tdb.CheckRepeatName(tool.id, txtName.Text, machineId))
             {
                 MessageBox.Show("名稱重複", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -62,6 +57,8 @@ namespace Shelf
 
             tool = new Tool
             {
+                id = tool.id,
+                machineId = machineId,
                 name = txtName.Text,
                 life = Convert.ToInt32(txtLife.Value),
                 remain = Convert.ToInt32(txtRemain.Value),
@@ -70,7 +67,18 @@ namespace Shelf
 
             if (tdb.EditTool(tool))
             {
-                //tdb.HistoryInsert(tool, '5');
+                Log log = new Log
+                {
+                    machineId = machineId,
+                    name = tool.name,
+                    life = tool.life,
+                    remain = tool.remain,
+                    warning = tool.warning,
+                    dateTime = DateTime.Now,
+                    mark = "修改"
+                };
+                tdb.InsertSystemLog(log);
+                this.Close();
                 MessageBox.Show("修改成功", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }

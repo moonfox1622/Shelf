@@ -117,6 +117,7 @@
       <DependentUpon>LoadingForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\CSVHistoryFormat.cs" />
+    <Compile Include="Model\Log.cs" />
     <Compile Include="Model\Machine.cs" />
     <Compile Include="Model\Respond.cs" />
     <Compile Include="NewToolForm.cs">
@@ -135,6 +136,12 @@
     </Compile>
     <Compile Include="SettingPageForm.Designer.cs">
       <DependentUpon>SettingPageForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SystemLogForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SystemLogForm.Designer.cs">
+      <DependentUpon>SystemLogForm.cs</DependentUpon>
     </Compile>
     <Compile Include="TempSave.cs" />
     <Compile Include="Model\Tool.cs" />
@@ -192,6 +199,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SettingPageForm.resx">
       <DependentUpon>SettingPageForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SystemLogForm.resx">
+      <DependentUpon>SystemLogForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -257,6 +267,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\gears.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\disableLeft.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\disableRight.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

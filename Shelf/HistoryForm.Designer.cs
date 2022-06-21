@@ -101,20 +101,23 @@
             // startDateTimePicker
             // 
             this.startDateTimePicker.CalendarFont = new System.Drawing.Font("微軟正黑體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.startDateTimePicker.CustomFormat = "YYYY-mm-dd";
+            this.startDateTimePicker.CustomFormat = "yyyy-MM-dd HH:mm:ss";
             this.startDateTimePicker.Font = new System.Drawing.Font("微軟正黑體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.startDateTimePicker.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.startDateTimePicker.Location = new System.Drawing.Point(108, 34);
             this.startDateTimePicker.Name = "startDateTimePicker";
-            this.startDateTimePicker.Size = new System.Drawing.Size(121, 23);
+            this.startDateTimePicker.Size = new System.Drawing.Size(155, 23);
             this.startDateTimePicker.TabIndex = 2;
             // 
             // endDateTimePicker
             // 
             this.endDateTimePicker.CalendarFont = new System.Drawing.Font("微軟正黑體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.endDateTimePicker.CustomFormat = "yyyy-MM-dd HH:mm:ss";
             this.endDateTimePicker.Font = new System.Drawing.Font("微軟正黑體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.endDateTimePicker.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.endDateTimePicker.Location = new System.Drawing.Point(108, 61);
             this.endDateTimePicker.Name = "endDateTimePicker";
-            this.endDateTimePicker.Size = new System.Drawing.Size(121, 23);
+            this.endDateTimePicker.Size = new System.Drawing.Size(155, 23);
             this.endDateTimePicker.TabIndex = 3;
             // 
             // labelStartTime
@@ -150,8 +153,8 @@
             // errorSelect
             // 
             this.errorSelect.AutoSize = true;
-            this.errorSelect.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.errorSelect.Location = new System.Drawing.Point(235, 59);
+            this.errorSelect.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Bold);
+            this.errorSelect.Location = new System.Drawing.Point(269, 60);
             this.errorSelect.Name = "errorSelect";
             this.errorSelect.Size = new System.Drawing.Size(93, 25);
             this.errorSelect.TabIndex = 8;
@@ -162,7 +165,7 @@
             // 
             this.btnDownload.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnDownload.Font = new System.Drawing.Font("微軟正黑體", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnDownload.Location = new System.Drawing.Point(461, 24);
+            this.btnDownload.Location = new System.Drawing.Point(486, 26);
             this.btnDownload.Name = "btnDownload";
             this.btnDownload.Size = new System.Drawing.Size(110, 46);
             this.btnDownload.TabIndex = 9;
@@ -193,7 +196,7 @@
             // 
             this.btnSearch.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnSearch.Font = new System.Drawing.Font("微軟正黑體", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnSearch.Location = new System.Drawing.Point(345, 24);
+            this.btnSearch.Location = new System.Drawing.Point(370, 26);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(110, 46);
             this.btnSearch.TabIndex = 14;
@@ -218,7 +221,7 @@
             this.machineList.FormattingEnabled = true;
             this.machineList.Location = new System.Drawing.Point(108, 6);
             this.machineList.Name = "machineList";
-            this.machineList.Size = new System.Drawing.Size(121, 24);
+            this.machineList.Size = new System.Drawing.Size(132, 24);
             this.machineList.TabIndex = 15;
             // 
             // label4

@@ -74,7 +74,6 @@ namespace Shelf
             DataTable dt = new DataTable();
 
             DataColumn dc = new DataColumn();
-            dc = new DataColumn();
             dc.ColumnName = "name";
             dt.Columns.Add(dc);
 
@@ -135,6 +134,7 @@ namespace Shelf
             toolGridView.Columns["setting"].SortMode = DataGridViewColumnSortMode.NotSortable;
             toolGridView.Columns["change"].SortMode = DataGridViewColumnSortMode.NotSortable;
             toolGridView.Columns["delete"].SortMode = DataGridViewColumnSortMode.NotSortable;
+
         }
 
         
@@ -236,6 +236,7 @@ namespace Shelf
         {
             EditForm editPadge = new EditForm
             {
+                machineId = (machineList.SelectedItem as Machine).id,
                 name = toolGridView[0, row].Value.ToString()
             };
             editPadge.ShowDialog();
@@ -274,12 +275,23 @@ namespace Shelf
                     MessageBox.Show("更換失敗", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-
-                if(!tdb.HistoryChangeTool(t, beforeChangeLife))
+                Log log = new Log
+                {
+                    machineId = (machineList.SelectedItem as Machine).id,
+                    name = t.name,
+                    life = t.life,
+                    remain = t.remain,
+                    warning = t.warning,
+                    dateTime = DateTime.Now,
+                    mark = "換刀"
+                };
+                if (!tdb.InsertSystemLog(log))
                 {
                     MessageBox.Show("紀錄更換歷史失敗", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
+
+                
 
                 toolGridView.Rows[row].Cells["remain"].Value = t.life;
                 GridViewStyle();
@@ -291,12 +303,31 @@ namespace Shelf
         {
             if (MessageBox.Show("確定要刪除「" + toolGridView.Rows[row].Cells["name"].Value + "」嗎？", "刪除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
-                if (!tdb.DeleteTool(toolGridView.Rows[row].Cells["name"].Value.ToString()))
+                Tool t = new Tool();
+                if (!tdb.GetToolByName(toolGridView.Rows[row].Cells["name"].Value.ToString(), (machineList.SelectedItem as Machine).id, ref t))
+                    return;
+                if (!tdb.DeleteTool(t.name, t.machineId))
                 {
                     MessageBox.Show("刪除失敗", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
                 toolGridView.Rows.Remove(toolGridView.Rows[row]);
+                Log log = new Log
+                {
+                    machineId = (machineList.SelectedItem as Machine).id,
+                    name = t.name,
+                    life = t.life,
+                    remain = t.remain,
+                    warning = t.warning,
+                    dateTime = DateTime.Now,
+                    mark = "刪除"
+                };
+                if (!tdb.InsertSystemLog(log))
+                {
+                    MessageBox.Show("紀錄更換歷史失敗", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                
                 MessageBox.Show("刪除成功", "訊息", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }

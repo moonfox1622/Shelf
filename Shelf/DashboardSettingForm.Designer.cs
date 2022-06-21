@@ -35,6 +35,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.numSpeed = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
+            this.txtComment = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numSpeed)).BeginInit();
             this.SuspendLayout();
             // 
@@ -44,9 +45,9 @@
             this.label1.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label1.Location = new System.Drawing.Point(14, 12);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(143, 24);
+            this.label1.Size = new System.Drawing.Size(124, 24);
             this.label1.TabIndex = 4;
-            this.label1.Text = "播放機台選擇：";
+            this.label1.Text = "播放機台選擇";
             // 
             // machineList
             // 
@@ -123,11 +124,21 @@
             this.label3.TabIndex = 9;
             this.label3.Text = "(秒)";
             // 
+            // txtComment
+            // 
+            this.txtComment.AutoSize = true;
+            this.txtComment.Location = new System.Drawing.Point(98, 172);
+            this.txtComment.Name = "txtComment";
+            this.txtComment.Size = new System.Drawing.Size(119, 16);
+            this.txtComment.TabIndex = 10;
+            this.txtComment.Text = "(最小輪播速度為5秒)";
+            // 
             // DashboardSettingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(255, 300);
+            this.Controls.Add(this.txtComment);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.numSpeed);
             this.Controls.Add(this.label2);
@@ -159,5 +170,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NumericUpDown numSpeed;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label txtComment;
     }
 }

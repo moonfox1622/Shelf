@@ -96,7 +96,7 @@ namespace Shelf
                 string decreaseLife = (th.beforeUseLife - th.afterUseLife).ToString();
                 if (Convert.ToInt32(decreaseLife) <= 0)
                     decreaseLife = "";
-                table.Rows.Add(th.name, decreaseLife, th.beforeUseLife, th.afterUseLife, th.warning, th.startTime.ToString("yyyy-MM-dd HH:mm:ss"), th.endTime.ToString("yyyy-MM-dd HH:mm:ss"), mark, th.dateTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                table.Rows.Add(th.toolId, th.name, decreaseLife, th.beforeUseLife, th.afterUseLife, th.warning, th.startTime.ToString("yyyy-MM-dd HH:mm:ss"), th.endTime.ToString("yyyy-MM-dd HH:mm:ss"), mark, th.dateTime.ToString("yyyy-MM-dd HH:mm:ss.fff"));
             }
             bs.DataSource = table;
             TableViewStyle();
@@ -110,8 +110,8 @@ namespace Shelf
         /// <param name="e"></param>
         private void BtnSearchClick(object sender, EventArgs e)
         {
-            DateTime startTime = startDateTimePicker.Value.Date;
-            DateTime endTime = endDateTimePicker.Value.Date;
+            DateTime startTime = startDateTimePicker.Value;
+            DateTime endTime = endDateTimePicker.Value;
             bool isWarning = errorSelect.Checked;
             LoadData(startTime, endTime, (machineList.SelectedItem as Machine).id, isWarning);
             btnDownload.Visible = true;
@@ -168,7 +168,7 @@ namespace Shelf
             tableView.Columns["mark"].HeaderText = "類別";
             tableView.Columns["dateTime"].HeaderText = "紀錄時間";
 
-            int width = 110;
+            int width = 97;
             tableView.Columns["name"].Width = width;
             tableView.Columns["decreaseLife"].Width = width;
             tableView.Columns["beforeUseLife"].Width = width;
@@ -188,12 +188,13 @@ namespace Shelf
             tableView.Columns["startTime"].SortMode = DataGridViewColumnSortMode.NotSortable;
             tableView.Columns["endTime"].SortMode = DataGridViewColumnSortMode.NotSortable;
             tableView.Columns["mark"].SortMode = DataGridViewColumnSortMode.NotSortable;
-            tableView.Columns["dateTime"].SortMode = DataGridViewColumnSortMode.NotSortable;
+            tableView.Columns["dateTime"].SortMode = DataGridViewColumnSortMode.Automatic;
 
             tableView.Columns["name"].DefaultCellStyle.BackColor = Color.FromArgb(235, 237, 237);
             tableView.Columns["name"].DefaultCellStyle.SelectionBackColor = Color.FromArgb(235, 237, 237);
             //tableView.Columns["warning"].Visible = false;
-            tableView.Columns["mark"].Visible = false; ;
+            tableView.Columns["mark"].Visible = false; 
+            tableView.Columns["toolId"].Visible = false;
         }
 
 
@@ -205,8 +206,11 @@ namespace Shelf
         private DataTable HistoryDataTable()
         {
             DataTable dt = new DataTable();
-
             DataColumn dc;
+            dc = new DataColumn();
+            dc.ColumnName = "toolId";
+            dt.Columns.Add(dc);
+
             dc = new DataColumn();
             dc.ColumnName = "name";
             dt.Columns.Add(dc);
@@ -268,43 +272,48 @@ namespace Shelf
 
         private void BtnDownloadClick(object sender, EventArgs e)
         {
-            DataTable selectedData = HistoryDataTable();
+            List<CSVHistoryFormat> histories = new List<CSVHistoryFormat>();
             string[] colName = new string[tableView.Columns.Count];
+
             for (int i = 0; i < colName.Length; i++)
             {
-
                 colName[i] = tableView.Columns[i].HeaderText;
             }
 
             for(int i = 0; i < tableView.Rows.Count; i++)
             {
                 DataGridViewCellCollection row = tableView.Rows[i].Cells;
-                selectedData.Rows.Add(
-                    row["name"].Value, 
-                    row["decreaseLife"].Value,
-                    row["beforeUseLife"].Value, 
-                    row["afterUseLife"].Value, 
-                    row["warning"].Value, 
-                    row["startTime"].Value, 
-                    row["endTime"].Value, 
-                    row["mark"].Value, 
-                    row["dateTime"].Value
-                    );
+                CSVHistoryFormat h = new CSVHistoryFormat
+                {
+                    toolId = Convert.ToInt32(row["toolId"].Value.ToString()),
+                    name = row["name"].Value.ToString(),
+                    decreaseLife = Convert.ToInt32(row["decreaseLife"].Value.ToString()),
+                    beforeUseLife = Convert.ToInt32(row["beforeUseLife"].Value.ToString()),
+                    afterUseLife = Convert.ToInt32(row["afterUseLife"].Value.ToString()),
+                    warning = Convert.ToInt32(row["warning"].Value.ToString()),
+                    startTime = row["startTime"].Value.ToString(),
+                    endTime = row["endTime"].Value.ToString(),
+                    dateTime = row["dateTime"].Value.ToString()
+                };
+                histories.Add(h);
             }
 
             fileDialog.Filter = "CSV(*.csv)|*.csv";
-            fileDialog.FileName = "刀具歷史紀錄" + string.Format("{0:yy-MM-dd-H-mm-ss}", DateTime.Now);
+            fileDialog.FileName = machineList.Text + "刀具歷史紀錄" + string.Format("{0:yyyy-MM-dd-H-mm-ss}", DateTime.Now);
             fileDialog.CheckPathExists = true;
             fileDialog.InitialDirectory = "c:\\";
-            if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
+            if (fileDialog.ShowDialog() == DialogResult.Cancel)
                 return;
             LoadingForm loadingForm = new LoadingForm
             {
-                dt = selectedData,
                 colName = colName,
                 fileName = fileDialog.FileName
             };
             loadingForm.Show();
+            if (loadingForm.ExportHistoryCSV(histories, fileDialog.FileName))
+                MessageBox.Show("下載成功", "訊息", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show("下載失敗", "訊息", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         /// <summary>

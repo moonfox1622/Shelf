@@ -73,7 +73,6 @@
             this.Name = "LoadingForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "下載中...";
-            this.Shown += new System.EventHandler(this.DownloadFormShown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

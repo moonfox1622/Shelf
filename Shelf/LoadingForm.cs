@@ -17,22 +17,14 @@ namespace Shelf
         public DataTable dt { get; set; }
         public string[] colName { get; set; }
         public string fileName { get; set; }
+
+        public List<Object> dataList { get; set; }
+
         public LoadingForm()
         {
             InitializeComponent();
         }
 
-        private void DownloadFormShown(object sender, EventArgs e)
-        {
-            if(!ExportCSV(dt, colName, fileName))
-            {
-                this.Close();
-                MessageBox.Show("下載失敗", "失敗", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            this.Close();
-            MessageBox.Show("下載完成", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
 
         /// <summary>
         /// 輸出Excel檔
@@ -97,8 +89,9 @@ namespace Shelf
             return false;
         }
 
-        private bool ExportCSV(DataTable dt, string[] colName, string fileName)
+        public bool ExportHistoryCSV(List<CSVHistoryFormat> histories, string fileName)
         {
+            int test = downloadProgressBar.Value;
             try
             {
                 using (var writer = new StreamWriter(fileName, false, System.Text.Encoding.UTF8))
@@ -106,33 +99,67 @@ namespace Shelf
                 {
                     csv.WriteHeader<CSVHistoryFormat>();
                     csv.NextRecord();
-                    downloadProgressBar.Maximum = dt.Rows.Count;
-                    for (int i = 0; i < dt.Rows.Count; i++)
+                    downloadProgressBar.Maximum = histories.Count;
+                    for (int i = 0; i < histories.Count; i++)
                     {
-                        CSVHistoryFormat h = new CSVHistoryFormat
-                        {
-                            name = dt.Rows[i][0].ToString(),
-                            decreaseLife = dt.Rows[i][1].ToString(),
-                            beforeUseLife = Convert.ToInt32(dt.Rows[i][2].ToString()),
-                            afterUseLife = Convert.ToInt32(dt.Rows[i][3].ToString()),
-                            warning = Convert.ToInt32(dt.Rows[i][4].ToString()),
-                            startTime = dt.Rows[i][5].ToString(),
-                            endTime = dt.Rows[i][6].ToString(),
-                            dateTime = dt.Rows[i][8].ToString()
-                        };
-                        csv.WriteRecord(h);
+                        
+                        csv.WriteRecord(histories[i]);
                         csv.NextRecord();
 
-                        double precentage = ((double)(i + 1) / (double)dt.Rows.Count) * 100;
+                        double precentage = ((double)(i + 1) / (double)histories.Count) * 100;
                         downloadProgressBar.Value = i + 1;
                         txtPercentage.Text = string.Format("{0}% 已完成", ((int)precentage).ToString());
                     }
+                    this.Close();
                     return true;
                 }
             }catch(Exception e)
             {
                 MessageBox.Show(e.Message);
             }
+            this.Close();
+            return false;
+        }
+
+        public bool ExportLogCSV(List<Log> logs, string fileName)
+        {
+            int test = downloadProgressBar.Value;
+            try
+            {
+                using (var writer = new StreamWriter(fileName, false, System.Text.Encoding.UTF8))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                {
+                    csv.WriteField("刀具名稱");
+                    csv.WriteField("最大耗損值");
+                    csv.WriteField("剩餘耗損值");
+                    csv.WriteField("警戒值");
+                    csv.WriteField("事件");
+                    csv.WriteField("紀錄日期");
+                    csv.NextRecord();
+                    downloadProgressBar.Maximum = logs.Count;
+                    for (int i = 0; i < logs.Count; i++)
+                    {
+                        csv.WriteField(logs[i].name);
+                        csv.WriteField(logs[i].life);
+                        csv.WriteField(logs[i].remain);
+                        csv.WriteField(logs[i].warning);
+                        csv.WriteField(logs[i].mark);
+                        csv.WriteField(logs[i].dateTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                        csv.NextRecord();
+
+                        double precentage = ((double)(i + 1) / (double)logs.Count) * 100;
+                        downloadProgressBar.Value = i + 1;
+                        txtPercentage.Text = string.Format("{0}% 已完成", ((int)precentage).ToString());
+                    }
+                    this.Close();
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            this.Close();
             return false;
         }
     }

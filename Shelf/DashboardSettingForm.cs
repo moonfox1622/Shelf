@@ -44,6 +44,7 @@ namespace Shelf
 
         private void BtnConfirmClick(object sender, EventArgs e)
         {
+            carouselSpeed = Convert.ToInt32(numSpeed.Value);
             if (!checkCarousel.Checked)
                 carouselSpeed = 0;
 

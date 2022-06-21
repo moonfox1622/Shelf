@@ -12,6 +12,7 @@ namespace Shelf
         public GridUserControl()
         {
             InitializeComponent();
+            this.DoubleBuffered = true;
         }
 
         private void Grid_Load(object sender, EventArgs e)
@@ -96,17 +97,28 @@ namespace Shelf
 
         public void ToolUse()
         {
-            picRunning.Visible = true;
-            this.BorderStyle = BorderStyle.FixedSingle;
-            this.BorderStyle = BorderStyle.FixedSingle;
-            //this.Parent.Controls.SetChildIndex(this, 0);
+            this.Invalidate();
         }
 
         public void ToolUnuse()
         {
-            picRunning.Visible = false;
-            this.BorderStyle = BorderStyle.None;
+            this.Invalidate();
         }
-        
+
+        private void GridUserControl_Paint(object sender, PaintEventArgs e)
+        {
+            if (tool.taken)
+            {
+                ButtonBorderStyle style = ButtonBorderStyle.Solid;
+                Color color = Color.FromArgb(13, 131, 0);
+                ControlPaint.DrawBorder(e.Graphics, this.ClientRectangle, color, 6, style, color, 6, style, color, 6, style, color, 6, style);
+            }
+            else
+            {
+                ControlPaint.DrawBorder(e.Graphics, this.ClientRectangle, Color.Black, ButtonBorderStyle.None);
+            }
+            
+            
+        }
     }
 }

@@ -3,10 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -17,17 +14,15 @@ namespace Shelf
         //資料庫連線設定
         private readonly string _connectStr = @"Data Source = 127.0.0.1; Initial Catalog = Shelf; User ID = MES2014; Password = PMCMES;"; //資料庫連線設定
 
-        //List<int> lastDatas = new List<int>(); //預防更新失敗之暫存資料
+        TableLayoutPanel table = new TableLayoutPanel();
         List<GridUserControl> tools = new List<GridUserControl>(); //刀具UserController List
         bool keepUpdate = true; //持續更新刀具資料
         int carouselSpeed = 10;
-        //TableLayoutPanel table = new TableLayoutPanel();
         ToolDatabase tdb = new ToolDatabase();
         bool simulateRun = true;
         Machine machine = new Machine();
-        //int machineId = 1;
-
-
+        int page = 0;
+        
         //Delegate function
         private delegate void updateGridUI();
 
@@ -35,13 +30,20 @@ namespace Shelf
         public MainForm()
         {
             InitializeComponent();
-        }
+            this.DoubleBuffered = true;
+        } 
 
         private void MainShown(object sender, EventArgs e)
         {
+            if (!tdb.IsDatabaseConnected())
+            {
+                txtMachineName.Text = "未連線";
+                return;
+            }
             //回傳本地資料指資料庫
-            //Thread restoreThread = new Thread(SendLocalData);
-            //restoreThread.Start();
+            Thread restoreThread = new Thread(TmpDataRestore);
+            restoreThread.Start();
+
             if (!tdb.GetTopMachine(ref machine))
             {
                 MessageBox.Show("未讀取到機台", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -52,7 +54,7 @@ namespace Shelf
                 return;
             keepUpdate = true;
 
-            Thread thread = new Thread(ToolUpdate);
+            Thread thread = new Thread(ToolUpdateCycle);
             thread.IsBackground = true;
             thread.Start();
 
@@ -67,22 +69,30 @@ namespace Shelf
         /// </summary>
         private void initialContent()
         {
-            content.Controls.Clear();
+            //content.Controls.Clear();
             tools = new List<GridUserControl>();
-            if (!LoadData(ref tools, machine.id))
+            table = InitialTablePanel();
+            
+            if (!LoadData(ref tools, machine.id, page))
                 return;
 
             txtMachineName.Text = machine.name;
             for (int i = 0; i < tools.Count; i++)
             {
-                tools[i].Margin = new Padding(8, 0, 8, 50);
+                //tools[i].Margin = new Padding(8, 0, 8, 50);
+                table.Controls.Add(tools[i], i % 6, table.RowCount);
                 //設定方框位置，每六個換一行
-                //if ((i + 1) % 6 == 0)
-                //{
-                //    content.SetFlowBreak(tools[i], true);
-                //}
-                content.Controls.Add(tools[i]);
+                if ((i + 1) % 6 == 0)
+                {
+                    table.RowCount += 1;
+                    table.RowStyles.Add(new RowStyle(SizeType.Absolute, 150));
+                }
             }
+            foreach (Control c in content.Controls)
+            {
+                c.Dispose();
+            }
+            content.Controls.Add(table);
         }
 
         /// <summary>
@@ -91,10 +101,10 @@ namespace Shelf
         /// <param name="tools"></param>
         /// <param name="lastDatas"></param>
         /// <returns></returns>
-        private bool LoadData(ref List<GridUserControl> tools, int machineId)
+        private bool LoadData(ref List<GridUserControl> tools, int machineId, int page)
         {
             List<Tool> toolsData = new List<Tool>();
-            if (!tdb.GetToolByMachineId(ref toolsData, machineId))
+            if (!tdb.GetToolByPage(ref toolsData, machineId, page))
             {
                 return false;
             }
@@ -112,7 +122,6 @@ namespace Shelf
                 {
                     tool = t
                 };
-
                 tools.Add(g);
             }
             return true;
@@ -125,7 +134,7 @@ namespace Shelf
         /// <param name="e"></param>
         private void TableControlRemoved(object sender, ControlEventArgs e)
         {
-            initialContent();
+            ToolUpdate();
         }
 
         /// <summary>
@@ -142,57 +151,93 @@ namespace Shelf
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
-            table.RowStyles.Add(new RowStyle(SizeType.Absolute, 130));
+            table.RowStyles.Add(new RowStyle(SizeType.Absolute, 150));
+            table.AutoScroll = false;
             table.Dock = DockStyle.Fill;
             table.ControlRemoved += TableControlRemoved;
             return table;
         }
 
-        private FlowLayoutPanel InitialFlowPanel()
-        {
-            FlowLayoutPanel flow = new FlowLayoutPanel();
-            flow.FlowDirection = FlowDirection.LeftToRight;
-            flow.WrapContents = true;
-            flow.AutoScroll = true;
-            
-
-            return flow;
-        }
-
         /// <summary>
         /// 持續更新刀具資料
         /// </summary>
-        private void ToolUpdate()
+        private void ToolUpdateCycle()
         {
             try
             {
                 while (keepUpdate)
                 {
-                    List<Tool> toolData = new List<Tool>();
-                    
-                    if (!tdb.GetToolByMachineId(ref toolData, machine.id))
-                    {
-                        continue;
-                    }
-
-                    if (toolData.Count != tools.Count || toolData[0].machineId != tools[0].tool.machineId)
-                    {
-                        Invoke(new updateGridUI(initialContent));
-                        continue;
-                    }
-                    for (int i = 0; i < tools.Count; i++)
-                    {
-                        tools[i].tool = toolData[i];
-                        Invoke(new updateGridUI(tools[i].CheckStatus));
-                    }
+                    Invoke(new updateGridUI(ToolUpdate));
                     Thread.Sleep(1000);
                 }
-            }catch (Exception e)
+            }catch
             {
 
             }
             
         }
+
+        /// <summary>
+        /// 更新畫面刀具資料
+        /// </summary>
+        private void ToolUpdate()
+        {
+            try
+            {
+                List<Tool> toolData = new List<Tool>();
+                txtMachineName.Text = machine.name;
+                if (!tdb.GetToolByPage(ref toolData, machine.id, page))
+                    return;
+
+                int toolsCount = TableCellShowCount(table);
+                
+
+                //若讀取資料比原來的多，多顯示 n 個GridUserControl
+                if (toolData.Count > toolsCount)
+                {
+                    for (int i = toolsCount; i <= (toolData.Count-1); i++)
+                    {
+                        table.GetControlFromPosition(i % 6, i / 6).Visible = true;
+                    }
+                }
+
+                //若讀取資料比原來的少，隱藏 n 個GridUserControl
+                if (toolData.Count < toolsCount)
+                {
+                    for (int i = toolsCount-1; i >  (toolData.Count - 1); i--)
+                    {
+                        table.GetControlFromPosition(i % 6, i / 6).Visible = false;
+                    }
+                }
+
+                for (int i = 0; i < tools.Count; i++)
+                {
+                    tools[i].tool = toolData[i];
+                    tools[i].CheckStatus();
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        private int TableCellShowCount(TableLayoutPanel t)
+        {
+            int toolsCount = 0;
+            for (int i = 0; i < t.RowCount; i++)
+            {
+                for (int j = 0; j < t.ColumnCount; j++)
+                {
+                    if (t.GetControlFromPosition(j, i).Visible == false)
+                        return toolsCount;
+                    toolsCount++;
+
+                }
+            }
+            return toolsCount;
+        }
+
 
         /// <summary>
         /// 定時變換觀看機台ID
@@ -207,7 +252,6 @@ namespace Shelf
             }
             while (keepUpdate)
             {
-                
                 foreach(Machine m in machines)
                 {
                     List<Tool> tList = new List<Tool>();
@@ -222,12 +266,53 @@ namespace Shelf
                     }
                     else
                     {
+                        //Invoke(new updateGridUI(showPages));
                         Thread.Sleep(3000);
                     }
-                        
-                    
                 }
             }
+        }
+
+        private void showPages(bool status)
+        {
+            if (status)
+            {
+                int num = tdb.GetToolCountByMachine(machine.id);
+                int maxPage = num / 36;
+                if (num % 36 != 0)
+                    maxPage++;
+                txtMaxPage.Text = maxPage.ToString();
+                txtPage.Text = "1";
+                
+                page = 0;
+
+                txtMaxPage.Visible = true;
+                txtPage.Visible = true;
+                txtDivide.Visible = true;
+                btnNext.Visible = true;
+                btnLast.Visible = true;
+
+                btnLast.Enabled = false;
+                btnNext.Enabled = true;
+                btnLast.Image = Properties.Resources.disableLeft;
+                btnNext.Image = Properties.Resources.right;
+                if (maxPage == 0)
+                {
+                    btnNext.Image = Properties.Resources.disableRight;
+                    btnNext.Enabled = false;
+                    txtPage.Text = "0";
+                }
+                    
+            }
+            else
+            {
+                txtMaxPage.Visible = false;
+                txtPage.Visible = false;
+                txtDivide.Visible = false;
+                btnNext.Visible = false;
+                btnLast.Visible = false;
+            }
+            
         }
 
         /// <summary>
@@ -252,7 +337,6 @@ namespace Shelf
                 btnRun.Text = "開始";
             }
         }
-
 
         /// <summary>
         /// 重新設定刀具庫
@@ -347,7 +431,7 @@ namespace Shelf
                 else
                 {
                     MessageBox.Show("新增成功");
-                    initialContent();
+                    ToolUpdate();
                 }
             }
             else
@@ -355,7 +439,6 @@ namespace Shelf
                 MessageBox.Show("未進行任何改變");
             }
         }
-
 
         /// <summary>
         /// 模擬刀具使用
@@ -396,12 +479,15 @@ namespace Shelf
                     Thread.Sleep(5000);
                 }
                 
-                foreach(Tool t in tools)
+                foreach (Tool t in tools)
                 {
                     DateTime endTime = DateTime.Now;
                     int decrease = rand.Next(3, 6);
                     int remain = t.remain - decrease;
+                    if (remain <= 0)
+                        remain = 0;
                     WriteHistory(t.name, machineId, remain, startTime, endTime);
+                    Thread.Sleep(1000);
                 }
             }
         }
@@ -426,15 +512,11 @@ namespace Shelf
                 //MessageBox.Show("test");
             }
             t.lastUpdate = DateTime.Now;
-            if (!tdb.UpdateTool(t, true))
+            t.taken = true;
+            if (!tdb.UpdateTool(t))
                 return false;
 
             return true;
-        }
-
-        private void Finished(int machineId)
-        {
-            tdb.UnuseTool(machineId);
         }
 
         /// <summary>
@@ -466,7 +548,9 @@ namespace Shelf
                 mark = '1',
                 dateTime = DateTime.Now
             };
-            if (!tdb.UpdateTool(t, false))
+            t.taken = false;
+            t.lastUpdate = DateTime.Now;
+            if (!tdb.UpdateTool(t))
                 return false;
             if (!tdb.HistoryTool(h))
                 return false;
@@ -517,22 +601,97 @@ namespace Shelf
                     id = dashboard.machineId,
                     name = dashboard.machineName
                 };
+                showPages(true);
+                
             }
-            
-        }
-
-        private void SendLocalData()
-        {
-            if (!File.Exists("Temp\\TempHistoryData.csv"))
-                return;
-            if (!tdb.IsDatabaseConnected())
+            else
             {
-
-            }                
-            TempSave tempSave = new TempSave();
-            //tempSave.SaveToolTempInDatabase();
+                page = 0;
+                showPages(false);
+            }
+            ToolUpdate();
         }
 
-        
+        private void BtnSystemLogClick(object sender, EventArgs e)
+        {
+            SystemLogForm logForm = new SystemLogForm();
+            logForm.ShowDialog();
+        }
+
+        /// <summary>
+        /// 將未上傳成功的資料重新上傳
+        /// </summary>
+        private void TmpDataRestore()
+        {
+            TempSave save = new TempSave();
+            if (File.Exists("Temp\\TempToolData.csv"))
+                save.RestoreToolTemp();
+
+            if (File.Exists("Temp\\TempHistoryData.csv"))
+                save.RestoreHistoryTemp();
+
+            if (File.Exists("Temp\\TempLogData.csv"))
+                save.RestoreSystemLogTemp();
+        }
+
+        /// <summary>
+        /// 點選上一頁
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LastPageClick(object sender, EventArgs e)
+        {
+            int currentPage = Convert.ToInt32(txtPage.Text);
+            int maxPage = Convert.ToInt32(txtMaxPage.Text);
+
+            if (currentPage == 1)
+                return;
+            currentPage--;
+            page = currentPage - 1;
+            if (currentPage != maxPage)
+            {
+                btnNext.Enabled = true;
+                btnNext.Image = Properties.Resources.right;
+            }
+
+            if (currentPage == 1)
+            {
+                btnLast.Enabled = false;
+                btnLast.Image = Properties.Resources.disableLeft;
+            }
+            txtPage.Text = currentPage.ToString();
+            ToolUpdate();
+        }
+
+        /// <summary>
+        /// 點選下一頁
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NextPageClick(object sender, EventArgs e)
+        {
+            int currentPage = Convert.ToInt32(txtPage.Text);
+            int maxPage = Convert.ToInt32(txtMaxPage.Text);
+
+            if (currentPage == maxPage)
+                return;
+            currentPage++;
+            page = currentPage - 1;
+            if (currentPage != 1)
+            {
+                btnLast.Enabled = true;
+                btnLast.Image = Properties.Resources.left;
+            }
+
+            if(currentPage == maxPage)
+            {
+                btnNext.Enabled = false;
+                btnNext.Image = Properties.Resources.disableRight;
+            }
+                
+            txtPage.Text = currentPage.ToString();
+            ToolUpdate();
+        }
+
     }
 }
