@@ -22,8 +22,7 @@ namespace Shelf
             BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
             null, remainLifeBar, new object[] { true });
 
-            
-            CheckStatus();
+            //CheckStatus();
         }
         
         /// <summary>
@@ -31,14 +30,14 @@ namespace Shelf
         /// </summary>
         private void LoadProgressBar()
         {
-            if (tool.remain <= 0)
+            if (tool.Remain <= 0)
             {
                 remainLifeBar.Value = 0;
             }
             else
             {
-                remainLifeBar.Maximum = tool.life;
-                remainLifeBar.Value = tool.remain;
+                remainLifeBar.Maximum = tool.Life;
+                remainLifeBar.Value = tool.Remain;
             }
         }
 
@@ -47,11 +46,11 @@ namespace Shelf
         /// </summary>
         public void CheckStatus()
         {
-            txtWarning.Text = "警戒值: " + tool.warning.ToString();
-            remainLifeBar.Maximum = tool.life;
-            txtName.Text = tool.name;
-            txtCount.Text = tool.remain.ToString();
-            double percent = ((double)tool.remain / (double)tool.life) * 100;
+            txtWarning.Text = "警戒值: " + tool.Warning.ToString();
+            remainLifeBar.Maximum = tool.Life;
+            txtName.Text = tool.Name;
+            txtCount.Text = tool.Remain.ToString();
+            double percent = ((double)tool.Remain / (double)tool.Life) * 100;
             txtPercet.Text = string.Format("{0}%", (int)percent);
             LoadProgressBar();
 
@@ -77,7 +76,7 @@ namespace Shelf
             }
 
             //warning == true show picAlarm
-            if (tool.remain <= tool.warning)
+            if (tool.Remain <= tool.Warning)
             {
                 txtCount.ForeColor = Color.White;
                 panelStatus.BackColor = Color.FromArgb(216, 30, 91);
@@ -88,7 +87,7 @@ namespace Shelf
                 panelStatus.BackColor = Color.FromArgb(241, 241, 241);
             }
 
-            if (tool.taken)
+            if (tool.Taken)
                 ToolUse();
             else
                 ToolUnuse();
@@ -107,7 +106,7 @@ namespace Shelf
 
         private void GridUserControl_Paint(object sender, PaintEventArgs e)
         {
-            if (tool.taken)
+            if (tool.Taken)
             {
                 ButtonBorderStyle style = ButtonBorderStyle.Solid;
                 Color color = Color.FromArgb(13, 131, 0);

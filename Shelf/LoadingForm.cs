@@ -139,12 +139,12 @@ namespace Shelf
                     downloadProgressBar.Maximum = logs.Count;
                     for (int i = 0; i < logs.Count; i++)
                     {
-                        csv.WriteField(logs[i].name);
-                        csv.WriteField(logs[i].life);
-                        csv.WriteField(logs[i].remain);
-                        csv.WriteField(logs[i].warning);
-                        csv.WriteField(logs[i].mark);
-                        csv.WriteField(logs[i].dateTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                        csv.WriteField(logs[i].Name);
+                        csv.WriteField(logs[i].Life);
+                        csv.WriteField(logs[i].Remain);
+                        csv.WriteField(logs[i].Warning);
+                        csv.WriteField(logs[i].Mark);
+                        csv.WriteField(logs[i].CreateTime.ToString("yyyy-MM-dd HH:mm:ss"));
                         csv.NextRecord();
 
                         double precentage = ((double)(i + 1) / (double)logs.Count) * 100;

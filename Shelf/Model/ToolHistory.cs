@@ -9,33 +9,33 @@ namespace Shelf
     public class ToolHistory
     {
         [CsvHelper.Configuration.Attributes.Ignore]
-        public int id { get; set; }
+        public int Id { get; set; }
 
-        [CsvHelper.Configuration.Attributes.Name("toolId")]
-        public int toolId { get; set; }
+        [CsvHelper.Configuration.Attributes.Name("ToolId")]
+        public int ToolId { get; set; }
 
-        [CsvHelper.Configuration.Attributes.Name("name")]
-        public string name { get; set; }
+        [CsvHelper.Configuration.Attributes.Name("Name")]
+        public string Name { get; set; }
 
-        [CsvHelper.Configuration.Attributes.Name("beforeUseLife")]
-        public int beforeUseLife { get; set; }
+        [CsvHelper.Configuration.Attributes.Name("BeforeUseLife")]
+        public int BeforeUseLife { get; set; }
 
-        [CsvHelper.Configuration.Attributes.Name("afterUseLife")]
-        public int afterUseLife { get; set; }
+        [CsvHelper.Configuration.Attributes.Name("AfterUseLife")]
+        public int AfterUseLife { get; set; }
 
-        [CsvHelper.Configuration.Attributes.Name("warning")]
-        public int warning { get; set; }
+        [CsvHelper.Configuration.Attributes.Name("Warning")]
+        public int Warning { get; set; }
 
-        [CsvHelper.Configuration.Attributes.Name("startTime")]
-        public DateTime startTime { get; set; }
+        [CsvHelper.Configuration.Attributes.Name("StartTime")]
+        public DateTime StartTime { get; set; }
 
-        [CsvHelper.Configuration.Attributes.Name("endTime")]
+        [CsvHelper.Configuration.Attributes.Name("EndTime")]
         public DateTime endTime { get; set; }
 
-        [CsvHelper.Configuration.Attributes.Name("mark")]
-        public char mark { get; set; }
+        [CsvHelper.Configuration.Attributes.Name("Mark")]
+        public char Mark { get; set; }
 
-        [CsvHelper.Configuration.Attributes.Name("dateTime")]
-        public DateTime dateTime { get; set; }
+        [CsvHelper.Configuration.Attributes.Name("CreateTime")]
+        public DateTime CreateTime { get; set; }
     }
 }

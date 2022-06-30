@@ -40,11 +40,13 @@
             this.txtMaxPage = new System.Windows.Forms.Label();
             this.txtPage = new System.Windows.Forms.Label();
             this.txtDivide = new System.Windows.Forms.Label();
-            this.btnLast = new System.Windows.Forms.PictureBox();
+            this.picMachine = new System.Windows.Forms.PictureBox();
             this.btnNext = new System.Windows.Forms.PictureBox();
+            this.btnLast = new System.Windows.Forms.PictureBox();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.btnLast)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picMachine)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnNext)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnLast)).BeginInit();
             this.SuspendLayout();
             // 
             // btnRun
@@ -156,13 +158,14 @@
             this.btnReset.TabIndex = 3;
             this.btnReset.Text = "重新設定";
             this.btnReset.UseVisualStyleBackColor = false;
+            this.btnReset.Visible = false;
             this.btnReset.Click += new System.EventHandler(this.BtnResetClick);
             // 
             // txtMachineName
             // 
             this.txtMachineName.AutoSize = true;
             this.txtMachineName.Font = new System.Drawing.Font("微軟正黑體", 48F, System.Drawing.FontStyle.Bold);
-            this.txtMachineName.Location = new System.Drawing.Point(121, 34);
+            this.txtMachineName.Location = new System.Drawing.Point(258, 43);
             this.txtMachineName.Name = "txtMachineName";
             this.txtMachineName.Size = new System.Drawing.Size(486, 81);
             this.txtMachineName.TabIndex = 1;
@@ -173,16 +176,17 @@
             this.content.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.content.Location = new System.Drawing.Point(131, 137);
+            this.content.Location = new System.Drawing.Point(135, 163);
             this.content.Name = "content";
-            this.content.Size = new System.Drawing.Size(1761, 839);
+            this.content.Size = new System.Drawing.Size(1761, 820);
             this.content.TabIndex = 2;
             // 
             // txtMaxPage
             // 
+            this.txtMaxPage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMaxPage.AutoSize = true;
             this.txtMaxPage.Font = new System.Drawing.Font("微軟正黑體", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.txtMaxPage.Location = new System.Drawing.Point(1789, 95);
+            this.txtMaxPage.Location = new System.Drawing.Point(1799, 986);
             this.txtMaxPage.Name = "txtMaxPage";
             this.txtMaxPage.Size = new System.Drawing.Size(28, 31);
             this.txtMaxPage.TabIndex = 5;
@@ -191,9 +195,10 @@
             // 
             // txtPage
             // 
+            this.txtPage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPage.AutoSize = true;
             this.txtPage.Font = new System.Drawing.Font("微軟正黑體", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.txtPage.Location = new System.Drawing.Point(1744, 95);
+            this.txtPage.Location = new System.Drawing.Point(1754, 986);
             this.txtPage.Name = "txtPage";
             this.txtPage.Size = new System.Drawing.Size(28, 31);
             this.txtPage.TabIndex = 6;
@@ -202,33 +207,32 @@
             // 
             // txtDivide
             // 
+            this.txtDivide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDivide.AutoSize = true;
             this.txtDivide.Font = new System.Drawing.Font("微軟正黑體", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.txtDivide.Location = new System.Drawing.Point(1769, 95);
+            this.txtDivide.Location = new System.Drawing.Point(1779, 986);
             this.txtDivide.Name = "txtDivide";
             this.txtDivide.Size = new System.Drawing.Size(25, 31);
             this.txtDivide.TabIndex = 7;
             this.txtDivide.Text = "/";
             this.txtDivide.Visible = false;
             // 
-            // btnLast
+            // picMachine
             // 
-            this.btnLast.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnLast.Image = global::Shelf.Properties.Resources.left;
-            this.btnLast.Location = new System.Drawing.Point(1699, 91);
-            this.btnLast.Name = "btnLast";
-            this.btnLast.Size = new System.Drawing.Size(40, 40);
-            this.btnLast.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.btnLast.TabIndex = 4;
-            this.btnLast.TabStop = false;
-            this.btnLast.Visible = false;
-            this.btnLast.Click += new System.EventHandler(this.LastPageClick);
+            this.picMachine.Image = global::Shelf.Properties.Resources.CNC3;
+            this.picMachine.Location = new System.Drawing.Point(131, 35);
+            this.picMachine.Name = "picMachine";
+            this.picMachine.Size = new System.Drawing.Size(121, 96);
+            this.picMachine.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picMachine.TabIndex = 8;
+            this.picMachine.TabStop = false;
             // 
             // btnNext
             // 
+            this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnNext.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnNext.Image = global::Shelf.Properties.Resources.right;
-            this.btnNext.Location = new System.Drawing.Point(1820, 91);
+            this.btnNext.Location = new System.Drawing.Point(1830, 982);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(40, 40);
             this.btnNext.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -237,20 +241,35 @@
             this.btnNext.Visible = false;
             this.btnNext.Click += new System.EventHandler(this.NextPageClick);
             // 
+            // btnLast
+            // 
+            this.btnLast.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLast.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnLast.Image = global::Shelf.Properties.Resources.left;
+            this.btnLast.Location = new System.Drawing.Point(1709, 982);
+            this.btnLast.Name = "btnLast";
+            this.btnLast.Size = new System.Drawing.Size(40, 40);
+            this.btnLast.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.btnLast.TabIndex = 4;
+            this.btnLast.TabStop = false;
+            this.btnLast.Visible = false;
+            this.btnLast.Click += new System.EventHandler(this.LastPageClick);
+            // 
             // MainForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ClientSize = new System.Drawing.Size(1904, 1041);
             this.ControlBox = false;
+            this.Controls.Add(this.picMachine);
             this.Controls.Add(this.txtPage);
-            this.Controls.Add(this.txtMaxPage);
-            this.Controls.Add(this.btnLast);
             this.Controls.Add(this.btnNext);
+            this.Controls.Add(this.txtMaxPage);
+            this.Controls.Add(this.txtDivide);
+            this.Controls.Add(this.btnLast);
             this.Controls.Add(this.content);
             this.Controls.Add(this.txtMachineName);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.txtDivide);
             this.Cursor = System.Windows.Forms.Cursors.Default;
             this.DoubleBuffered = true;
             this.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -262,8 +281,9 @@
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Shown += new System.EventHandler(this.MainShown);
             this.panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.btnLast)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picMachine)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnNext)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnLast)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -284,6 +304,7 @@
         private System.Windows.Forms.Label txtMaxPage;
         private System.Windows.Forms.Label txtPage;
         private System.Windows.Forms.Label txtDivide;
+        private System.Windows.Forms.PictureBox picMachine;
     }
 }
 

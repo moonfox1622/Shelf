@@ -5,21 +5,15 @@ namespace Shelf
 {
     public class Tool
     {
-        [CsvHelper.Configuration.Attributes.Name("id")]
-        public int id { get; set; }
-        public int machineId { get; set; }
-        public string name { get; set; }
-        public int life { get; set; }
-        public int remain { get; set; }
-        public int warning { get; set; }
-        public bool taken { get; set; }
-        public DateTime lastUpdate { get; set; }
-
-        [CsvHelper.Configuration.Attributes.Ignore]
-        public DateTime startTime { get; set; }
-        [CsvHelper.Configuration.Attributes.Ignore]
-        public DateTime endTime { get; set; }
-
-        
+        public int Id { get; set; }
+        public int MachineId { get; set; }
+        public string Name { get; set; }
+        public int Life { get; set; }
+        public int Remain { get; set; }
+        public int Warning { get; set; }
+        public bool Taken { get; set; }
+        public DateTime LastUpdate { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
     }
 }

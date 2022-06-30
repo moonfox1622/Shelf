@@ -70,12 +70,13 @@
             this.txtName.Cursor = System.Windows.Forms.Cursors.Default;
             this.txtName.Font = new System.Drawing.Font("Arial", 16F, System.Drawing.FontStyle.Bold);
             this.txtName.ForeColor = System.Drawing.Color.Black;
+            this.txtName.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.txtName.Location = new System.Drawing.Point(10, 7);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(53, 42);
+            this.txtName.Size = new System.Drawing.Size(83, 42);
             this.txtName.TabIndex = 8;
             this.txtName.Text = "T1";
-            this.txtName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.txtName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // txtPercet
             // 

@@ -48,10 +48,10 @@ namespace Shelf
 
                 tool = new Tool
                 {
-                    name = txtName.Text,
-                    life = Convert.ToInt32(txtLife.Value),
-                    remain = Convert.ToInt32(txtLife.Value),
-                    warning = Convert.ToInt32(txtWarning.Value)
+                    Name = txtName.Text,
+                    Life = Convert.ToInt32(txtLife.Value),
+                    Remain = Convert.ToInt32(txtLife.Value),
+                    Warning = Convert.ToInt32(txtWarning.Value)
                 };
                 if (!tdb.InsertTool(tool, machineId))
                     return;

@@ -4,18 +4,18 @@ namespace Shelf.Model
 {
     public class Log
     {
-        public int machineId { get; set; }
+        public int MachineId { get; set; }
 
-        public string name { get; set; }
+        public string Name { get; set; }
 
-        public int life { get; set; }
+        public int Life { get; set; }
 
-        public int remain { get; set; }
+        public int Remain { get; set; }
 
-        public int warning { get; set; }
+        public int Warning { get; set; }
 
-        public string mark { get; set; }
+        public string Mark { get; set; }
 
-        public DateTime dateTime { get; set; }
+        public DateTime CreateTime { get; set; }
     }
 }

@@ -13,7 +13,7 @@ namespace Shelf
         ToolDatabase tdb = new ToolDatabase();
         private DataTable table = new DataTable();
         private BindingSource bs = new BindingSource();
-
+        private bool searchBoxHasText = false;
         public SystemLogForm()
         {
             InitializeComponent();
@@ -39,7 +39,7 @@ namespace Shelf
         {
             DateTime startTime = startDateTimePicker.Value;
             DateTime endTime = endDateTimePicker.Value;
-            LoadData(startTime, endTime, (machineList.SelectedItem as Machine).id);
+            LoadData(startTime, endTime, (machineList.SelectedItem as Machine).Id);
             btnDownload.Visible = true;
         }
 
@@ -77,11 +77,11 @@ namespace Shelf
             tableView.DataSource = bs;
 
             tableView.Columns["name"].HeaderText = "刀具名稱";
-            tableView.Columns["life"].HeaderText = "最大損耗值";
-            tableView.Columns["remain"].HeaderText = "剩餘損耗";
+            tableView.Columns["life"].HeaderText = "最大磨耗值";
+            tableView.Columns["remain"].HeaderText = "剩餘磨耗";
             tableView.Columns["warning"].HeaderText = "警戒值";
             tableView.Columns["mark"].HeaderText = "類別";
-            tableView.Columns["dateTime"].HeaderText = "紀錄時間";
+            tableView.Columns["createTime"].HeaderText = "紀錄時間";
 
             int width = 95;
             tableView.Columns["name"].Width = width;
@@ -90,14 +90,14 @@ namespace Shelf
             tableView.Columns["warning"].Width = width;
             tableView.Columns["mark"].Width = width;
             width = (tableView.Width - (width * 6)) / 3;
-            tableView.Columns["dateTime"].Width = width;
+            tableView.Columns["createTime"].Width = width;
 
             tableView.Columns["name"].SortMode = DataGridViewColumnSortMode.NotSortable;
             tableView.Columns["life"].SortMode = DataGridViewColumnSortMode.NotSortable;
             tableView.Columns["remain"].SortMode = DataGridViewColumnSortMode.NotSortable;
             tableView.Columns["warning"].SortMode = DataGridViewColumnSortMode.NotSortable;
             tableView.Columns["mark"].SortMode = DataGridViewColumnSortMode.NotSortable;
-            tableView.Columns["dateTime"].SortMode = DataGridViewColumnSortMode.Automatic;
+            tableView.Columns["createTime"].SortMode = DataGridViewColumnSortMode.Automatic;
 
             tableView.Columns["name"].DefaultCellStyle.BackColor = Color.FromArgb(235, 237, 237);
             tableView.Columns["name"].DefaultCellStyle.SelectionBackColor = Color.FromArgb(235, 237, 237);
@@ -121,7 +121,7 @@ namespace Shelf
 
             foreach (Log l in logs)
             {
-                table.Rows.Add(l.name, l.life, l.remain, l.warning, l.mark, l.dateTime.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+                table.Rows.Add(l.Name, l.Life, l.Remain, l.Warning, l.Mark, l.CreateTime.ToString("yyyy-MM-dd HH:mm:ss.fff"));
             }
             bs.DataSource = table;
             TableViewStyle();
@@ -144,7 +144,7 @@ namespace Shelf
             machineList.DataSource = machines;
         }
 
-
+        
         private DataTable LogDataTable()
         {
             DataTable dt = new DataTable();
@@ -172,7 +172,7 @@ namespace Shelf
             dt.Columns.Add(dc);
 
             dc = new DataColumn();
-            dc.ColumnName = "dateTime";
+            dc.ColumnName = "createTime";
             dt.Columns.Add(dc);
 
             return dt;
@@ -201,12 +201,12 @@ namespace Shelf
                 DataGridViewCellCollection row = tableView.Rows[i].Cells;
                 Log l = new Log
                 {
-                    name = row["name"].Value.ToString(),
-                    life = Convert.ToInt32(row["life"].Value.ToString()),
-                    remain = Convert.ToInt32(row["remain"].Value.ToString()),
-                    warning = Convert.ToInt32(row["warning"].Value.ToString()),
-                    mark = row["mark"].Value.ToString(),
-                    dateTime = Convert.ToDateTime(row["dateTime"].Value.ToString())
+                    Name = row["name"].Value.ToString(),
+                    Life = Convert.ToInt32(row["life"].Value.ToString()),
+                    Remain = Convert.ToInt32(row["remain"].Value.ToString()),
+                    Warning = Convert.ToInt32(row["warning"].Value.ToString()),
+                    Mark = row["mark"].Value.ToString(),
+                    CreateTime = Convert.ToDateTime(row["createTime"].Value.ToString())
                 };
                 logs.Add(l);
             }
@@ -227,6 +227,26 @@ namespace Shelf
                 MessageBox.Show("下載成功", "訊息", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
                 MessageBox.Show("下載失敗", "訊息", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        private void Textbox_Enter(object sender, EventArgs e)
+        {
+            if (searchBoxHasText == false)
+                searchBox.Text = "";
+
+            searchBox.ForeColor = Color.Black;
+        }
+        //textbox失去焦點
+        private void Textbox_Leave(object sender, EventArgs e)
+        {
+            if (searchBox.Text == "")
+            {
+                searchBox.Text = "名稱/類別/紀錄時間";
+                searchBox.ForeColor = Color.Gray;
+                searchBoxHasText = false;
+            }
+            else
+                searchBoxHasText = true;
         }
     }
 }

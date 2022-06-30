@@ -6,15 +6,18 @@ using System.Threading.Tasks;
 
 namespace Shelf.Model
 {
-    class Machine
+    public class Machine
     {
-        public int id { get; set; }
+        public int Id { get; set; }
 
-        public string name { get; set; }
+        public string Name { get; set; }
 
+        public string Describe { get; set; }
+
+        public string Picture { get; set; }
         public override string ToString()
         {
-            return name;
+            return Name;
         }
     }
 }

@@ -8,8 +8,8 @@ namespace Shelf
     public partial class DashboardSettingForm : Form
     {
         public int carouselSpeed { get; set; }
-        public int machineId { get; set; }
-        public string machineName { get; set; }
+
+        public Machine machine { get; set; }
 
         ToolDatabase tdb = new ToolDatabase();
         public DashboardSettingForm()
@@ -37,7 +37,7 @@ namespace Shelf
 
             foreach(Machine m in machineList.Items)
             {
-                if (m.id == machineId)
+                if (m.Id == machine.Id)
                     machineList.SelectedItem = m;
             }
         }
@@ -75,8 +75,7 @@ namespace Shelf
 
         private void MachineListSelectedIndexChanged(object sender, EventArgs e)
         {
-            machineId = (machineList.SelectedItem as Machine).id;
-            machineName = machineList.SelectedItem.ToString();
+            machine = machineList.SelectedItem as Machine;
         }
 
         private void SpeedChange(object sender, EventArgs e)

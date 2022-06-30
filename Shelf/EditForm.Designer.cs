@@ -145,7 +145,7 @@
             this.MinimumSize = new System.Drawing.Size(266, 397);
             this.Name = "EditForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "EditForm";
+            this.Text = "修改";
             this.Shown += new System.EventHandler(this.EditFormShown);
             ((System.ComponentModel.ISupportInitialize)(this.txtAlarm)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtRemain)).EndInit();

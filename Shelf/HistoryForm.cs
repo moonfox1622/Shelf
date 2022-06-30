@@ -17,7 +17,7 @@ namespace Shelf
         ToolDatabase tdb = new ToolDatabase();
         private DataTable table = new DataTable();
         private BindingSource bs = new BindingSource();
-
+        private bool searchBoxHasText = false;
         public HistoryForm()
         {
             InitializeComponent();
@@ -69,7 +69,7 @@ namespace Shelf
             foreach (ToolHistory th in histories)
             {
                 string mark = "";
-                switch (th.mark)
+                switch (th.Mark)
                 {
                     case '1':
                         mark = "取出刀具";
@@ -93,10 +93,10 @@ namespace Shelf
                         mark = "機台錯誤";
                         break;
                 }
-                string decreaseLife = (th.beforeUseLife - th.afterUseLife).ToString();
+                string decreaseLife = (th.BeforeUseLife - th.AfterUseLife).ToString();
                 if (Convert.ToInt32(decreaseLife) <= 0)
                     decreaseLife = "";
-                table.Rows.Add(th.toolId, th.name, decreaseLife, th.beforeUseLife, th.afterUseLife, th.warning, th.startTime.ToString("yyyy-MM-dd HH:mm:ss"), th.endTime.ToString("yyyy-MM-dd HH:mm:ss"), mark, th.dateTime.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+                table.Rows.Add(th.ToolId, th.Name, decreaseLife, th.BeforeUseLife, th.AfterUseLife, th.Warning, th.StartTime.ToString("yyyy-MM-dd HH:mm:ss"), th.endTime.ToString("yyyy-MM-dd HH:mm:ss"), mark, th.CreateTime.ToString("yyyy-MM-dd HH:mm:ss"));
             }
             bs.DataSource = table;
             TableViewStyle();
@@ -113,7 +113,7 @@ namespace Shelf
             DateTime startTime = startDateTimePicker.Value;
             DateTime endTime = endDateTimePicker.Value;
             bool isWarning = errorSelect.Checked;
-            LoadData(startTime, endTime, (machineList.SelectedItem as Machine).id, isWarning);
+            LoadData(startTime, endTime, (machineList.SelectedItem as Machine).Id, isWarning);
             btnDownload.Visible = true;
         }
 
@@ -159,14 +159,14 @@ namespace Shelf
             tableView.DataSource = bs;
 
             tableView.Columns["name"].HeaderText = "刀具名稱";
-            tableView.Columns["decreaseLife"].HeaderText = "使用損耗";
-            tableView.Columns["beforeUseLife"].HeaderText = "使用前損耗";
-            tableView.Columns["afterUseLife"].HeaderText = "使用後損耗";
+            tableView.Columns["decreaseLife"].HeaderText = "使用磨耗";
+            tableView.Columns["beforeUseLife"].HeaderText = "使用前磨耗";
+            tableView.Columns["afterUseLife"].HeaderText = "使用後磨耗";
             tableView.Columns["warning"].HeaderText = "警戒值";
             tableView.Columns["startTime"].HeaderText = "開始使用時間";
             tableView.Columns["endTime"].HeaderText = "結束使用時間";
             tableView.Columns["mark"].HeaderText = "類別";
-            tableView.Columns["dateTime"].HeaderText = "紀錄時間";
+            tableView.Columns["createTime"].HeaderText = "紀錄時間";
 
             int width = 97;
             tableView.Columns["name"].Width = width;
@@ -178,7 +178,7 @@ namespace Shelf
             width = (tableView.Width - (width * 6)) / 3;
             tableView.Columns["startTime"].Width = width;
             tableView.Columns["endTime"].Width = width;
-            tableView.Columns["dateTime"].Width = width;
+            tableView.Columns["createTime"].Width = width;
 
             tableView.Columns["name"].SortMode = DataGridViewColumnSortMode.NotSortable;
             tableView.Columns["decreaseLife"].SortMode = DataGridViewColumnSortMode.NotSortable;
@@ -188,7 +188,7 @@ namespace Shelf
             tableView.Columns["startTime"].SortMode = DataGridViewColumnSortMode.NotSortable;
             tableView.Columns["endTime"].SortMode = DataGridViewColumnSortMode.NotSortable;
             tableView.Columns["mark"].SortMode = DataGridViewColumnSortMode.NotSortable;
-            tableView.Columns["dateTime"].SortMode = DataGridViewColumnSortMode.Automatic;
+            tableView.Columns["createTime"].SortMode = DataGridViewColumnSortMode.Automatic;
 
             tableView.Columns["name"].DefaultCellStyle.BackColor = Color.FromArgb(235, 237, 237);
             tableView.Columns["name"].DefaultCellStyle.SelectionBackColor = Color.FromArgb(235, 237, 237);
@@ -246,7 +246,7 @@ namespace Shelf
             dt.Columns.Add(dc);
 
             dc = new DataColumn();
-            dc.ColumnName = "dateTime";
+            dc.ColumnName = "createTime";
             dt.Columns.Add(dc);
 
             return dt;
@@ -259,8 +259,7 @@ namespace Shelf
         {
             try
             {
-                bs.Filter = string.Format("(convert(name, 'System.String') LIKE '%{0}%' OR convert(beforeUseLife, 'System.String')  LIKE '%{0}%' OR convert(afterUseLife, 'System.String') LIKE '%{0}%' OR" +
-                       " convert(mark, 'System.String') LIKE '%{0}%')", searchBox.Text);
+                bs.Filter = string.Format("(convert(name, 'System.String') LIKE '%{0}%' OR convert(decreaseLife, 'System.String')  LIKE '%{0}%' OR convert(createTime, 'System.String') LIKE '%{0}%')", searchBox.Text);
                 
                 TableMark();
             }
@@ -286,14 +285,14 @@ namespace Shelf
                 CSVHistoryFormat h = new CSVHistoryFormat
                 {
                     toolId = Convert.ToInt32(row["toolId"].Value.ToString()),
-                    name = row["name"].Value.ToString(),
-                    decreaseLife = Convert.ToInt32(row["decreaseLife"].Value.ToString()),
-                    beforeUseLife = Convert.ToInt32(row["beforeUseLife"].Value.ToString()),
-                    afterUseLife = Convert.ToInt32(row["afterUseLife"].Value.ToString()),
-                    warning = Convert.ToInt32(row["warning"].Value.ToString()),
-                    startTime = row["startTime"].Value.ToString(),
-                    endTime = row["endTime"].Value.ToString(),
-                    dateTime = row["dateTime"].Value.ToString()
+                    Name = row["name"].Value.ToString(),
+                    DecreaseLife = Convert.ToInt32(row["decreaseLife"].Value.ToString()),
+                    BeforeUseLife = Convert.ToInt32(row["beforeUseLife"].Value.ToString()),
+                    AfterUseLife = Convert.ToInt32(row["afterUseLife"].Value.ToString()),
+                    Warning = Convert.ToInt32(row["warning"].Value.ToString()),
+                    StartTime = row["startTime"].Value.ToString(),
+                    EndTime = row["endTime"].Value.ToString(),
+                    CreateTime = row["createTime"].Value.ToString()
                 };
                 histories.Add(h);
             }
@@ -374,6 +373,26 @@ namespace Shelf
             endDateTimePicker.Enabled = status;
             errorSelect.Enabled = status;
             machineList.Enabled = status;
+        }
+
+        private void Textbox_Enter(object sender, EventArgs e)
+        {
+            if (searchBoxHasText == false)
+                searchBox.Text = "";
+
+            searchBox.ForeColor = Color.Black;
+        }
+        //textbox失去焦點
+        private void Textbox_Leave(object sender, EventArgs e)
+        {
+            if (searchBox.Text == "")
+            {
+                searchBox.Text = "名稱/使用磨耗/紀錄時間";
+                searchBox.ForeColor = Color.Gray;
+                searchBoxHasText = false;
+            }
+            else
+                searchBoxHasText = true;
         }
     }
 }

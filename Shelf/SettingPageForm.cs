@@ -61,7 +61,7 @@ namespace Shelf
             
             for (int i = 0; i < tools.Count; i++)
             {
-                toolsData.Rows.Add(tools[i].name, tools[i].life, tools[i].remain, tools[i].warning, "設定", "換刀", "刪除");
+                toolsData.Rows.Add(tools[i].Name, tools[i].Life, tools[i].Remain, tools[i].Warning, "設定", "換刀", "刪除");
             }
         }
 
@@ -114,8 +114,8 @@ namespace Shelf
 
             //Set column header name
             toolGridView.Columns["name"].HeaderText = "刀具名稱";
-            toolGridView.Columns["life"].HeaderText = "最大損耗";
-            toolGridView.Columns["remain"].HeaderText = "剩餘損耗";
+            toolGridView.Columns["life"].HeaderText = "最大磨耗";
+            toolGridView.Columns["remain"].HeaderText = "剩餘磨耗";
             toolGridView.Columns["warning"].HeaderText = "警戒值";
             toolGridView.Columns["setting"].HeaderText = "設定";
             toolGridView.Columns["change"].HeaderText = "換刀";
@@ -206,8 +206,10 @@ namespace Shelf
         /// <param name="e"></param>
         private void MachineChange(object sender, EventArgs e)
         {
-            LoadTool((machineList.SelectedItem as Machine).id);
-
+            LoadTool((machineList.SelectedItem as Machine).Id);
+            Bitmap picture = (Bitmap)Properties.Resources.ResourceManager.GetObject((machineList.SelectedItem as Machine).Picture);
+            picMachine.Image = picture;
+            txtMachDescrible.Text = (machineList.SelectedItem as Machine).Describe;
             if (toolsData.Rows.Count == 0)
                 return;
             GridViewSetting();
@@ -236,18 +238,18 @@ namespace Shelf
         {
             EditForm editPadge = new EditForm
             {
-                machineId = (machineList.SelectedItem as Machine).id,
+                machineId = (machineList.SelectedItem as Machine).Id,
                 name = toolGridView[0, row].Value.ToString()
             };
             editPadge.ShowDialog();
             Tool t = new Tool();
-            tdb.GetToolByName(toolGridView[0, row].Value.ToString(), (machineList.SelectedItem as Machine).id, ref t);
-            toolGridView.Rows[row].Cells["name"].Value = t.name;
-            toolGridView.Rows[row].Cells["life"].Value = t.life;
-            toolGridView.Rows[row].Cells["remain"].Value = t.remain;
-            toolGridView.Rows[row].Cells["warning"].Value = t.warning;
+            tdb.GetToolByName(toolGridView[0, row].Value.ToString(), (machineList.SelectedItem as Machine).Id, ref t);
+            toolGridView.Rows[row].Cells["name"].Value = t.Name;
+            toolGridView.Rows[row].Cells["life"].Value = t.Life;
+            toolGridView.Rows[row].Cells["remain"].Value = t.Remain;
+            toolGridView.Rows[row].Cells["warning"].Value = t.Warning;
             GridViewStyle();
-        }
+        } 
 
         private void Change(int row)
         {
@@ -255,20 +257,12 @@ namespace Shelf
             {
                 int beforeChangeLife = Convert.ToInt32(toolGridView.Rows[row].Cells["remain"].Value.ToString());
                 Tool t = new Tool();
-                if (!tdb.GetToolByName(toolGridView.Rows[row].Cells["name"].Value.ToString(), (machineList.SelectedItem as Machine).id, ref t))
+                if (!tdb.GetToolByName(toolGridView.Rows[row].Cells["name"].Value.ToString(), (machineList.SelectedItem as Machine).Id, ref t))
                     return;
-                t.remain = t.life;
-                t.startTime = DateTime.Now;
-                t.endTime = DateTime.Now;
-                //Tool t = new Tool
-                //{
-                //    name = toolGridView.Rows[row].Cells["name"].Value.ToString(),
-                //    life = Convert.ToInt32(toolGridView.Rows[row].Cells["life"].Value.ToString()),
-                //    remain = Convert.ToInt32(toolGridView.Rows[row].Cells["life"].Value.ToString()),
-                //    startTime = DateTime.Now,
-                //    endTime = DateTime.Now,
-                //    warning = Convert.ToInt32(toolGridView.Rows[row].Cells["warning"].Value.ToString())
-                //};
+                t.Remain = t.Life;
+                t.StartTime = DateTime.Now;
+                t.EndTime = DateTime.Now;
+                
                     
                 if (!tdb.ChangeTool(t))
                 {
@@ -277,13 +271,13 @@ namespace Shelf
                 }
                 Log log = new Log
                 {
-                    machineId = (machineList.SelectedItem as Machine).id,
-                    name = t.name,
-                    life = t.life,
-                    remain = t.remain,
-                    warning = t.warning,
-                    dateTime = DateTime.Now,
-                    mark = "換刀"
+                    MachineId = (machineList.SelectedItem as Machine).Id,
+                    Name = t.Name,
+                    Life = t.Life,
+                    Remain = t.Remain,
+                    Warning = t.Warning,
+                    CreateTime = DateTime.Now,
+                    Mark = "換刀"
                 };
                 if (!tdb.InsertSystemLog(log))
                 {
@@ -293,7 +287,7 @@ namespace Shelf
 
                 
 
-                toolGridView.Rows[row].Cells["remain"].Value = t.life;
+                toolGridView.Rows[row].Cells["remain"].Value = t.Life;
                 GridViewStyle();
                 MessageBox.Show("更換成功", "訊息", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -304,9 +298,9 @@ namespace Shelf
             if (MessageBox.Show("確定要刪除「" + toolGridView.Rows[row].Cells["name"].Value + "」嗎？", "刪除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 Tool t = new Tool();
-                if (!tdb.GetToolByName(toolGridView.Rows[row].Cells["name"].Value.ToString(), (machineList.SelectedItem as Machine).id, ref t))
+                if (!tdb.GetToolByName(toolGridView.Rows[row].Cells["name"].Value.ToString(), (machineList.SelectedItem as Machine).Id, ref t))
                     return;
-                if (!tdb.DeleteTool(t.name, t.machineId))
+                if (!tdb.DeleteTool(t.Name, t.MachineId))
                 {
                     MessageBox.Show("刪除失敗", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
@@ -314,13 +308,13 @@ namespace Shelf
                 toolGridView.Rows.Remove(toolGridView.Rows[row]);
                 Log log = new Log
                 {
-                    machineId = (machineList.SelectedItem as Machine).id,
-                    name = t.name,
-                    life = t.life,
-                    remain = t.remain,
-                    warning = t.warning,
-                    dateTime = DateTime.Now,
-                    mark = "刪除"
+                    MachineId = (machineList.SelectedItem as Machine).Id,
+                    Name = t.Name,
+                    Life = t.Life,
+                    Remain = t.Remain,
+                    Warning = t.Warning,
+                    CreateTime = DateTime.Now,
+                    Mark = "刪除"
                 };
                 if (!tdb.InsertSystemLog(log))
                 {
@@ -335,13 +329,15 @@ namespace Shelf
         private void BtnNewToolClick(object sender, EventArgs e)
         {
             NewToolForm newTool = new NewToolForm();
-            newTool.machineId = (machineList.SelectedItem as Machine).id;
+            newTool.machineId = (machineList.SelectedItem as Machine).Id;
             newTool.ShowDialog();
             if (!newTool.hasNew)
                 return;
             Tool t = newTool.tool;
-            toolsData.Rows.Add(t.name, t.life, t.remain, t.warning, "設定", "換刀", "刪除");
+            toolsData.Rows.Add(t.Name, t.Life, t.Remain, t.Warning, "設定", "換刀", "刪除");
             GridViewStyle();
         }
+
+       
     }
 }

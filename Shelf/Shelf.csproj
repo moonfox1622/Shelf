@@ -64,6 +64,7 @@
     <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
     </Reference>
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Memory, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Memory.4.5.0\lib\netstandard2.0\System.Memory.dll</HintPath>
@@ -119,7 +120,7 @@
     <Compile Include="Model\CSVHistoryFormat.cs" />
     <Compile Include="Model\Log.cs" />
     <Compile Include="Model\Machine.cs" />
-    <Compile Include="Model\Respond.cs" />
+    <Compile Include="Model\TempWriteHistory.cs" />
     <Compile Include="NewToolForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -279,6 +280,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\disableRight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\U-600P.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CNC1.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CNC2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CNC1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CNC3.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
