@@ -43,6 +43,7 @@
             this.picMachine = new System.Windows.Forms.PictureBox();
             this.btnNext = new System.Windows.Forms.PictureBox();
             this.btnLast = new System.Windows.Forms.PictureBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMachine)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnNext)).BeginInit();
@@ -69,6 +70,7 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
+            this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.btnSystemLog);
             this.panel1.Controls.Add(this.btnDashBoard);
             this.panel1.Controls.Add(this.btnSetting);
@@ -255,10 +257,25 @@
             this.btnLast.Visible = false;
             this.btnLast.Click += new System.EventHandler(this.LastPageClick);
             // 
+            // button1
+            // 
+            this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.Font = new System.Drawing.Font("微軟正黑體", 15.75F, System.Drawing.FontStyle.Bold);
+            this.button1.ForeColor = System.Drawing.Color.White;
+            this.button1.Location = new System.Drawing.Point(-8, 500);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(130, 47);
+            this.button1.TabIndex = 11;
+            this.button1.Tag = "start";
+            this.button1.Text = "Test";
+            this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(214)))), ((int)(((byte)(214)))), ((int)(((byte)(214)))));
             this.ClientSize = new System.Drawing.Size(1904, 1041);
             this.ControlBox = false;
             this.Controls.Add(this.picMachine);
@@ -305,6 +322,7 @@
         private System.Windows.Forms.Label txtPage;
         private System.Windows.Forms.Label txtDivide;
         private System.Windows.Forms.PictureBox picMachine;
+        private System.Windows.Forms.Button button1;
     }
 }
 

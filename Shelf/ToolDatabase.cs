@@ -167,12 +167,12 @@ namespace Shelf
         /// <param name="machineId"></param>
         /// <param name="page"></param>
         /// <returns></returns>
-        public bool GetToolByPage(ref List<Tool> tools, int machineId, int page)
+        public bool GetToolByPage(ref List<Tool> tools, int machineId, int page, int num)
         {
-            int start = page * 36;
+            int start = page * num;
             if (start != 0)
                 start++;
-            int end = start + 36;
+            int end = start + num;
 
             var query = "SELECT id, machineId, name, life, remain, warning, taken, lastUpdate FROM tool WHERE machineId = @machineId ORDER BY lastUpdate DESC, taken DESC";
             try
@@ -1074,7 +1074,6 @@ namespace Shelf
         /// <returns></returns>
         public bool IsDatabaseConnected()
         {
-            //return false;
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))

@@ -93,7 +93,7 @@ namespace Shelf
         private bool LoadData(ref List<GridUserControl> tools, int machineId, int page)
         {
             List<Tool> toolsData = new List<Tool>();
-            if (!tdb.GetToolByPage(ref toolsData, machineId, page))
+            if (!tdb.GetToolByPage(ref toolsData, machineId, page, 36))
             {
                 return false;
             }
@@ -181,7 +181,7 @@ namespace Shelf
                 txtMachineName.Text = machine.Name;
                 Bitmap picture = (Bitmap)Properties.Resources.ResourceManager.GetObject(machine.Picture);
                 picMachine.Image = picture;
-                if (!tdb.GetToolByPage(ref toolData, machine.Id, page))
+                if (!tdb.GetToolByPage(ref toolData, machine.Id, page, 36))
                     return;
 
                 int toolsCount = TableCellShowCount(table);
@@ -738,6 +738,12 @@ namespace Shelf
                 }
                 Thread.Sleep(5000);
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            TestForm testForm = new TestForm();
+            testForm.ShowDialog();
         }
     }
 }
