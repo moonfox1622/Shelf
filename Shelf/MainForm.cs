@@ -16,15 +16,16 @@ namespace Shelf
         private readonly string _connectStr = @"Data Source = 127.0.0.1; Initial Catalog = Shelf; User ID = MES2014; Password = PMCMES;"; //資料庫連線設定
 
         TableLayoutPanel table = new TableLayoutPanel();
-        List<GridUserControl> tools = new List<GridUserControl>(); //刀具UserController List
+        List<CircularProgressUserControl> tools = new List<CircularProgressUserControl>(); //刀具UserController List
         bool keepUpdate = true; //持續更新刀具資料
         int carouselSpeed = 10;
         ToolDatabase tdb = new ToolDatabase();
         bool simulateRun = true;
         Machine machine = new Machine();
         int page = 0;
+        int toolNumInAPage = 24;
         private bool restoring = false;
-        
+        private bool sidebarExpand = true;
         //Delegate function
         private delegate void updateGridUI();
 
@@ -33,6 +34,7 @@ namespace Shelf
         {
             InitializeComponent();
             this.DoubleBuffered = true;
+            ControlBox = true;
         } 
 
         private void MainShown(object sender, EventArgs e)
@@ -63,7 +65,7 @@ namespace Shelf
         private void initialContent()
         {
             //content.Controls.Clear();
-            tools = new List<GridUserControl>();
+            tools = new List<CircularProgressUserControl>();
             table = InitialTablePanel();
 
             if (!LoadData(ref tools, machine.Id, page))
@@ -76,7 +78,7 @@ namespace Shelf
             {
                 table.Controls.Add(tools[i]);
                 if (i % 6 == 0)
-                    table.RowStyles.Add(new RowStyle(SizeType.Absolute, 140));
+                    table.RowStyles.Add(new RowStyle(SizeType.Absolute, 200));
 
             }
             content.Controls.Add(table);
@@ -90,10 +92,10 @@ namespace Shelf
         /// <param name="tools"></param>
         /// <param name="lastDatas"></param>
         /// <returns></returns>
-        private bool LoadData(ref List<GridUserControl> tools, int machineId, int page)
+        private bool LoadData(ref List<CircularProgressUserControl> tools, int machineId, int page)
         {
             List<Tool> toolsData = new List<Tool>();
-            if (!tdb.GetToolByPage(ref toolsData, machineId, page, 36))
+            if (!tdb.GetToolByPage(ref toolsData, machineId, page, toolNumInAPage))
             {
                 return false;
             }
@@ -107,15 +109,15 @@ namespace Shelf
                 t.StartTime = h.StartTime;
                 t.EndTime = h.endTime;
 
-                GridUserControl g = new GridUserControl
+                CircularProgressUserControl g = new CircularProgressUserControl
                 {
                     tool = t
                 };
                 tools.Add(g);
             }
-            for(int i = toolsData.Count; i < 36; i++)
+            for(int i = toolsData.Count; i < toolNumInAPage; i++)
             {
-                tools.Add(new GridUserControl());
+                tools.Add(new CircularProgressUserControl());
             }
             return true;
         }
@@ -138,7 +140,7 @@ namespace Shelf
         {
             TableLayoutPanel table = new TableLayoutPanel();
             table.ColumnCount = 6;
-            table.RowCount = 6;
+            table.RowCount = 4;
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
@@ -175,13 +177,13 @@ namespace Shelf
         /// </summary>
         private void ToolUpdate()
         {
-            try
-            {
+        //    try
+        //    {
                 List<Tool> toolData = new List<Tool>();
                 txtMachineName.Text = machine.Name;
                 Bitmap picture = (Bitmap)Properties.Resources.ResourceManager.GetObject(machine.Picture);
                 picMachine.Image = picture;
-                if (!tdb.GetToolByPage(ref toolData, machine.Id, page, 36))
+                if (!tdb.GetToolByPage(ref toolData, machine.Id, page, toolNumInAPage))
                     return;
 
                 int toolsCount = TableCellShowCount(table);
@@ -211,10 +213,10 @@ namespace Shelf
                     tools[i].tool = toolData[i];
                     tools[i].CheckStatus();
                 }
-            }catch(Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
+            //}catch(Exception e)
+            //{
+            //    MessageBox.Show(e.Message);
+            //}
         }
 
         private int TableCellShowCount(TableLayoutPanel t)
@@ -273,8 +275,8 @@ namespace Shelf
             if (status)
             {
                 int num = tdb.GetToolCountByMachine(machine.Id);
-                int maxPage = num / 36;
-                if (num % 36 != 0)
+                int maxPage = num / toolNumInAPage;
+                if (num % toolNumInAPage != 0)
                     maxPage++;
                 txtMaxPage.Text = maxPage.ToString();
                 txtPage.Text = "1";
@@ -317,19 +319,19 @@ namespace Shelf
         /// <param name="e"></param>
         private void BtnRunClick(object sender, EventArgs e)
         {
-            if(btnRun.Tag.ToString() == "start")
+            if(button5.Tag.ToString() == "start")
             {
                 Thread sim = new Thread(simulate);
                 simulateRun = true;
-                btnRun.Tag = "end";
-                btnRun.Text = "結束";
+                button5.Tag = "end";
+                button5.Text = "結束";
                 sim.Start();
             }
             else
             {
                 simulateRun = false;
-                btnRun.Tag = "start";
-                btnRun.Text = "開始";
+                button5.Tag = "start";
+                button5.Text = "開始";
             }
         }
 
@@ -744,6 +746,55 @@ namespace Shelf
         {
             TestForm testForm = new TestForm();
             testForm.ShowDialog();
+        }
+
+        private void MenuClick(object sender, EventArgs e)
+        {
+            sidebarTimer.Start();
+            if (sidebarExpand)
+            {
+                picMenu.Image = Shelf.Properties.Resources.menu;
+                panelContent.Width = 1818;
+                content.Width = 1810;
+            }
+            else
+            {
+                picMenu.Image = Properties.Resources.arrowToLeft;
+                panelContent.Width = 1690;
+                content.Width = 1682;
+            }
+        }
+
+        private void SidebarTimer(object sender, EventArgs e)
+        {
+            Point minP = new Point(59, 12);
+            Point maxP = new Point(194, 12);
+            if (sidebarExpand)
+            {
+                sidebarPanel.Width -= 10;
+                
+                int x = panelContent.Location.X - 10;
+                int y = panelContent.Location.Y;
+                panelContent.Location = new Point(x, y);
+                if(sidebarPanel.Width == sidebarPanel.MinimumSize.Width)
+                {
+                    sidebarExpand = false;
+                    sidebarTimer.Stop();
+                }
+            }
+            else
+            {
+                sidebarPanel.Width += 10;
+                
+                int x = panelContent.Location.X + 10;
+                int y = panelContent.Location.Y;
+                panelContent.Location = new Point(x, y);
+                if (sidebarPanel.Width == sidebarPanel.MaximumSize.Width)
+                {
+                    sidebarExpand = true;
+                    sidebarTimer.Stop();
+                }
+            }
         }
     }
 }

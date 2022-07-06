@@ -39,6 +39,9 @@
     <Reference Include="CircularProgressBar, Version=2.8.0.16, Culture=neutral, PublicKeyToken=310fd07b25df79b3, processorArchitecture=MSIL">
       <HintPath>..\packages\CircularProgressBar.2.8.0.16\lib\net40\CircularProgressBar.dll</HintPath>
     </Reference>
+    <Reference Include="CodeArtEng.Gauge, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CodeArtEng.Gauge.2.0.0\lib\net40\CodeArtEng.Gauge.dll</HintPath>
+    </Reference>
     <Reference Include="CsvHelper, Version=27.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
       <HintPath>..\packages\CsvHelper.27.2.1\lib\net47\CsvHelper.dll</HintPath>
     </Reference>
@@ -96,11 +99,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CircularProgress.cs">
+    <Compile Include="CircularProgressUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CircularProgress.Designer.cs">
-      <DependentUpon>CircularProgress.cs</DependentUpon>
+    <Compile Include="CircularProgressUserControl.Designer.cs">
+      <DependentUpon>CircularProgressUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CProgressBar.cs">
       <SubType>Component</SubType>
@@ -186,8 +189,8 @@
     </Compile>
     <Compile Include="ToolDatabase.cs" />
     <Compile Include="Model\ToolHistory.cs" />
-    <EmbeddedResource Include="CircularProgress.resx">
-      <DependentUpon>CircularProgress.cs</DependentUpon>
+    <EmbeddedResource Include="CircularProgressUserControl.resx">
+      <DependentUpon>CircularProgressUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DashboardSettingForm.resx">
       <DependentUpon>DashboardSettingForm.cs</DependentUpon>
@@ -319,6 +322,36 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\CNC3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\time-past.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\history.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\setting-w.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\computer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\play1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\exchange.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\menu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\close.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrowToLeft.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrowToLeft1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

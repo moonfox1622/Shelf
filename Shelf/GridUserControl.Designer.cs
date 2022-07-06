@@ -68,12 +68,12 @@
             // 
             this.txtName.BackColor = System.Drawing.Color.Transparent;
             this.txtName.Cursor = System.Windows.Forms.Cursors.Default;
-            this.txtName.Font = new System.Drawing.Font("Arial", 16F, System.Drawing.FontStyle.Bold);
+            this.txtName.Font = new System.Drawing.Font("Arial", 20F, System.Drawing.FontStyle.Bold);
             this.txtName.ForeColor = System.Drawing.Color.Black;
             this.txtName.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.txtName.Location = new System.Drawing.Point(10, 7);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(83, 42);
+            this.txtName.Size = new System.Drawing.Size(93, 42);
             this.txtName.TabIndex = 8;
             this.txtName.Text = "T1";
             this.txtName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -131,8 +131,7 @@
             // 
             // GridUserControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(241)))), ((int)(((byte)(241)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.Controls.Add(this.txtPercet);

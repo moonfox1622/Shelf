@@ -22,8 +22,6 @@ namespace Shelf
         private void TestForm_Shown(object sender, EventArgs e)
         {
             initalData();
-
-
         }
 
         private void initalData()
@@ -32,13 +30,13 @@ namespace Shelf
             List<Tool> tList = new List<Tool>();
             tdb.GetToolByPage(ref tList, 1, 0, 28);
 
-            for(int i = 0; i < 1; i++)
+            for(int i = 0; i < 28; i++)
             {
-                CircularProgress ui = new CircularProgress
+                CircularProgressUserControl ui = new CircularProgressUserControl
                 {
                     tool = tList[i]
                 };
-                ui.Dock = DockStyle.Fill;
+                ui.Margin = new Padding(10, 0, 0, 0);
                 table.Controls.Add(ui);
             }
 

@@ -174,7 +174,7 @@ namespace Shelf
                 start++;
             int end = start + num;
 
-            var query = "SELECT id, machineId, name, life, remain, warning, taken, lastUpdate FROM tool WHERE machineId = @machineId ORDER BY lastUpdate DESC, taken DESC";
+            var query = "SELECT id, machineId, name, life, remain, warning, taken, lastUpdate FROM tool WHERE machineId = @machineId ORDER BY taken DESC, lastUpdate DESC";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))

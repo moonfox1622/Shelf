@@ -87,19 +87,11 @@ namespace Shelf
                 panelStatus.BackColor = Color.FromArgb(241, 241, 241);
             }
 
-            if (tool.Taken)
-                ToolUse();
-            else
-                ToolUnuse();
+            ToolUse();
 
         }
 
         public void ToolUse()
-        {
-            this.Invalidate();
-        }
-
-        public void ToolUnuse()
         {
             this.Invalidate();
         }
@@ -111,13 +103,13 @@ namespace Shelf
                 ButtonBorderStyle style = ButtonBorderStyle.Solid;
                 Color color = Color.FromArgb(13, 131, 0);
                 ControlPaint.DrawBorder(e.Graphics, this.ClientRectangle, color, 6, style, color, 6, style, color, 6, style, color, 6, style);
+                
             }
             else
             {
                 ControlPaint.DrawBorder(e.Graphics, this.ClientRectangle, Color.Black, ButtonBorderStyle.None);
+                
             }
-            
-            
         }
     }
 }
