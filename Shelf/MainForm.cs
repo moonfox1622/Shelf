@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using WinFormAnimation;
 
 namespace Shelf
 {
@@ -23,13 +24,16 @@ namespace Shelf
         bool simulateRun = true;
         Machine machine = new Machine();
         int page = 0;
-        int toolNumInAPage = 24;
+        int toolNumInAPage = 20;
         private bool restoring = false;
         private bool sidebarExpand = true;
         //Delegate function
         private delegate void updateGridUI();
 
-        
+        //Animate
+        Animator2D contentAnimate = new Animator2D();
+        Animator sidebarAnimate = new Animator();
+
         public MainForm()
         {
             InitializeComponent();
@@ -77,8 +81,8 @@ namespace Shelf
             for (int i = 0; i < tools.Count; i++)
             {
                 table.Controls.Add(tools[i]);
-                if (i % 6 == 0)
-                    table.RowStyles.Add(new RowStyle(SizeType.Absolute, 200));
+                if (i % 5 == 0)
+                    table.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
 
             }
             content.Controls.Add(table);
@@ -102,13 +106,8 @@ namespace Shelf
 
             for(int i=0 ; i<toolsData.Count ; i++)
             {
-                //讀取中斷資料
                 Tool t = toolsData[i];
-                ToolHistory h = new ToolHistory { Name = t.Name };
-                tdb.GetLastHistory(ref h);
-                t.StartTime = h.StartTime;
-                t.EndTime = h.endTime;
-
+                
                 CircularProgressUserControl g = new CircularProgressUserControl
                 {
                     tool = t
@@ -139,9 +138,8 @@ namespace Shelf
         private TableLayoutPanel InitialTablePanel()
         {
             TableLayoutPanel table = new TableLayoutPanel();
-            table.ColumnCount = 6;
+            table.ColumnCount = 5;
             table.RowCount = 4;
-            table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
@@ -177,8 +175,8 @@ namespace Shelf
         /// </summary>
         private void ToolUpdate()
         {
-        //    try
-        //    {
+            try
+            {
                 List<Tool> toolData = new List<Tool>();
                 txtMachineName.Text = machine.Name;
                 Bitmap picture = (Bitmap)Properties.Resources.ResourceManager.GetObject(machine.Picture);
@@ -194,7 +192,7 @@ namespace Shelf
                 {
                     for (int i = toolsCount; i <= (toolData.Count - 1); i++)
                     {
-                        table.GetControlFromPosition(i % 6, i / 6).Visible = true;
+                        table.GetControlFromPosition(i % 5, i / 5).Visible = true;
 
                     }
                 }
@@ -204,7 +202,7 @@ namespace Shelf
                 {
                     for (int i = toolsCount - 1; i > (toolData.Count - 1); i--)
                     {
-                        table.GetControlFromPosition(i % 6, i / 6).Visible = false;
+                        table.GetControlFromPosition(i % 5, i / 5).Visible = false;
                     }
                 }
 
@@ -213,10 +211,11 @@ namespace Shelf
                     tools[i].tool = toolData[i];
                     tools[i].CheckStatus();
                 }
-            //}catch(Exception e)
-            //{
-            //    MessageBox.Show(e.Message);
-            //}
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
 
         private int TableCellShowCount(TableLayoutPanel t)
@@ -270,6 +269,10 @@ namespace Shelf
             }
         }
 
+        /// <summary>
+        /// 顯示分頁
+        /// </summary>
+        /// <param name="status"></param>
         private void showPages(bool status)
         {
             if (status)
@@ -319,21 +322,22 @@ namespace Shelf
         /// <param name="e"></param>
         private void BtnRunClick(object sender, EventArgs e)
         {
-            if(button5.Tag.ToString() == "start")
+            if(btnRun.Tag.ToString() == "start")
             {
                 Thread sim = new Thread(simulate);
                 simulateRun = true;
-                button5.Tag = "end";
-                button5.Text = "結束";
+                btnRun.Tag = "end";
+                btnRun.Text = "結束";
                 sim.Start();
             }
             else
             {
                 simulateRun = false;
-                button5.Tag = "start";
-                button5.Text = "開始";
+                btnRun.Tag = "start";
+                btnRun.Text = "開始";
             }
         }
+
 
         /// <summary>
         /// 重新設定刀具庫
@@ -434,6 +438,7 @@ namespace Shelf
             }
         }
 
+
         /// <summary>
         /// 模擬刀具使用
         /// </summary>
@@ -488,6 +493,7 @@ namespace Shelf
             }
         }
 
+
         /// <summary>
         /// 使用刀具
         /// </summary>
@@ -535,6 +541,7 @@ namespace Shelf
             return true;
         }
 
+
         /// <summary>
         /// 刀具使用完畢
         /// </summary>
@@ -575,7 +582,7 @@ namespace Shelf
 
             ToolHistory h = new ToolHistory
             {
-                ToolId = t.Id,
+                MachineId = t.MachineId,
                 Name = t.Name,
                 BeforeUseLife = beforeUseLife,
                 AfterUseLife = t.Remain,
@@ -597,6 +604,7 @@ namespace Shelf
             return true;
         }
 
+
         /// <summary>
         /// 刀具歷史紀錄
         /// </summary>
@@ -608,6 +616,7 @@ namespace Shelf
             history.ShowDialog();
         }
 
+
         /// <summary>
         /// 設定頁面
         /// </summary>
@@ -618,6 +627,7 @@ namespace Shelf
             SettingPageForm setting = new SettingPageForm();
             setting.ShowDialog();
         }
+
 
         /// <summary>
         /// 開啟輪播設定頁面
@@ -645,6 +655,7 @@ namespace Shelf
             }
             ToolUpdate();
         }
+
 
         /// <summary>
         /// 系統紀錄頁面
@@ -687,6 +698,7 @@ namespace Shelf
             ToolUpdate();
         }
 
+
         /// <summary>
         /// 切換下一頁刀具
         /// </summary>
@@ -717,6 +729,7 @@ namespace Shelf
             ToolUpdate();
         }
 
+
         /// <summary>
         /// 嘗試將暫存資料存入資料庫
         /// </summary>
@@ -742,27 +755,34 @@ namespace Shelf
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            TestForm testForm = new TestForm();
-            testForm.ShowDialog();
-        }
 
         private void MenuClick(object sender, EventArgs e)
         {
-            sidebarTimer.Start();
+            //sidebarTimer.Start();
+            
+            if (sidebarAnimate.CurrentStatus == AnimatorStatus.Playing || contentAnimate.CurrentStatus == AnimatorStatus.Playing)
+                return;
             if (sidebarExpand)
             {
+                sidebarExpand = false;
                 picMenu.Image = Shelf.Properties.Resources.menu;
                 panelContent.Width = 1818;
                 content.Width = 1810;
+                sidebarAnimate.Paths = new WinFormAnimation.Path(188, 53, 100, AnimationFunctions.Liner).ContinueTo();
+                contentAnimate.Paths = new Path2D(202, 71, 12, 12, 300, AnimationFunctions.CubicEaseOut).ContinueTo();
+                
             }
             else
             {
+                sidebarExpand = true;
+                sidebarAnimate.Paths = new WinFormAnimation.Path(53, 188, 100, AnimationFunctions.Liner).ContinueTo();
+                contentAnimate.Paths = new Path2D(71, 202, 12, 12, 300, AnimationFunctions.CubicEaseOut).ContinueTo();
                 picMenu.Image = Properties.Resources.arrowToLeft;
                 panelContent.Width = 1690;
                 content.Width = 1682;
             }
+            contentAnimate.Play(panelContent, Animator2D.KnownProperties.Location);
+            sidebarAnimate.Play(sidebarPanel,"Width");
         }
 
         private void SidebarTimer(object sender, EventArgs e)
@@ -772,10 +792,9 @@ namespace Shelf
             if (sidebarExpand)
             {
                 sidebarPanel.Width -= 10;
-                
-                int x = panelContent.Location.X - 10;
-                int y = panelContent.Location.Y;
-                panelContent.Location = new Point(x, y);
+                //int x = panelContent.Location.X - 10;
+                //int y = panelContent.Location.Y;
+                //panelContent.Location = new Point(x, y);
                 if(sidebarPanel.Width == sidebarPanel.MinimumSize.Width)
                 {
                     sidebarExpand = false;
@@ -786,14 +805,35 @@ namespace Shelf
             {
                 sidebarPanel.Width += 10;
                 
-                int x = panelContent.Location.X + 10;
-                int y = panelContent.Location.Y;
-                panelContent.Location = new Point(x, y);
+                //int x = panelContent.Location.X + 10;
+                //int y = panelContent.Location.Y;
+                //panelContent.Location = new Point(x, y);
                 if (sidebarPanel.Width == sidebarPanel.MaximumSize.Width)
                 {
                     sidebarExpand = true;
                     sidebarTimer.Stop();
                 }
+            }
+        }
+
+        private void BtnMuiltToolClick(object sender, EventArgs e)
+        {
+            MuiltToolSettingForm muiltTool = new MuiltToolSettingForm();
+            muiltTool.ShowDialog();
+        }
+        
+        /// <summary>
+        /// 按下ESC關閉頁面
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Escape)
+            {
+                if (MessageBox.Show("確定要關閉嗎?", "關閉程式", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No)
+                    return;
+                this.Close();
             }
         }
     }

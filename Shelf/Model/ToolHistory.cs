@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shelf
 {
@@ -11,8 +7,8 @@ namespace Shelf
         [CsvHelper.Configuration.Attributes.Ignore]
         public int Id { get; set; }
 
-        [CsvHelper.Configuration.Attributes.Name("ToolId")]
-        public int ToolId { get; set; }
+        [CsvHelper.Configuration.Attributes.Name("MachineId")]
+        public int MachineId { get; set; }
 
         [CsvHelper.Configuration.Attributes.Name("Name")]
         public string Name { get; set; }

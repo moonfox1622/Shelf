@@ -3,7 +3,7 @@
     public class CSVHistoryFormat
     {
         [CsvHelper.Configuration.Attributes.Ignore]
-        public int toolId { get; set; }
+        public int machineId { get; set; }
 
         [CsvHelper.Configuration.Attributes.Name("刀具名稱")]
         public string Name { get; set; }

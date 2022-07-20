@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Shelf.Model;
 
@@ -26,7 +27,7 @@ namespace Shelf
             var thisWeekEnd = thisWeekStart.AddDays(7).AddSeconds(-1);
             startDateTimePicker.Value = thisWeekStart;
             endDateTimePicker.Value = thisWeekEnd;
-
+            
             LoadMachine();
         }
 
@@ -50,8 +51,19 @@ namespace Shelf
         {
             foreach (DataGridViewRow row in tableView.Rows)
             {
-                DataGridViewCellStyle cellStyle = new DataGridViewCellStyle();
-                DataGridViewButtonCell buttonCell = new DataGridViewButtonCell();
+                string mark = row.Cells["mark"].Value.ToString();
+                switch (mark)
+                {
+                    case "新增":
+                        row.Cells["mark"].Style.BackColor = Color.FromArgb(89, 201, 165);
+                        break;
+                    case "換刀":
+                        row.Cells["mark"].Style.BackColor = Color.FromArgb(242, 236, 0);
+                        break;
+                    case "刪除":
+                        row.Cells["mark"].Style.BackColor = Color.FromArgb(216, 30, 91);
+                        break;
+                }
             }
         }
 
@@ -59,7 +71,10 @@ namespace Shelf
         {
             try
             {
-                bs.Filter = string.Format("(convert(name, 'System.String') LIKE '%{0}%' OR convert(mark, 'System.String') LIKE '%{0}%')", searchBox.Text);
+                string filterText = searchBox.Text;
+                if (searchBox.Text == "名稱/類別/紀錄時間")
+                    filterText = "";
+                bs.Filter = string.Format("(convert(name, 'System.String') LIKE '%{0}%' OR convert(mark, 'System.String') LIKE '%{0}%')", filterText);
 
                 //TableMark();
             }
@@ -75,6 +90,7 @@ namespace Shelf
         private void TableViewStyle()
         {
             tableView.DataSource = bs;
+            
 
             tableView.Columns["name"].HeaderText = "刀具名稱";
             tableView.Columns["life"].HeaderText = "最大磨耗值";
@@ -121,7 +137,7 @@ namespace Shelf
 
             foreach (Log l in logs)
             {
-                table.Rows.Add(l.Name, l.Life, l.Remain, l.Warning, l.Mark, l.CreateTime.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+                table.Rows.Add(l.Name, l.Life, l.Remain, l.Warning, l.Mark, l.CreateTime.ToString("yyyy-MM-dd HH:mm:ss"));
             }
             bs.DataSource = table;
             TableViewStyle();
@@ -212,7 +228,7 @@ namespace Shelf
             }
 
             fileDialog.Filter = "CSV(*.csv)|*.csv";
-            fileDialog.FileName = machineList.Text + "系統紀錄" + string.Format("{0:yyyy-MM-dd HH:mm:ss.fff}", DateTime.Now);
+            fileDialog.FileName = machineList.Text + "系統紀錄" + string.Format("{0:yyyy-MM-dd HH-mm-ss}", DateTime.Now);
             fileDialog.CheckPathExists = true;
             fileDialog.InitialDirectory = "c:\\";
             if (fileDialog.ShowDialog() == DialogResult.Cancel)
@@ -236,6 +252,7 @@ namespace Shelf
 
             searchBox.ForeColor = Color.Black;
         }
+
         //textbox失去焦點
         private void Textbox_Leave(object sender, EventArgs e)
         {
@@ -247,6 +264,101 @@ namespace Shelf
             }
             else
                 searchBoxHasText = true;
+        }
+
+        private void SystemLogForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+                this.Close();
+        }
+
+
+        private void TableViewCellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if(e.RowIndex == -1 && e.ColumnIndex == 0)
+            {
+                var myComparer = new NaturalSortComparer();
+                tableView.Sort(myComparer);
+            }
+        }
+
+        public class NaturalSortComparer : System.Collections.IComparer
+        {
+
+            private System.Collections.Generic.Dictionary<string, string[]> table;
+
+            public NaturalSortComparer()
+            {
+                table = new System.Collections.Generic.Dictionary<string, string[]>();
+            }
+
+            public void Dispose()
+            {
+                table.Clear();
+                table = null;
+            }
+
+            public int Compare(object x, object y)
+            {
+                System.Windows.Forms.DataGridViewRow DataGridViewRow1 = (System.Windows.Forms.DataGridViewRow)x;
+                System.Windows.Forms.DataGridViewRow DataGridViewRow2 = (System.Windows.Forms.DataGridViewRow)y;
+
+                string xStr = DataGridViewRow1.Cells["Column1"].Value.ToString();
+                string yStr = DataGridViewRow2.Cells["Column1"].Value.ToString();
+
+
+                if (xStr == yStr)
+                {
+                    return 0;
+                }
+                string[] x1, y1;
+                if (!table.TryGetValue(xStr, out x1))
+                {
+                    x1 = System.Text.RegularExpressions.Regex.Split(xStr.Replace(" ", ""), "([0-9]+)");
+                    table.Add(xStr, x1);
+                }
+                if (!table.TryGetValue(yStr, out y1))
+                {
+                    y1 = System.Text.RegularExpressions.Regex.Split(yStr.Replace(" ", ""), "([0-9]+)");
+                    table.Add(yStr, y1);
+                }
+
+                for (int i = 0; i < x1.Length && i < y1.Length; i++)
+                {
+                    if (x1[i] != y1[i])
+                    {
+                        return PartCompare(x1[i], y1[i]);
+                    }
+                }
+                if (y1.Length > x1.Length)
+                {
+                    return 1;
+                }
+                else if (x1.Length > y1.Length)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+
+            private static int PartCompare(string left, string right)
+            {
+                int x, y;
+                if (!int.TryParse(left, out x))
+                {
+                    return left.CompareTo(right);
+                }
+
+                if (!int.TryParse(right, out y))
+                {
+                    return left.CompareTo(right);
+                }
+
+                return x.CompareTo(y);
+            }
         }
     }
 }

@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Shelf
@@ -39,6 +32,11 @@ namespace Shelf
             if (tdb.checkRepeat(txtName.Text, machineId))
             {
                 MessageBox.Show("名稱重複，請重新命名");
+                return;
+            }
+            if(txtLife.Value <= 0)
+            {
+                MessageBox.Show("最大磨耗值不可為0");
                 return;
             }
 

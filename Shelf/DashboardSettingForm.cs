@@ -82,5 +82,13 @@ namespace Shelf
         {
             carouselSpeed = Convert.ToInt32(numSpeed.Value);
         }
+
+        private void DashboardSettingForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Escape)
+            {
+                this.Close();
+            }
+        }
     }
 }

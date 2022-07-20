@@ -177,7 +177,7 @@ namespace Shelf
 
                     ToolHistory h = new ToolHistory
                     {
-                        ToolId = t.Id,
+                        MachineId = t.MachineId,
                         Name = t.Name,
                         BeforeUseLife = beforeUseLife,
                         AfterUseLife = t.Remain,

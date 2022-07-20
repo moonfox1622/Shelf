@@ -147,14 +147,17 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.machineList);
             this.Font = new System.Drawing.Font("微軟正黑體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(271, 339);
+            this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(271, 339);
             this.Name = "DashboardSettingForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "主頁撥放設定";
             this.Shown += new System.EventHandler(this.DashboardSettingFormShown);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DashboardSettingForm_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.numSpeed)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -62,7 +62,8 @@ namespace Shelf
                 Name = txtName.Text,
                 Life = Convert.ToInt32(txtLife.Value),
                 Remain = Convert.ToInt32(txtRemain.Value),
-                Warning = Convert.ToInt32(txtAlarm.Value)
+                Warning = Convert.ToInt32(txtAlarm.Value),
+                LastUpdate = DateTime.Now
             };
             
             if (tdb.EditTool(tool))

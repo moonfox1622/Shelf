@@ -93,6 +93,16 @@ namespace Shelf.Properties {
         /// <summary>
         ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
         /// </summary>
+        internal static System.Drawing.Bitmap close_B {
+            get {
+                object obj = ResourceManager.GetObject("close_B", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
         internal static System.Drawing.Bitmap CNC1 {
             get {
                 object obj = ResourceManager.GetObject("CNC1", resourceCulture);

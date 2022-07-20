@@ -94,7 +94,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(124, 24);
             this.label2.TabIndex = 12;
-            this.label2.Text = "最大損耗值：";
+            this.label2.Text = "最大磨耗值：";
             // 
             // label1
             // 

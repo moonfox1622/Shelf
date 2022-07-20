@@ -120,6 +120,18 @@
     <Compile Include="EditForm.Designer.cs">
       <DependentUpon>EditForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="EditMulitToolsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditMulitToolsForm.Designer.cs">
+      <DependentUpon>EditMulitToolsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PreviewEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PreviewEditForm.Designer.cs">
+      <DependentUpon>PreviewEditForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="HistoryForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -136,6 +148,12 @@
     <Compile Include="Model\Log.cs" />
     <Compile Include="Model\Machine.cs" />
     <Compile Include="Model\TempWriteHistory.cs" />
+    <Compile Include="MuiltToolSettingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MuiltToolSettingForm.Designer.cs">
+      <DependentUpon>MuiltToolSettingForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="NewToolForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -198,6 +216,12 @@
     <EmbeddedResource Include="EditForm.resx">
       <DependentUpon>EditForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="EditMulitToolsForm.resx">
+      <DependentUpon>EditMulitToolsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PreviewEditForm.resx">
+      <DependentUpon>PreviewEditForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="HistoryForm.resx">
       <DependentUpon>HistoryForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -206,6 +230,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MuiltToolSettingForm.resx">
+      <DependentUpon>MuiltToolSettingForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NewToolForm.resx">
       <DependentUpon>NewToolForm.cs</DependentUpon>
@@ -352,6 +379,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\arrowToLeft1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\close_B.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

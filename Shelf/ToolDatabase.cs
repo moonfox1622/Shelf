@@ -170,8 +170,8 @@ namespace Shelf
         public bool GetToolByPage(ref List<Tool> tools, int machineId, int page, int num)
         {
             int start = page * num;
-            if (start != 0)
-                start++;
+            //if (start != 0)
+                //start++;
             int end = start + num;
 
             var query = "SELECT id, machineId, name, life, remain, warning, taken, lastUpdate FROM tool WHERE machineId = @machineId ORDER BY taken DESC, lastUpdate DESC";
@@ -410,63 +410,6 @@ namespace Shelf
         }
 
         /// <summary>
-        /// 取得所有歷史資料
-        /// </summary>
-        /// <param name="histories"></param>
-        /// <returns></returns>
-        public bool GetAllHistory(ref List<ToolHistory> histories)
-        {
-            var query = "SELECT id, toolId, name, beforeUseLife, afterUseLife, warning, startTime, endTime, mark, createTime FROM history WHERE mark != '0'";
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(_connectStr))
-                {
-                    using (SqlCommand comm = new SqlCommand(query, conn))
-                    {
-                        conn.Open();
-                        using (SqlDataReader data = comm.ExecuteReader())
-                        {
-                            if (!data.HasRows)
-                            {
-                                return false;
-                            }
-                            while (data.Read())
-                            {
-                                ToolHistory history = new ToolHistory
-                                {
-                                    ToolId = Convert.ToInt32(data["toolId"].ToString()),
-                                    Name = data["name"].ToString(),
-                                    BeforeUseLife = Convert.ToInt32(data["beforeUseLife"].ToString()),
-                                    AfterUseLife = Convert.ToInt32(data["afterUseLife"].ToString()),
-                                    Warning = Convert.ToInt32(data["warning"].ToString()),
-                                    Mark = Convert.ToChar(data["mark"].ToString()),
-                                    CreateTime = Convert.ToDateTime(data["createTime"].ToString())
-
-                                };
-                                if (!string.IsNullOrWhiteSpace(data["startTime"].ToString()))
-                                    history.StartTime = Convert.ToDateTime(data["startTime"].ToString());
-                                if (!string.IsNullOrWhiteSpace(data["endTime"].ToString()))
-                                    history.endTime = Convert.ToDateTime(data["endTime"].ToString());
-                                histories.Add(history);
-                            }
-                            return true;
-                        }
-                    }
-                }
-            }
-            catch (SqlException ex)
-            {
-                MessageBox.Show("資料庫發生問題" + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("發生錯誤" + ex.Message);
-            }
-
-            return false;
-        }
-
-        /// <summary>
         /// 根據條件取得歷史資料
         /// </summary>
         /// <param name="startTime">搜尋起始日期</param>
@@ -475,10 +418,10 @@ namespace Shelf
         /// <returns></returns>
         public bool GetHistory(ref List<ToolHistory> histories, DateTime startTime, DateTime endTime, int machineId, bool isWarning)
         {
-            string query = "SELECT * FROM history h LEFT JOIN tool t ON t.id = h.toolId WHERE h.createTime >= @startTime AND h.createTime <= @endTime AND t.machineId = @machineId";
+            string query = "SELECT * FROM history WHERE createTime >= @startTime AND createTime <= @endTime AND machineId = @machineId";
             if (isWarning)
-                query += " AND h.afterUseLife <= h.warning";
-            query += " ORDER BY h.createTime asc";
+                query += " AND afterUseLife <= warning";
+            query += " ORDER BY createTime asc";
 
 
             try
@@ -503,7 +446,7 @@ namespace Shelf
                                     continue;
                                 ToolHistory h = new ToolHistory
                                 {
-                                    ToolId = Convert.ToInt32(data["toolId"].ToString()),
+                                    MachineId = Convert.ToInt32(data["machineId"].ToString()),
                                     Name = data["name"].ToString(),
                                     BeforeUseLife = Convert.ToInt32(data["beforeUseLife"].ToString()),
                                     AfterUseLife = Convert.ToInt32(data["afterUseLife"].ToString()),
@@ -513,8 +456,6 @@ namespace Shelf
                                     StartTime = Convert.ToDateTime(data["startTime"].ToString()),
                                     CreateTime = Convert.ToDateTime(data["createTime"])
                                 };
-                                
-                                        
                                 histories.Add(h);
                             }
                             return true;
@@ -693,7 +634,7 @@ namespace Shelf
         /// <returns></returns>
         public bool EditTool(Tool t)
         {
-            var queryData = @"UPDATE tool SET life = @life, remain = @remain, warning = @warning WHERE name = @name AND @machineId = machineId";
+            var queryData = @"UPDATE tool SET life = @life, remain = @remain, warning = @warning , lastUpdate = @lastUpdate WHERE name = @name AND @machineId = machineId";
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectStr))
@@ -707,6 +648,7 @@ namespace Shelf
                         comm.Parameters.AddWithValue("@life", t.Life);
                         comm.Parameters.AddWithValue("@remain", t.Remain);
                         comm.Parameters.AddWithValue("@warning", t.Warning);
+                        comm.Parameters.AddWithValue("@lastUpdate", t.LastUpdate);
                         comm.Parameters.AddWithValue("@name", t.Name);
                         comm.Parameters.AddWithValue("@machineId", t.MachineId);
                         int affectRows = comm.ExecuteNonQuery();
@@ -894,52 +836,6 @@ namespace Shelf
             return false;
         }
 
-        public bool GetLastHistory(ref ToolHistory h)
-        {
-            var query = @"SELECT TOP(1) * FROM history WHERE name = @name order by id DESC";
-
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(_connectStr))
-                {
-                    using (SqlCommand comm = new SqlCommand(query, conn))
-                    {
-                        conn.Open();
-                        comm.Parameters.AddWithValue("@name", h.Name);
-                        using (SqlDataReader data = comm.ExecuteReader())
-                        {
-                            if (data.HasRows)
-                            {
-                                while (data.Read())
-                                {
-                                    h = new ToolHistory
-                                    {
-                                        Id = Convert.ToInt32(data["id"].ToString()),
-                                        ToolId = Convert.ToInt32(data["toolId"].ToString()),
-                                        Name = data["name"].ToString(),
-                                        Warning = Convert.ToInt32(data["warning"].ToString()),
-                                        StartTime = Convert.ToDateTime(data["startTime"].ToString()),
-                                        Mark = Convert.ToChar(data["mark"].ToString()),
-                                    };
-                                };
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-            catch (SqlException ex)
-            {
-                MessageBox.Show("搜尋歷史紀錄時發生錯誤" + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("發生錯誤" + ex.Message);
-            }
-            
-            return false;
-        }
-
         /// <summary>
         /// 新增歷史紀錄
         /// </summary>
@@ -947,7 +843,7 @@ namespace Shelf
         /// <returns></returns>
         public bool HistoryTool(ToolHistory h)
         {
-            string query = "INSERT INTO  history (toolId, name, beforeUseLife, afterUseLife, warning, startTime, endTime, mark, createTime) VALUES (@toolId, @name, @beforeUseLife, @afterUseLife, @warning, @startTime, @endTime, @mark, @createTime)";
+            string query = "INSERT INTO  history (machineId, name, beforeUseLife, afterUseLife, warning, startTime, endTime, mark, createTime) VALUES (@MachineId, @name, @beforeUseLife, @afterUseLife, @warning, @startTime, @endTime, @mark, @createTime)";
             try
             {
                 using (SqlConnection conn = new SqlConnection(@"Data Source = 127.0.0.1; Initial Catalog = Shelf; User ID = MES2014; Password = PMCMES"))
@@ -956,7 +852,7 @@ namespace Shelf
                     {
                         if (conn.State != ConnectionState.Open)
                             conn.Open();
-                        comm.Parameters.AddWithValue("@toolId", h.ToolId);
+                        comm.Parameters.AddWithValue("@MachineId", h.MachineId);
                         comm.Parameters.AddWithValue("@name", h.Name);
                         comm.Parameters.AddWithValue("@beforeUseLife", h.BeforeUseLife);
                         comm.Parameters.AddWithValue("@afterUseLife", h.AfterUseLife);

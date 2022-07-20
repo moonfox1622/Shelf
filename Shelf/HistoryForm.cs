@@ -1,12 +1,8 @@
-﻿using NPOI.HSSF.Util;
-using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
+﻿
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 using Shelf.Model;
 
@@ -94,9 +90,8 @@ namespace Shelf
                         break;
                 }
                 string decreaseLife = (th.BeforeUseLife - th.AfterUseLife).ToString();
-                if (Convert.ToInt32(decreaseLife) <= 0)
-                    decreaseLife = "";
-                table.Rows.Add(th.ToolId, th.Name, decreaseLife, th.BeforeUseLife, th.AfterUseLife, th.Warning, th.StartTime.ToString("yyyy-MM-dd HH:mm:ss"), th.endTime.ToString("yyyy-MM-dd HH:mm:ss"), mark, th.CreateTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                
+                table.Rows.Add(th.MachineId, th.Name, decreaseLife, th.BeforeUseLife, th.AfterUseLife, th.Warning, th.StartTime.ToString("yyyy-MM-dd HH:mm:ss"), th.endTime.ToString("yyyy-MM-dd HH:mm:ss"), mark, th.CreateTime.ToString("yyyy-MM-dd HH:mm:ss"));
             }
             bs.DataSource = table;
             TableViewStyle();
@@ -194,7 +189,7 @@ namespace Shelf
             tableView.Columns["name"].DefaultCellStyle.SelectionBackColor = Color.FromArgb(235, 237, 237);
             //tableView.Columns["warning"].Visible = false;
             tableView.Columns["mark"].Visible = false; 
-            tableView.Columns["toolId"].Visible = false;
+            tableView.Columns["machineId"].Visible = false;
         }
 
 
@@ -208,7 +203,7 @@ namespace Shelf
             DataTable dt = new DataTable();
             DataColumn dc;
             dc = new DataColumn();
-            dc.ColumnName = "toolId";
+            dc.ColumnName = "machineId";
             dt.Columns.Add(dc);
 
             dc = new DataColumn();
@@ -259,7 +254,10 @@ namespace Shelf
         {
             try
             {
-                bs.Filter = string.Format("(convert(name, 'System.String') LIKE '%{0}%' OR convert(decreaseLife, 'System.String')  LIKE '%{0}%' OR convert(createTime, 'System.String') LIKE '%{0}%')", searchBox.Text);
+                string filterText = searchBox.Text;
+                if (searchBox.Text == "名稱/使用磨耗/紀錄時間")
+                    filterText = "";
+                bs.Filter = string.Format("(convert(name, 'System.String') LIKE '%{0}%' OR convert(decreaseLife, 'System.String')  LIKE '%{0}%' OR convert(createTime, 'System.String') LIKE '%{0}%')", filterText);
                 
                 TableMark();
             }
@@ -269,6 +267,11 @@ namespace Shelf
             }
         }
 
+        /// <summary>
+        /// 下載按鈕
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnDownloadClick(object sender, EventArgs e)
         {
             List<CSVHistoryFormat> histories = new List<CSVHistoryFormat>();
@@ -284,7 +287,7 @@ namespace Shelf
                 DataGridViewCellCollection row = tableView.Rows[i].Cells;
                 CSVHistoryFormat h = new CSVHistoryFormat
                 {
-                    toolId = Convert.ToInt32(row["toolId"].Value.ToString()),
+                    machineId = Convert.ToInt32(row["machineId"].Value.ToString()),
                     Name = row["name"].Value.ToString(),
                     DecreaseLife = Convert.ToInt32(row["decreaseLife"].Value.ToString()),
                     BeforeUseLife = Convert.ToInt32(row["beforeUseLife"].Value.ToString()),
@@ -298,7 +301,7 @@ namespace Shelf
             }
 
             fileDialog.Filter = "CSV(*.csv)|*.csv";
-            fileDialog.FileName = machineList.Text + "刀具歷史紀錄" + string.Format("{0:yyyy-MM-dd-H-mm-ss}", DateTime.Now);
+            fileDialog.FileName = machineList.Text + "刀具歷史紀錄" + string.Format("{0:yyyy-MM-dd HH-mm-ss}", DateTime.Now);
             fileDialog.CheckPathExists = true;
             fileDialog.InitialDirectory = "c:\\";
             if (fileDialog.ShowDialog() == DialogResult.Cancel)
@@ -382,6 +385,7 @@ namespace Shelf
 
             searchBox.ForeColor = Color.Black;
         }
+
         //textbox失去焦點
         private void Textbox_Leave(object sender, EventArgs e)
         {
@@ -393,6 +397,22 @@ namespace Shelf
             }
             else
                 searchBoxHasText = true;
+        }
+
+        private void HistoryForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+                this.Close();
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void toolComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -105,7 +105,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(124, 24);
             this.label3.TabIndex = 25;
-            this.label3.Text = "剩餘損耗值：";
+            this.label3.Text = "剩餘磨耗值：";
             // 
             // label2
             // 
@@ -113,9 +113,9 @@
             this.label2.Font = new System.Drawing.Font("微軟正黑體", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label2.Location = new System.Drawing.Point(11, 91);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(105, 24);
+            this.label2.Size = new System.Drawing.Size(124, 24);
             this.label2.TabIndex = 24;
-            this.label2.Text = "總損耗值：";
+            this.label2.Text = "最大磨耗值：";
             // 
             // label1
             // 
@@ -141,7 +141,9 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(266, 397);
+            this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(266, 397);
             this.Name = "EditForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
