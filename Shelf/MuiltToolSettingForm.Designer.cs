@@ -40,7 +40,6 @@
             this.selectToolListPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.deleListPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.btnChangeTool = new System.Windows.Forms.Button();
-            this.btnSelectAll = new System.Windows.Forms.Button();
             this.btnClearList = new System.Windows.Forms.Button();
             this.picMachine = new System.Windows.Forms.PictureBox();
             this.txtMachDescrible = new System.Windows.Forms.Label();
@@ -116,7 +115,6 @@
             this.toolGridView.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.toolGridView.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.toolGridView.RowTemplate.Height = 35;
-            this.toolGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.toolGridView.Size = new System.Drawing.Size(617, 589);
             this.toolGridView.TabIndex = 9;
             this.toolGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.CellClick);
@@ -178,19 +176,6 @@
             this.btnChangeTool.Text = "更換刀具";
             this.btnChangeTool.UseVisualStyleBackColor = true;
             this.btnChangeTool.Click += new System.EventHandler(this.BtnChangeToolClick);
-            // 
-            // btnSelectAll
-            // 
-            this.btnSelectAll.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSelectAll.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnSelectAll.Location = new System.Drawing.Point(464, 21);
-            this.btnSelectAll.Name = "btnSelectAll";
-            this.btnSelectAll.Size = new System.Drawing.Size(84, 30);
-            this.btnSelectAll.TabIndex = 24;
-            this.btnSelectAll.Tag = "select";
-            this.btnSelectAll.Text = "全選";
-            this.btnSelectAll.UseVisualStyleBackColor = true;
-            this.btnSelectAll.Click += new System.EventHandler(this.BtnSelectAllClick);
             // 
             // btnClearList
             // 
@@ -286,7 +271,6 @@
             this.Controls.Add(this.txtMachDescrible);
             this.Controls.Add(this.picMachine);
             this.Controls.Add(this.btnClearList);
-            this.Controls.Add(this.btnSelectAll);
             this.Controls.Add(this.btnChangeTool);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label3);
@@ -322,7 +306,6 @@
         private System.Windows.Forms.FlowLayoutPanel selectToolListPanel;
         private System.Windows.Forms.FlowLayoutPanel deleListPanel;
         private System.Windows.Forms.Button btnChangeTool;
-        private System.Windows.Forms.Button btnSelectAll;
         private System.Windows.Forms.Button btnClearList;
         private System.Windows.Forms.PictureBox picMachine;
         private System.Windows.Forms.Label txtMachDescrible;

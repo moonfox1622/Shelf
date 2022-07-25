@@ -83,7 +83,7 @@
             this.tableView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.tableView.Size = new System.Drawing.Size(1240, 554);
             this.tableView.TabIndex = 1;
-            this.tableView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.TableViewCellClick);
+            this.tableView.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.tableView_ColumnHeaderMouseClick);
             // 
             // label1
             // 

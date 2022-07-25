@@ -110,6 +110,7 @@ namespace Shelf
             bool isWarning = errorSelect.Checked;
             LoadData(startTime, endTime, (machineList.SelectedItem as Machine).Id, isWarning);
             btnDownload.Visible = true;
+
         }
 
         /// <summary>
@@ -175,7 +176,7 @@ namespace Shelf
             tableView.Columns["endTime"].Width = width;
             tableView.Columns["createTime"].Width = width;
 
-            tableView.Columns["name"].SortMode = DataGridViewColumnSortMode.NotSortable;
+            tableView.Columns["name"].SortMode = DataGridViewColumnSortMode.Programmatic;
             tableView.Columns["decreaseLife"].SortMode = DataGridViewColumnSortMode.NotSortable;
             tableView.Columns["beforeUseLife"].SortMode = DataGridViewColumnSortMode.NotSortable;
             tableView.Columns["afterUseLife"].SortMode = DataGridViewColumnSortMode.NotSortable;
@@ -183,13 +184,15 @@ namespace Shelf
             tableView.Columns["startTime"].SortMode = DataGridViewColumnSortMode.NotSortable;
             tableView.Columns["endTime"].SortMode = DataGridViewColumnSortMode.NotSortable;
             tableView.Columns["mark"].SortMode = DataGridViewColumnSortMode.NotSortable;
-            tableView.Columns["createTime"].SortMode = DataGridViewColumnSortMode.Automatic;
+            tableView.Columns["createTime"].SortMode = DataGridViewColumnSortMode.Programmatic;
 
             tableView.Columns["name"].DefaultCellStyle.BackColor = Color.FromArgb(235, 237, 237);
             tableView.Columns["name"].DefaultCellStyle.SelectionBackColor = Color.FromArgb(235, 237, 237);
             //tableView.Columns["warning"].Visible = false;
             tableView.Columns["mark"].Visible = false; 
             tableView.Columns["machineId"].Visible = false;
+
+            tableView.Columns["name"].HeaderCell.Tag = "natureAsc";
         }
 
 
@@ -386,7 +389,7 @@ namespace Shelf
             searchBox.ForeColor = Color.Black;
         }
 
-        //textbox失去焦點
+        
         private void Textbox_Leave(object sender, EventArgs e)
         {
             if (searchBox.Text == "")
@@ -399,20 +402,66 @@ namespace Shelf
                 searchBoxHasText = true;
         }
 
+        /// <summary>
+        /// 以ESC關閉視窗
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void HistoryForm_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
                 this.Close();
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        /// <summary>
+        /// 排序
+        /// </summary>
+        /// <param name="sort"></param>
+        private void Sort(string sort)
         {
-            this.Close();
+            DataTable dt = new DataTable();
+            if(sort == "natureAsc")
+                dt = table.AsEnumerable().OrderBy(x => x.Field<string>("name"), new NaturalStringComparer()).CopyToDataTable();
+            else if (sort == "natureDesc")
+                dt = table.AsEnumerable().OrderBy(x => x.Field<string>("name"), new NaturalStringComparerDesc()).CopyToDataTable();
+            
+            bs.DataSource = dt;
         }
 
-        private void toolComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void tableView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            var column = tableView.Columns[e.ColumnIndex];
+
+            if (column.SortMode != DataGridViewColumnSortMode.Programmatic)
+                return;
+            if (table.Rows.Count == 0)
+                return;
+            var sortGlyphDirection = column.HeaderCell.SortGlyphDirection;
+            string columnName = tableView.Columns[e.ColumnIndex].Name;
+            DataTable dt = new DataTable();
+            switch (sortGlyphDirection)
+            {
+                case SortOrder.None:
+                case SortOrder.Ascending:
+                    sortGlyphDirection = SortOrder.Descending;
+                    dt = table.AsEnumerable().OrderBy(x => x.Field<string>(columnName), new NaturalStringComparerDesc()).CopyToDataTable();
+                    break;
+                case SortOrder.Descending:
+                    sortGlyphDirection = SortOrder.Ascending;
+                    dt = table.AsEnumerable().OrderBy(x => x.Field<string>(columnName), new NaturalStringComparer()).CopyToDataTable();
+                    break;
+            }
+            bs.DataSource = dt;
+            tableView.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = sortGlyphDirection;
+
+
+        }
+
+        private void tableView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
 
         }
+
+
     }
 }

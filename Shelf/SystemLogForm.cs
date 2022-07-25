@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Shelf.Model;
@@ -108,12 +109,13 @@ namespace Shelf
             width = (tableView.Width - (width * 6)) / 3;
             tableView.Columns["createTime"].Width = width;
 
-            tableView.Columns["name"].SortMode = DataGridViewColumnSortMode.NotSortable;
+            tableView.Columns["name"].SortMode = DataGridViewColumnSortMode.Programmatic;
+            
             tableView.Columns["life"].SortMode = DataGridViewColumnSortMode.NotSortable;
             tableView.Columns["remain"].SortMode = DataGridViewColumnSortMode.NotSortable;
             tableView.Columns["warning"].SortMode = DataGridViewColumnSortMode.NotSortable;
             tableView.Columns["mark"].SortMode = DataGridViewColumnSortMode.NotSortable;
-            tableView.Columns["createTime"].SortMode = DataGridViewColumnSortMode.Automatic;
+            tableView.Columns["createTime"].SortMode = DataGridViewColumnSortMode.Programmatic;
 
             tableView.Columns["name"].DefaultCellStyle.BackColor = Color.FromArgb(235, 237, 237);
             tableView.Columns["name"].DefaultCellStyle.SelectionBackColor = Color.FromArgb(235, 237, 237);
@@ -272,93 +274,35 @@ namespace Shelf
                 this.Close();
         }
 
-
-        private void TableViewCellClick(object sender, DataGridViewCellEventArgs e)
+        private void tableView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if(e.RowIndex == -1 && e.ColumnIndex == 0)
+            var column = tableView.Columns[e.ColumnIndex];
+
+            if (column.SortMode != DataGridViewColumnSortMode.Programmatic)
+                return;
+            if (table.Rows.Count == 0)
+                return;
+            var sortGlyphDirection = column.HeaderCell.SortGlyphDirection;
+            string columnName = tableView.Columns[e.ColumnIndex].Name;
+            DataTable dt = new DataTable();
+            switch (sortGlyphDirection)
             {
-                var myComparer = new NaturalSortComparer();
-                tableView.Sort(myComparer);
+                case SortOrder.None:
+                case SortOrder.Ascending:
+                    sortGlyphDirection = SortOrder.Descending;
+                    dt = table.AsEnumerable().OrderBy(x => x.Field<string>(columnName), new NaturalStringComparerDesc()).CopyToDataTable();
+                    break;
+                case SortOrder.Descending:
+                    sortGlyphDirection = SortOrder.Ascending;
+                    dt = table.AsEnumerable().OrderBy(x => x.Field<string>(columnName), new NaturalStringComparer()).CopyToDataTable();
+                    break;
             }
+            bs.DataSource = dt;
+            tableView.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = sortGlyphDirection;
         }
 
-        public class NaturalSortComparer : System.Collections.IComparer
-        {
 
-            private System.Collections.Generic.Dictionary<string, string[]> table;
-
-            public NaturalSortComparer()
-            {
-                table = new System.Collections.Generic.Dictionary<string, string[]>();
-            }
-
-            public void Dispose()
-            {
-                table.Clear();
-                table = null;
-            }
-
-            public int Compare(object x, object y)
-            {
-                System.Windows.Forms.DataGridViewRow DataGridViewRow1 = (System.Windows.Forms.DataGridViewRow)x;
-                System.Windows.Forms.DataGridViewRow DataGridViewRow2 = (System.Windows.Forms.DataGridViewRow)y;
-
-                string xStr = DataGridViewRow1.Cells["Column1"].Value.ToString();
-                string yStr = DataGridViewRow2.Cells["Column1"].Value.ToString();
-
-
-                if (xStr == yStr)
-                {
-                    return 0;
-                }
-                string[] x1, y1;
-                if (!table.TryGetValue(xStr, out x1))
-                {
-                    x1 = System.Text.RegularExpressions.Regex.Split(xStr.Replace(" ", ""), "([0-9]+)");
-                    table.Add(xStr, x1);
-                }
-                if (!table.TryGetValue(yStr, out y1))
-                {
-                    y1 = System.Text.RegularExpressions.Regex.Split(yStr.Replace(" ", ""), "([0-9]+)");
-                    table.Add(yStr, y1);
-                }
-
-                for (int i = 0; i < x1.Length && i < y1.Length; i++)
-                {
-                    if (x1[i] != y1[i])
-                    {
-                        return PartCompare(x1[i], y1[i]);
-                    }
-                }
-                if (y1.Length > x1.Length)
-                {
-                    return 1;
-                }
-                else if (x1.Length > y1.Length)
-                {
-                    return -1;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-
-            private static int PartCompare(string left, string right)
-            {
-                int x, y;
-                if (!int.TryParse(left, out x))
-                {
-                    return left.CompareTo(right);
-                }
-
-                if (!int.TryParse(right, out y))
-                {
-                    return left.CompareTo(right);
-                }
-
-                return x.CompareTo(y);
-            }
-        }
     }
 }
+
+

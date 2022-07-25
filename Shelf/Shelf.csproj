@@ -126,6 +126,7 @@
     <Compile Include="EditMulitToolsForm.Designer.cs">
       <DependentUpon>EditMulitToolsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="NaturalSortToolComparer.cs" />
     <Compile Include="PreviewEditForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -382,6 +383,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\close_B.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\alpha-down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\alpha-up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\number-down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\number-up.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

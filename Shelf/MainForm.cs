@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using WinFormAnimation;
@@ -18,13 +19,15 @@ namespace Shelf
 
         TableLayoutPanel table = new TableLayoutPanel();
         List<CircularProgressUserControl> tools = new List<CircularProgressUserControl>(); //刀具UserController List
-        bool keepUpdate = true; //持續更新刀具資料
-        int carouselSpeed = 10;
         ToolDatabase tdb = new ToolDatabase();
-        bool simulateRun = true;
         Machine machine = new Machine();
-        int page = 0;
-        int toolNumInAPage = 20;
+        //genreral setting
+        bool keepUpdate = true; //持續更新刀具資料
+        int carouselSpeed = 10; //輪播速度 (秒)
+        bool simulateRun = true; //模擬程式運行
+        int page = 0; //當前頁面
+        int toolNumInAPage = 20; //單頁刀具數量
+        string sortMode = "lastUpdateDesc";
         private bool restoring = false;
         private bool sidebarExpand = true;
         //Delegate function
@@ -43,11 +46,13 @@ namespace Shelf
 
         private void MainShown(object sender, EventArgs e)
         {
+            //顯示第一台機台
             if (!tdb.GetTopMachine(ref machine))
             {
                 MessageBox.Show("未讀取到機台", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
+
             initialContent();
             if (tools.Count == 0)
                 return;
@@ -60,7 +65,6 @@ namespace Shelf
             Thread carouselThread = new Thread(CarouselMachine);
             carouselThread.IsBackground = true;
             carouselThread.Start();
-
         }
 
         /// <summary>
@@ -72,6 +76,7 @@ namespace Shelf
             tools = new List<CircularProgressUserControl>();
             table = InitialTablePanel();
 
+            //讀取刀具資料
             if (!LoadData(ref tools, machine.Id, page))
                 return;
 
@@ -86,25 +91,26 @@ namespace Shelf
 
             }
             content.Controls.Add(table);
-            
-            
+            sortList.Text = "更新時間";
+            picSort.Image = Properties.Resources.number_up;
         }
 
         /// <summary>
         /// 取得刀具資料
         /// </summary>
         /// <param name="tools"></param>
-        /// <param name="lastDatas"></param>
+        /// <param name="machineId">機台ID</param>
+        /// <param name="page">頁數</param>
         /// <returns></returns>
         private bool LoadData(ref List<CircularProgressUserControl> tools, int machineId, int page)
         {
             List<Tool> toolsData = new List<Tool>();
-            if (!tdb.GetToolByPage(ref toolsData, machineId, page, toolNumInAPage))
+            if (!tdb.GetToolByMachineId(ref toolsData, machineId))
             {
                 return false;
             }
 
-            for(int i=0 ; i<toolsData.Count ; i++)
+            for(int i=(page* toolNumInAPage); i< toolNumInAPage; i++)
             {
                 Tool t = toolsData[i];
                 
@@ -114,21 +120,8 @@ namespace Shelf
                 };
                 tools.Add(g);
             }
-            for(int i = toolsData.Count; i < toolNumInAPage; i++)
-            {
-                tools.Add(new CircularProgressUserControl());
-            }
+            
             return true;
-        }
-
-        /// <summary>
-        /// 當有 Grid 被刪除整理畫面
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TableControlRemoved(object sender, ControlEventArgs e)
-        {
-            ToolUpdate();
         }
 
         /// <summary>
@@ -147,7 +140,7 @@ namespace Shelf
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6F));
             table.AutoScroll = false;
             table.Dock = DockStyle.Fill;
-            table.ControlRemoved += TableControlRemoved;
+            //table.ControlRemoved += TableControlRemoved;
             return table;
         }
 
@@ -167,56 +160,57 @@ namespace Shelf
             {
 
             }
-            
         }
 
         /// <summary>
         /// 更新畫面刀具資料
         /// </summary>
+        /// <param name="sort">排序依據</param>
+        /// <param name="order">asc or desc</param>
         private void ToolUpdate()
         {
-            try
-            {
+            //try
+            //{
                 List<Tool> toolData = new List<Tool>();
                 txtMachineName.Text = machine.Name;
                 Bitmap picture = (Bitmap)Properties.Resources.ResourceManager.GetObject(machine.Picture);
                 picMachine.Image = picture;
-                if (!tdb.GetToolByPage(ref toolData, machine.Id, page, toolNumInAPage))
+                if (!tdb.GetToolByMachineId(ref toolData, machine.Id))
                     return;
-
+                toolData = SortTools(toolData, sortMode);
+                List<Tool> pagedTools = PageTool(toolData, page);
+                
                 int toolsCount = TableCellShowCount(table);
-
-
                 //若讀取資料比原來的多，多顯示 n 個GridUserControl
-                if (toolData.Count > toolsCount)
+                if (pagedTools.Count > toolsCount)
                 {
-                    for (int i = toolsCount; i <= (toolData.Count - 1); i++)
+                    for (int i = toolsCount; i <= (pagedTools.Count - 1); i++)
                     {
                         table.GetControlFromPosition(i % 5, i / 5).Visible = true;
-
                     }
                 }
 
                 //若讀取資料比原來的少，隱藏 n 個GridUserControl
-                if (toolData.Count < toolsCount)
+                if (pagedTools.Count < toolsCount)
                 {
-                    for (int i = toolsCount - 1; i > (toolData.Count - 1); i--)
+                    for (int i = toolsCount - 1; i > (pagedTools.Count - 1); i--)
                     {
                         table.GetControlFromPosition(i % 5, i / 5).Visible = false;
                     }
                 }
 
-                for (int i = 0; i < toolData.Count; i++)
+                for (int i = 0; i < pagedTools.Count; i++)
                 {
-                    tools[i].tool = toolData[i];
+                    tools[i].tool = pagedTools[i];
                     tools[i].CheckStatus();
                 }
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    MessageBox.Show(e.Message);
+            //}
         }
+
 
         private int TableCellShowCount(TableLayoutPanel t)
         {
@@ -755,7 +749,11 @@ namespace Shelf
             }
         }
 
-
+        /// <summary>
+        /// 縮放Menu
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuClick(object sender, EventArgs e)
         {
             //sidebarTimer.Start();
@@ -785,37 +783,11 @@ namespace Shelf
             sidebarAnimate.Play(sidebarPanel,"Width");
         }
 
-        private void SidebarTimer(object sender, EventArgs e)
-        {
-            Point minP = new Point(59, 12);
-            Point maxP = new Point(194, 12);
-            if (sidebarExpand)
-            {
-                sidebarPanel.Width -= 10;
-                //int x = panelContent.Location.X - 10;
-                //int y = panelContent.Location.Y;
-                //panelContent.Location = new Point(x, y);
-                if(sidebarPanel.Width == sidebarPanel.MinimumSize.Width)
-                {
-                    sidebarExpand = false;
-                    sidebarTimer.Stop();
-                }
-            }
-            else
-            {
-                sidebarPanel.Width += 10;
-                
-                //int x = panelContent.Location.X + 10;
-                //int y = panelContent.Location.Y;
-                //panelContent.Location = new Point(x, y);
-                if (sidebarPanel.Width == sidebarPanel.MaximumSize.Width)
-                {
-                    sidebarExpand = true;
-                    sidebarTimer.Stop();
-                }
-            }
-        }
-
+        /// <summary>
+        /// 刀具設定
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnMuiltToolClick(object sender, EventArgs e)
         {
             MuiltToolSettingForm muiltTool = new MuiltToolSettingForm();
@@ -835,6 +807,79 @@ namespace Shelf
                     return;
                 this.Close();
             }
+        }
+
+        private List<Tool> PageTool(List<Tool> tools,int page)
+        {
+            int start = page * toolNumInAPage;
+            int end = start + toolNumInAPage;
+            if (tools.Count < end)
+                end = tools.Count;
+
+            List<Tool> pagedTool = new List<Tool>();
+            for(int i = start; i < end; i++)
+                pagedTool.Add(tools[i]);
+
+            return pagedTool;
+        }
+
+        private List<Tool> SortTools(List<Tool> tools, string sortMode)
+        {
+            if (sortMode == "natureAsc")
+                tools = tools.OrderBy(e => e.Name, new NaturalStringComparer()).ToList();
+            else if (sortMode == "natureDesc")
+                tools = tools.OrderBy(e => e.Name, new NaturalStringComparerDesc()).ToList();
+            else if (sortMode == "lastUpdateAsc")
+                tools = tools.OrderBy(e => e.Taken).ThenBy(e => e.LastUpdate).ToList();
+            else if (sortMode == "lastUpdateDesc")
+                tools = tools.OrderByDescending(e => e.Taken).ThenByDescending(e => e.LastUpdate).ToList();
+
+            return tools;
+        }
+
+        /// <summary>
+        /// 選擇刀具排版方式
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SortListSelectedIndexChanged(object sender, EventArgs e)
+        {
+            int index = sortList.SelectedIndex;
+            if (index == 0)
+            {
+                sortMode = "lastUpdateDesc";
+                picSort.Image = Properties.Resources.number_up;
+            }
+            else if(index == 1)
+            {
+                sortMode = "natureAsc";
+                picSort.Image = Properties.Resources.alpha_down;
+            }
+            ToolUpdate();
+        }
+
+        private void PicSortClick(object sender, EventArgs e)
+        {
+            switch (sortMode)
+            {
+                case "lastUpdateDesc":
+                    sortMode = "lastUpdateAsc";
+                    picSort.Image = Properties.Resources.number_down;
+                    break;
+                case "lastUpdateAsc":
+                    sortMode = "lastUpdateDesc";
+                    picSort.Image = Properties.Resources.number_up;
+                    break;
+                case "natureAsc":
+                    sortMode = "natureDesc";
+                    picSort.Image = Properties.Resources.alpha_up;
+                    break;
+                case "natureDesc":
+                    sortMode = "natureAsc";
+                    picSort.Image = Properties.Resources.alpha_down;
+                    break;
+            }
+            ToolUpdate();
         }
     }
 }

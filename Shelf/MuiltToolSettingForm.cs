@@ -17,7 +17,7 @@ namespace Shelf
         private DataTable toolsData = new DataTable();
         private BindingSource bs = new BindingSource();
         public List<Tool> selectedTools = new List<Tool>();
-
+        bool selectAll = false;
         public MuiltToolSettingForm()
         {
             InitializeComponent();
@@ -71,8 +71,6 @@ namespace Shelf
         private DataTable ToolsDataTable()
         {
             DataTable dt = new DataTable();
-
-            
 
             DataColumn dc = new DataColumn();
             dc.ColumnName = "check";
@@ -129,7 +127,9 @@ namespace Shelf
             toolGridView.Columns["remain"].SortMode = DataGridViewColumnSortMode.NotSortable;
             toolGridView.Columns["warning"].SortMode = DataGridViewColumnSortMode.NotSortable;
             toolGridView.Columns["id"].Visible = false;
+
         }
+
 
         public void GridViewStyle()
         {
@@ -259,7 +259,14 @@ namespace Shelf
         /// <param name="e"></param>
         private void CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if(e.RowIndex>=0 && e.ColumnIndex==0)
+            if(e.RowIndex==-1 && e.ColumnIndex == 0)
+            {
+                selectAll = !selectAll;
+                BtnSelectAllClick();
+
+
+            }
+            if(e.RowIndex>=0 && e.ColumnIndex == 0)
             if ((bool)toolGridView.Rows[e.RowIndex].Cells["check"].Value == true)
             {
                 toolGridView.Rows[e.RowIndex].Cells["check"].Value = false;
@@ -435,14 +442,10 @@ namespace Shelf
         /// <summary>
         /// 刀具全選或取消全選
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void BtnSelectAllClick(object sender, EventArgs e)
+        private void BtnSelectAllClick()
         {
-            if(btnSelectAll.Tag.ToString() == "select")
+            if(selectAll)
             {
-                btnSelectAll.Tag = "cancle";
-                btnSelectAll.Text = "取消全選";
                 for (int i = 0; i < toolGridView.Rows.Count; i++)
                 {
                     toolGridView.Rows[i].Cells["check"].Value = true;
@@ -458,10 +461,8 @@ namespace Shelf
                     NewSelectedTool(t);
                 }
             }
-            else if(btnSelectAll.Tag.ToString() == "cancle")
+            else if(!selectAll)
             {
-                btnSelectAll.Tag = "select";
-                btnSelectAll.Text = "全選";
                 for (int i = 0; i < toolGridView.Rows.Count; i++)
                 {
                     toolGridView.Rows[i].Cells["check"].Value = false;
@@ -558,6 +559,15 @@ namespace Shelf
 
         private void ToolGridViewCellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
+            if (e.ColumnIndex == 0 && e.RowIndex == -1)
+            {
+                e.PaintBackground(e.CellBounds, true);
+                ControlPaint.DrawCheckBox(e.Graphics, e.CellBounds.X + 1, e.CellBounds.Y + 1,
+                    e.CellBounds.Width - 2, e.CellBounds.Height - 2,
+                    selectAll ? ButtonState.Checked : ButtonState.Normal);
+                e.Handled = true;
+            }
+
             if (e.ColumnIndex == 0 && e.RowIndex >= 0)
             {
                 e.PaintBackground(e.CellBounds, true);

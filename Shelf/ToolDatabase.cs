@@ -170,8 +170,6 @@ namespace Shelf
         public bool GetToolByPage(ref List<Tool> tools, int machineId, int page, int num)
         {
             int start = page * num;
-            //if (start != 0)
-                //start++;
             int end = start + num;
 
             var query = "SELECT id, machineId, name, life, remain, warning, taken, lastUpdate FROM tool WHERE machineId = @machineId ORDER BY taken DESC, lastUpdate DESC";
@@ -190,7 +188,6 @@ namespace Shelf
                                 List<Tool> allTools = new List<Tool>();
                                 while (data.Read())
                                 {
-
                                     Tool t = new Tool
                                     {
                                         Id = Convert.ToInt32(data["id"].ToString()),
@@ -309,8 +306,9 @@ namespace Shelf
                                         Remain = Convert.ToInt32(data["remain"].ToString()),
                                         Warning = Convert.ToInt32(data["warning"].ToString()),
                                         Taken = Convert.ToBoolean(data["taken"].ToString()),
-                                        LastUpdate = Convert.ToDateTime(data["lastUpdate"].ToString())
-                                    };
+                                        LastUpdate = data.GetDateTime(data.GetOrdinal("lastUpdate"))
+                                };
+
                                     tools.Add(tool);
                                 }
                             }

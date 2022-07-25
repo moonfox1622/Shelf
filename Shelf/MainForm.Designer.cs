@@ -28,13 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.txtMachineName = new System.Windows.Forms.Label();
             this.content = new System.Windows.Forms.Panel();
             this.txtPage = new System.Windows.Forms.Label();
-            this.btnLast = new System.Windows.Forms.PictureBox();
-            this.btnNext = new System.Windows.Forms.PictureBox();
             this.txtDivide = new System.Windows.Forms.Label();
             this.txtMaxPage = new System.Windows.Forms.Label();
             this.sidebarPanel = new System.Windows.Forms.FlowLayoutPanel();
@@ -56,11 +53,13 @@
             this.panel8 = new System.Windows.Forms.Panel();
             this.pictureBox6 = new System.Windows.Forms.PictureBox();
             this.btnRun = new System.Windows.Forms.Button();
-            this.sidebarTimer = new System.Windows.Forms.Timer(this.components);
             this.panelContent = new System.Windows.Forms.Panel();
+            this.picSort = new System.Windows.Forms.PictureBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.sortList = new System.Windows.Forms.ComboBox();
             this.picMachine = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.btnLast)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.btnNext)).BeginInit();
+            this.btnLast = new System.Windows.Forms.PictureBox();
+            this.btnNext = new System.Windows.Forms.PictureBox();
             this.sidebarPanel.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMenu)).BeginInit();
@@ -75,7 +74,10 @@
             this.panel8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
             this.panelContent.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picSort)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMachine)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnLast)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnNext)).BeginInit();
             this.SuspendLayout();
             // 
             // txtMachineName
@@ -95,7 +97,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.content.Location = new System.Drawing.Point(5, 134);
             this.content.Name = "content";
-            this.content.Size = new System.Drawing.Size(1682, 819);
+            this.content.Size = new System.Drawing.Size(1710, 850);
             this.content.TabIndex = 2;
             // 
             // txtPage
@@ -103,47 +105,19 @@
             this.txtPage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPage.AutoSize = true;
             this.txtPage.Font = new System.Drawing.Font("微軟正黑體", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.txtPage.Location = new System.Drawing.Point(1571, 963);
+            this.txtPage.Location = new System.Drawing.Point(1599, 994);
             this.txtPage.Name = "txtPage";
             this.txtPage.Size = new System.Drawing.Size(28, 31);
             this.txtPage.TabIndex = 6;
             this.txtPage.Text = "6";
             this.txtPage.Visible = false;
             // 
-            // btnLast
-            // 
-            this.btnLast.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnLast.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnLast.Image = global::Shelf.Properties.Resources.left;
-            this.btnLast.Location = new System.Drawing.Point(1526, 959);
-            this.btnLast.Name = "btnLast";
-            this.btnLast.Size = new System.Drawing.Size(40, 40);
-            this.btnLast.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.btnLast.TabIndex = 4;
-            this.btnLast.TabStop = false;
-            this.btnLast.Visible = false;
-            this.btnLast.Click += new System.EventHandler(this.LastPageClick);
-            // 
-            // btnNext
-            // 
-            this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnNext.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnNext.Image = global::Shelf.Properties.Resources.right;
-            this.btnNext.Location = new System.Drawing.Point(1647, 959);
-            this.btnNext.Name = "btnNext";
-            this.btnNext.Size = new System.Drawing.Size(40, 40);
-            this.btnNext.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.btnNext.TabIndex = 3;
-            this.btnNext.TabStop = false;
-            this.btnNext.Visible = false;
-            this.btnNext.Click += new System.EventHandler(this.NextPageClick);
-            // 
             // txtDivide
             // 
             this.txtDivide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDivide.AutoSize = true;
             this.txtDivide.Font = new System.Drawing.Font("微軟正黑體", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.txtDivide.Location = new System.Drawing.Point(1596, 963);
+            this.txtDivide.Location = new System.Drawing.Point(1624, 994);
             this.txtDivide.Name = "txtDivide";
             this.txtDivide.Size = new System.Drawing.Size(25, 31);
             this.txtDivide.TabIndex = 7;
@@ -155,7 +129,7 @@
             this.txtMaxPage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMaxPage.AutoSize = true;
             this.txtMaxPage.Font = new System.Drawing.Font("微軟正黑體", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.txtMaxPage.Location = new System.Drawing.Point(1616, 963);
+            this.txtMaxPage.Location = new System.Drawing.Point(1644, 994);
             this.txtMaxPage.Name = "txtMaxPage";
             this.txtMaxPage.Size = new System.Drawing.Size(28, 31);
             this.txtMaxPage.TabIndex = 5;
@@ -178,7 +152,7 @@
             this.sidebarPanel.MaximumSize = new System.Drawing.Size(188, 0);
             this.sidebarPanel.MinimumSize = new System.Drawing.Size(53, 0);
             this.sidebarPanel.Name = "sidebarPanel";
-            this.sidebarPanel.Size = new System.Drawing.Size(188, 1041);
+            this.sidebarPanel.Size = new System.Drawing.Size(188, 1314);
             this.sidebarPanel.TabIndex = 9;
             // 
             // panel2
@@ -389,16 +363,14 @@
             this.btnRun.UseVisualStyleBackColor = true;
             this.btnRun.Click += new System.EventHandler(this.BtnRunClick);
             // 
-            // sidebarTimer
-            // 
-            this.sidebarTimer.Interval = 10;
-            this.sidebarTimer.Tick += new System.EventHandler(this.SidebarTimer);
-            // 
             // panelContent
             // 
             this.panelContent.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelContent.Controls.Add(this.picSort);
+            this.panelContent.Controls.Add(this.label2);
+            this.panelContent.Controls.Add(this.sortList);
             this.panelContent.Controls.Add(this.txtPage);
             this.panelContent.Controls.Add(this.picMachine);
             this.panelContent.Controls.Add(this.btnLast);
@@ -407,10 +379,46 @@
             this.panelContent.Controls.Add(this.txtDivide);
             this.panelContent.Controls.Add(this.txtMachineName);
             this.panelContent.Controls.Add(this.txtMaxPage);
-            this.panelContent.Location = new System.Drawing.Point(202, 12);
+            this.panelContent.Location = new System.Drawing.Point(194, 12);
             this.panelContent.Name = "panelContent";
-            this.panelContent.Size = new System.Drawing.Size(1690, 1006);
+            this.panelContent.Size = new System.Drawing.Size(1718, 1037);
             this.panelContent.TabIndex = 10;
+            // 
+            // picSort
+            // 
+            this.picSort.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.picSort.Image = global::Shelf.Properties.Resources.number_up;
+            this.picSort.Location = new System.Drawing.Point(1645, 77);
+            this.picSort.Name = "picSort";
+            this.picSort.Size = new System.Drawing.Size(40, 40);
+            this.picSort.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picSort.TabIndex = 11;
+            this.picSort.TabStop = false;
+            this.picSort.Click += new System.EventHandler(this.PicSortClick);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("微軟正黑體", 14F, System.Drawing.FontStyle.Bold);
+            this.label2.Location = new System.Drawing.Point(1445, 83);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(67, 24);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "排序：";
+            // 
+            // sortList
+            // 
+            this.sortList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.sortList.Font = new System.Drawing.Font("微軟正黑體", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.sortList.FormattingEnabled = true;
+            this.sortList.Items.AddRange(new object[] {
+            "更新時間",
+            "名稱"});
+            this.sortList.Location = new System.Drawing.Point(1518, 84);
+            this.sortList.Name = "sortList";
+            this.sortList.Size = new System.Drawing.Size(121, 27);
+            this.sortList.TabIndex = 9;
+            this.sortList.SelectedIndexChanged += new System.EventHandler(this.SortListSelectedIndexChanged);
             // 
             // picMachine
             // 
@@ -422,18 +430,45 @@
             this.picMachine.TabIndex = 8;
             this.picMachine.TabStop = false;
             // 
+            // btnLast
+            // 
+            this.btnLast.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLast.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnLast.Image = global::Shelf.Properties.Resources.left;
+            this.btnLast.Location = new System.Drawing.Point(1554, 990);
+            this.btnLast.Name = "btnLast";
+            this.btnLast.Size = new System.Drawing.Size(40, 40);
+            this.btnLast.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.btnLast.TabIndex = 4;
+            this.btnLast.TabStop = false;
+            this.btnLast.Visible = false;
+            this.btnLast.Click += new System.EventHandler(this.LastPageClick);
+            // 
+            // btnNext
+            // 
+            this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnNext.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnNext.Image = global::Shelf.Properties.Resources.right;
+            this.btnNext.Location = new System.Drawing.Point(1675, 990);
+            this.btnNext.Name = "btnNext";
+            this.btnNext.Size = new System.Drawing.Size(40, 40);
+            this.btnNext.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.btnNext.TabIndex = 3;
+            this.btnNext.TabStop = false;
+            this.btnNext.Visible = false;
+            this.btnNext.Click += new System.EventHandler(this.NextPageClick);
+            // 
             // MainForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(214)))), ((int)(((byte)(214)))), ((int)(((byte)(214)))));
-            this.ClientSize = new System.Drawing.Size(1904, 1030);
+            this.ClientSize = new System.Drawing.Size(1924, 1061);
             this.ControlBox = false;
             this.Controls.Add(this.sidebarPanel);
             this.Controls.Add(this.panelContent);
             this.Cursor = System.Windows.Forms.Cursors.Default;
             this.DoubleBuffered = true;
             this.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.HelpButton = true;
             this.KeyPreview = true;
             this.Name = "MainForm";
@@ -442,8 +477,6 @@
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Shown += new System.EventHandler(this.MainShown);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
-            ((System.ComponentModel.ISupportInitialize)(this.btnLast)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.btnNext)).EndInit();
             this.sidebarPanel.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
@@ -460,7 +493,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).EndInit();
             this.panelContent.ResumeLayout(false);
             this.panelContent.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picSort)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMachine)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnLast)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnNext)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -490,11 +526,13 @@
         private System.Windows.Forms.Button btnRun;
         private System.Windows.Forms.PictureBox picMenu;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Timer sidebarTimer;
         private System.Windows.Forms.Panel panelContent;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.PictureBox pictureBox7;
         private System.Windows.Forms.Button btnMuiltTool;
+        private System.Windows.Forms.ComboBox sortList;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.PictureBox picSort;
     }
 }
 

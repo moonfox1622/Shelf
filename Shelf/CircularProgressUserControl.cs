@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace Shelf
 {
@@ -16,20 +17,26 @@ namespace Shelf
         public CircularProgressUserControl()
         {
             InitializeComponent();
+            
         }
 
         private void CircularProgress_Load(object sender, EventArgs e)
         {
+            this.DoubleBuffered = true;
+            typeof(Panel).InvokeMember("DoubleBuffered", BindingFlags.SetProperty
+            | BindingFlags.Instance | BindingFlags.NonPublic, null,
+            panelValue, new object[] { true });
             CheckStatus();
         }
 
         public void CheckStatus()
         {
-            this.DoubleBuffered = true;
+            
             percentBar.Text = tool.Remain.ToString();
             txtName.Text = tool.Name;
             txtLife.Text = tool.Remain.ToString();
             double percent = ((double)tool.Remain / (double)tool.Life) * 100;
+
             percentBar.Text = ((int)percent).ToString() + "%";
             percentBar.Value = 100 - (int)percent;
             txtWarning.Text = "警戒值:" + tool.Warning.ToString();
@@ -62,90 +69,90 @@ namespace Shelf
             
             txtLife.BackColor = bc;
             txtLife.ForeColor = fc;
-            txtUnit.BackColor = bc;
-            txtUnit.ForeColor = fc;
-            panelValue.BackColor = bc;
+            //panelValue.BackColor = bc;
         }
 
         public void ToolUse()
         {
             this.Invalidate();
+            panelValue.Invalidate();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void UsePaint(object sender, PaintEventArgs e)
         {
+            Control c = (Control)sender;
             Color backC = Color.FromArgb(241, 241, 241);
             if (tool.Taken)
             {
                 ButtonBorderStyle style = ButtonBorderStyle.Solid;
                 Color color = Color.FromArgb(13, 131, 0);
-                ControlPaint.DrawBorder(e.Graphics, this.ClientRectangle, color, 6, style, color, 6, style, color, 6, style, color, 6, style);
-                backC = Color.FromArgb(62, 167, 179);
+                ControlPaint.DrawBorder(e.Graphics, c.ClientRectangle, color, 6, style, color, 6, style, color, 6, style, color, 6, style);
+                //ControlPaint.DrawBorder(e.Graphics, panelValue.ClientRectangle, color, 6, style, color, 6, style, color, 6, style, color, 6, style);
+                
             }
             else
             {
-                ControlPaint.DrawBorder(e.Graphics, this.ClientRectangle, Color.Black, ButtonBorderStyle.None);
+                ControlPaint.DrawBorder(e.Graphics, c.ClientRectangle, Color.Black, ButtonBorderStyle.None);
             }
 
         }
 
-        private void ResizeUI()
+        private void panelValuePaint(object sender, PaintEventArgs e)
         {
-            int w = this.Width; //306
-            int h = this.Height; //181
-
-            if (w >= 2000)
+            Control c = (Control)sender;
+            
+            Color backC = Color.FromArgb(241, 241, 241);
+            if (tool.Taken)
             {
-                percentBar.Size = new Size(100, 100);
-                percentBar.Font = new Font("Arial", 24, FontStyle.Bold);
-                txtLife.Font = new Font("Arial", 15, FontStyle.Bold);
-                txtWarning.Font = new Font("Arial", 12, FontStyle.Bold);
+                ButtonBorderStyle style = ButtonBorderStyle.Solid;
+                Color color = Color.FromArgb(13, 131, 0);
+                ControlPaint.DrawBorder(e.Graphics, c.ClientRectangle, color, 6, style, color, 6, style, color, 0, style, color, 6, style);
+                //ControlPaint.DrawBorder(e.Graphics, panelValue.ClientRectangle, color, 6, style, color, 6, style, color, 6, style, color, 6, style);
+                
             }
-            else if(w <= 100)
+            else
             {
-                percentBar.Size = new Size(100, 100);
-                percentBar.Font = new Font("Arial", 24, FontStyle.Bold);
-                txtLife.Font = new Font("Arial", 20, FontStyle.Bold);
-                txtWarning.Font = new Font("Arial", 12, FontStyle.Bold);
+                ControlPaint.DrawBorder(e.Graphics, c.ClientRectangle, Color.Black, ButtonBorderStyle.None);
             }
         }
 
+        /// <summary>
+        /// 縮放元件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CircularProgressUserControl_Resize(object sender, EventArgs e)
         {
             int w = this.Width; //306
             int h = this.Height; //181
-
             if (w > 265)
             {
-                percentBar.Size = new Size(160, 160);
                 percentBar.Font = new Font("Arial", 34, FontStyle.Bold);
-
-                panelValue.Height = 53;
-                txtLife.Font = new Font("Arial", 39, FontStyle.Bold);
-                txtLife.Location = new Point(-4, -5);
+                txtLife.Font = new Font("Arial", 35, FontStyle.Bold);
+                
                 txtWarning.Font = new Font("微軟正黑體", 14, FontStyle.Bold);
                 txtName.Font = new Font("Arial", 24, FontStyle.Bold);
             }
             else if (w <= 265 && w > 228)
             {
-                percentBar.Size = new Size(130, 130);
-                percentBar.Font = new Font("Arial", 24, FontStyle.Bold);
-                panelValue.Height = 30;
-                txtLife.Location = new Point(0, -10);
+                percentBar.Font = new Font("Arial", 20, FontStyle.Bold);
                 txtLife.Font = new Font("Arial", 20, FontStyle.Bold);
                 txtWarning.Font = new Font("Arial", 12, FontStyle.Bold);
             }
             else
             {
-                percentBar.Size = new Size(100, 100);
-                percentBar.Font = new Font("Arial", 24, FontStyle.Bold);
-                panelValue.Height = 30;
-                txtLife.Location = new Point(0, -10);
+                percentBar.Font = new Font("Arial", 20, FontStyle.Bold);
                 txtLife.Font = new Font("Arial", 20, FontStyle.Bold);
                 txtWarning.Font = new Font("Arial", 12, FontStyle.Bold);
             }
-            percentBar.Location = new Point(w - percentBar.Width - 8, 9);
-            panelValue.Location = new Point(6, txtWarning.Location.Y - panelValue.Height);
+            txtLife.Location = new Point(6, panelValue.Height - txtWarning.Height - txtLife.Height - 5);
+            panelPercent.Width = panelPercent.Height;
+            panelPercent.Location = new Point(w - panelPercent.Width - 8, 7);
 
         }
     }
